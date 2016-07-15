@@ -6,14 +6,18 @@ VERSION="$(git symbolic-ref HEAD | sed -e 's/^refs\/heads\/*//g')"
 TARGET_FILE="$(git rev-parse --show-toplevel)/etc/deploy-targets.csv"
 TARGET_ENV=""
 SKIP_COMPOSER=0
+SKIP_CONFIRM=0
 
 # Parameter handling
 OPTIND=1
-while getopts ":e:f" opt; do
+while getopts ":e:fy" opt; do
     case "$opt" in
     e)  TARGET_ENV=$OPTARG
         ;;
     f)  SKIP_COMPOSER=1
+        ;;
+    y)
+        SKIP_CONFIRM=1
         ;;
     \?) printf "Usage: $0 -e <environment>\n" >&2
         exit 1
@@ -30,6 +34,7 @@ function environment_get () {
         printf "Usage: $0 -e <environment> -f\n" >&2
         printf "    -e    Sets target environment\n" >&2
         printf "    -f    Skips composer update\n" >&2
+        printf "    -y    Skips confirmation check\n" >&2
         return 1
     fi
     HOST="$(grep "$1" $2 | cut -d, -f2-)"
@@ -50,11 +55,13 @@ TARGET_HOST=$(environment_get "${TARGET_ENV}" "${TARGET_FILE}" || exit $?) \
     || exit $?
 
 # Confirmation check
-printf "This will deploy ${PROJECT_NAME}:${VERSION} to ${TARGET_ENV}.\n"
-read -p "Is this ok [y/N]: " PROMPT
-if [ "${PROMPT}" != "Y" ] && [ "${PROMPT}" != "y" ]; then
-    printf "Operation aborted.\n" >&2
-    exit 1
+if [ "${SKIP_CONFIRM}" -ne 1 ]; then
+    printf "This will deploy ${PROJECT_NAME}:${VERSION} to ${TARGET_ENV}.\n"
+    read -p "Is this ok [y/N]: " PROMPT
+    if [ "${PROMPT}" != "Y" ] && [ "${PROMPT}" != "y" ]; then
+        printf "Operation aborted.\n" >&2
+        exit 1
+    fi
 fi
 
 # Break on non-success exit codes

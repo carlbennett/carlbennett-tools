@@ -1,5 +1,4 @@
 <?php
-
 /**
  * carlbennett-tools (c) by Carl Bennett <carl@carlbennett.me>
  *
@@ -13,20 +12,28 @@
 namespace CarlBennett\Tools;
 
 use \CarlBennett\MVC\Libraries\Cache;
+use \CarlBennett\MVC\Libraries\GlobalErrorHandler;
 use \CarlBennett\Tools\Libraries\Common;
 
-function main($argc, $argv) {
+function main() {
 
     require(__DIR__ . "/../vendor/autoload.php");
 
+    GlobalErrorHandler::createOverrides();
+
     Common::$config = json_decode(
-      file_get_contents(__DIR__ . "/../etc/config.json")
+        file_get_contents(__DIR__ . "/../etc/config.json")
     );
 
-    Common::$cache = new Cache($config->memcache->servers);
+    Common::$cache = new Cache(Common::$config->memcache->servers);
 
-    return 0;
+    http_response_code(503);
+    $context = null;
+    $template = new \CarlBennett\MVC\Libraries\Template(
+        $context, "Maintenance"
+    );
+    $template->render();
 
 }
 
-exit(main($argc, $argv));
+main();

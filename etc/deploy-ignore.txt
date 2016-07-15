@@ -36,3 +36,5 @@
 /src/libraries/Exceptions/Reference.md
 /tmp/
 Thumbs.db
+test/
+tests/
