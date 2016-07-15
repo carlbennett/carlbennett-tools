@@ -1,0 +1,33 @@
+{
+    "name": "carlbennett/carlbennett-tools",
+    "description": "Tools created by and for Carl Bennett",
+    "type": "project",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Carl Bennett",
+            "email": "carl@carlbennett.me"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "CarlBennett\\MVC\\Controllers\\": "vendor/carlbennett/php-mvc/controllers/",
+            "CarlBennett\\MVC\\Libraries\\": "vendor/carlbennett/php-mvc/libraries/",
+            "CarlBennett\\MVC\\Models\\": "vendor/carlbennett/php-mvc/models/",
+            "CarlBennett\\MVC\\Views\\": "vendor/carlbennett/php-mvc/views/",
+            "CarlBennett\\Tools\\Controllers\\": "src/controllers/",
+            "CarlBennett\\Tools\\Libraries\\": "src/libraries/",
+            "CarlBennett\\Tools\\Models\\": "src/models/",
+            "CarlBennett\\Tools\\Views\\": "src/views/"
+        }
+    },
+    "require": {
+        "carlbennett/php-mvc": "dev-master"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/carlbennett/php-mvc"
+        }
+    ]
+}
