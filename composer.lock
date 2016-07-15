@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/carlbennett/php-mvc.git",
-                "reference": "f42b1437ccd314325c38dc8d02dbc63419a6b059"
+                "reference": "b38affbda9a56e2693b9767fb02e9c4667c2bf2e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/carlbennett/php-mvc/zipball/f42b1437ccd314325c38dc8d02dbc63419a6b059",
-                "reference": "f42b1437ccd314325c38dc8d02dbc63419a6b059",
+                "url": "https://api.github.com/repos/carlbennett/php-mvc/zipball/b38affbda9a56e2693b9767fb02e9c4667c2bf2e",
+                "reference": "b38affbda9a56e2693b9767fb02e9c4667c2bf2e",
                 "shasum": ""
             },
             "require": {
@@ -62,7 +62,7 @@
                 "source": "https://github.com/carlbennett/php-mvc/tree/no-boilerplate",
                 "issues": "https://github.com/carlbennett/php-mvc/issues"
             },
-            "time": "2016-07-15 07:52:24"
+            "time": "2016-07-15 08:22:39"
         }
     ],
     "packages-dev": [],

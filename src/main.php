@@ -35,21 +35,19 @@ function main() {
     Common::$router = new Router();
 
     Common::$router->addRoute(
-      "/.*/", "CarlBennett\\Tools\\Controllers\\Maintenance",
+      "#^/$#",
+      "CarlBennett\\Tools\\Controllers\\RedirectSoft",
+      "CarlBennett\\Tools\\Views\\RedirectSoftHtml",
+      "/user/login"
+    );
+    Common::$router->addRoute(
+      "#.*#",
+      "CarlBennett\\Tools\\Controllers\\Maintenance",
       "CarlBennett\\Tools\\Views\\MaintenanceHtml"
     );
 
     Common::$router->route();
     Common::$router->send();
-
-/*
-    http_response_code(503);
-    $context = null;
-    $template = new \CarlBennett\MVC\Libraries\Template(
-        $context, "Maintenance"
-    );
-    $template->render();
-*/
 
 }
 

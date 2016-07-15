@@ -6,19 +6,19 @@ use \CarlBennett\MVC\Libraries\Exceptions\IncorrectModelException;
 use \CarlBennett\MVC\Libraries\Model;
 use \CarlBennett\MVC\Libraries\Template;
 use \CarlBennett\MVC\Libraries\View;
-use \CarlBennett\Tools\Models\Maintenance as MaintenanceModel;
+use \CarlBennett\Tools\Models\RedirectSoft as RedirectSoftModel;
 
-class MaintenanceHtml extends View {
+class RedirectSoftHtml extends View {
 
   public function getMimeType() {
     return "text/html;charset=utf-8";
   }
 
   public function render(Model &$model) {
-    if (!$model instanceof MaintenanceModel) {
+    if (!$model instanceof RedirectSoftModel) {
       throw new IncorrectModelException();
     }
-    (new Template($model, "Maintenance"))->render();
+    (new Template($model, "RedirectSoft"))->render();
   }
 
 }
