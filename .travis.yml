@@ -23,7 +23,5 @@ install:
   - pear channel-update pear.php.net
   - pecl install geoip
   - pear install http2
-  - echo "extension=http.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-  - composer install
 script:
   - bash -c 'set -e;for file in $(find . -type f -regex .*\.php -print); do php -e -l -f "$file"; done'
