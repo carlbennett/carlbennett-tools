@@ -14,6 +14,7 @@ namespace CarlBennett\Tools;
 use \CarlBennett\MVC\Libraries\Cache;
 use \CarlBennett\MVC\Libraries\GlobalErrorHandler;
 use \CarlBennett\MVC\Libraries\Router;
+use \CarlBennett\MVC\Libraries\Exceptions\ControllerNotFoundException;
 use \CarlBennett\Tools\Libraries\Common;
 
 function main() {
@@ -34,16 +35,24 @@ function main() {
 
     Common::$router = new Router();
 
+    // URL: /
     Common::$router->addRoute(
-      "#^/$#",
-      "CarlBennett\\Tools\\Controllers\\RedirectSoft",
-      "CarlBennett\\Tools\\Views\\RedirectSoftHtml",
-      "/user/login"
+        "#^/$#",
+        "CarlBennett\\Tools\\Controllers\\RedirectSoft",
+        "CarlBennett\\Tools\\Views\\RedirectSoftHtml",
+        "/user/login"
     );
+    // URL: /user/login
     Common::$router->addRoute(
-      "#.*#",
-      "CarlBennett\\Tools\\Controllers\\Maintenance",
-      "CarlBennett\\Tools\\Views\\MaintenanceHtml"
+        "#^/user/login/?#",
+        "CarlBennett\\Tools\\Controllers\\User\\Login",
+        "CarlBennett\\Tools\\Views\\User\\LoginHtml"
+    );
+    // URL: *
+    Common::$router->addRoute(
+        "#.*#",
+        "CarlBennett\\Tools\\Controllers\\Maintenance",
+        "CarlBennett\\Tools\\Views\\MaintenanceHtml"
     );
 
     Common::$router->route();

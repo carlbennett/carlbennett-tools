@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f8af66002fbdfaf70fbb04b4c129d4f3",
-    "content-hash": "e191031e6057f8065f50acbe4bf24197",
+    "hash": "168b745d285bead5bca774291860d987",
+    "content-hash": "ad2029ad4e02e219fee49d42b6eda138",
     "packages": [
         {
             "name": "carlbennett/php-mvc",
-            "version": "dev-no-boilerplate",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/carlbennett/php-mvc.git",
-                "reference": "b38affbda9a56e2693b9767fb02e9c4667c2bf2e"
+                "reference": "ddcf028bf740b798398f9f2aa3cd1b30cb707303"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/carlbennett/php-mvc/zipball/b38affbda9a56e2693b9767fb02e9c4667c2bf2e",
-                "reference": "b38affbda9a56e2693b9767fb02e9c4667c2bf2e",
+                "url": "https://api.github.com/repos/carlbennett/php-mvc/zipball/ddcf028bf740b798398f9f2aa3cd1b30cb707303",
+                "reference": "ddcf028bf740b798398f9f2aa3cd1b30cb707303",
                 "shasum": ""
             },
             "require": {
@@ -59,18 +59,16 @@
                 "system"
             ],
             "support": {
-                "source": "https://github.com/carlbennett/php-mvc/tree/no-boilerplate",
+                "source": "https://github.com/carlbennett/php-mvc/tree/2.0.0",
                 "issues": "https://github.com/carlbennett/php-mvc/issues"
             },
-            "time": "2016-07-15 08:22:39"
+            "time": "2016-07-15 08:37:13"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "carlbennett/php-mvc": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

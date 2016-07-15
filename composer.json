@@ -22,7 +22,7 @@
         }
     },
     "require": {
-        "carlbennett/php-mvc": "dev-no-boilerplate"
+        "carlbennett/php-mvc": ">=2.0.0"
     },
     "repositories": [
         {
