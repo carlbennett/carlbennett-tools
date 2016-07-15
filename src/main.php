@@ -13,6 +13,7 @@ namespace CarlBennett\Tools;
 
 use \CarlBennett\MVC\Libraries\Cache;
 use \CarlBennett\MVC\Libraries\GlobalErrorHandler;
+use \CarlBennett\MVC\Libraries\Router;
 use \CarlBennett\Tools\Libraries\Common;
 
 function main() {
@@ -31,12 +32,24 @@ function main() {
 
     Common::$cache = new Cache(Common::$config->memcache->servers);
 
+    Common::$router = new Router();
+
+    Common::$router->addRoute(
+      "/.*/", "CarlBennett\\Tools\\Controllers\\Maintenance",
+      "CarlBennett\\Tools\\Views\\MaintenanceHtml"
+    );
+
+    Common::$router->route();
+    Common::$router->send();
+
+/*
     http_response_code(503);
     $context = null;
     $template = new \CarlBennett\MVC\Libraries\Template(
         $context, "Maintenance"
     );
     $template->render();
+*/
 
 }
 
