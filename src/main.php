@@ -17,6 +17,10 @@ use \CarlBennett\Tools\Libraries\Common;
 
 function main() {
 
+    if (!file_exists(__DIR__ . "/../vendor/autoload.php")) {
+        http_response_code(500);
+        exit("Server misconfigured. Please run `composer install`.");
+    }
     require(__DIR__ . "/../vendor/autoload.php");
 
     GlobalErrorHandler::createOverrides();
