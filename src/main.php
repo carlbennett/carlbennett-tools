@@ -44,7 +44,7 @@ function main() {
     );
     // URL: /user/login
     Common::$router->addRoute(
-        "#^/user/login/?#",
+        "#^/user/login/?$#",
         "CarlBennett\\Tools\\Controllers\\User\\Login",
         "CarlBennett\\Tools\\Views\\User\\LoginHtml"
     );
