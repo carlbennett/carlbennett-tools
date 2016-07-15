@@ -45,8 +45,9 @@ function environment_get () {
     return 0
 }
 
-# Get target hosts by environment 
-TARGET_HOST=$(environment_get "${TARGET_ENV}" "${TARGET_FILE}" || exit $?) || exit $?
+# Get target hosts by environment
+TARGET_HOST=$(environment_get "${TARGET_ENV}" "${TARGET_FILE}" || exit $?) \
+    || exit $?
 
 # Confirmation check
 printf "This will deploy ${PROJECT_NAME}:${VERSION} to ${TARGET_ENV}.\n"
@@ -74,7 +75,10 @@ printf "[2/2] Syncing project to target...\n"
 pushd "$(git rev-parse --show-toplevel)" >/dev/null
 OIFS=$IFS; IFS=,
 for host in ${TARGET_HOST}; do
-    printf "  syncing to $host ...\n"
+    rsync -avzc --delete --delete-excluded --delete-after --progress \
+        --exclude-from="./etc/deploy-ignore.txt" \
+        --chown=nginx:www-data --rsync-path="sudo rsync" \
+        "./" ${TARGET_HOST}:"/home/nginx/${PROJECT_NAME}"
 done
 IFS=$OIFS
 popd >/dev/null
