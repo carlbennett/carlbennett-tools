@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "168b745d285bead5bca774291860d987",
-    "content-hash": "ad2029ad4e02e219fee49d42b6eda138",
+    "hash": "c6080917c377688b07eecdda0cb55336",
+    "content-hash": "4f8c7f5282956c17cfb485d07ce62208",
     "packages": [
         {
             "name": "carlbennett/php-mvc",
-            "version": "2.0.0",
+            "version": "2.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/carlbennett/php-mvc.git",
-                "reference": "ddcf028bf740b798398f9f2aa3cd1b30cb707303"
+                "reference": "d867a436be1e304ded9a0d09fd6d034358894b89"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/carlbennett/php-mvc/zipball/ddcf028bf740b798398f9f2aa3cd1b30cb707303",
-                "reference": "ddcf028bf740b798398f9f2aa3cd1b30cb707303",
+                "url": "https://api.github.com/repos/carlbennett/php-mvc/zipball/d867a436be1e304ded9a0d09fd6d034358894b89",
+                "reference": "d867a436be1e304ded9a0d09fd6d034358894b89",
                 "shasum": ""
             },
             "require": {
@@ -34,8 +34,13 @@
                 "php-64bit": ">=5.5.0"
             },
             "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "CarlBennett\\MVC\\Libraries\\": "src/libraries"
+                }
+            },
             "license": [
-                "CC-BY-SA-4.0"
+                "AGPLv3"
             ],
             "authors": [
                 {
@@ -59,10 +64,10 @@
                 "system"
             ],
             "support": {
-                "source": "https://github.com/carlbennett/php-mvc/tree/2.0.0",
+                "source": "https://github.com/carlbennett/php-mvc/tree/2.1.2",
                 "issues": "https://github.com/carlbennett/php-mvc/issues"
             },
-            "time": "2016-07-15 08:37:13"
+            "time": "2016-08-25 01:52:21"
         }
     ],
     "packages-dev": [],

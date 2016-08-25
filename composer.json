@@ -22,12 +22,6 @@
         }
     },
     "require": {
-        "carlbennett/php-mvc": ">=2.0.0"
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/carlbennett/php-mvc"
-        }
-    ]
+        "carlbennett/php-mvc": "^2.1"
+    }
 }
