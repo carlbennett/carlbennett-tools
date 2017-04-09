@@ -19,11 +19,11 @@ use \CarlBennett\Tools\Libraries\Common;
 
 function main() {
 
-    if (!file_exists(__DIR__ . "/../vendor/autoload.php")) {
+    if (!file_exists(__DIR__ . "/../lib/autoload.php")) {
         http_response_code(500);
         exit("Server misconfigured. Please run `composer install`.");
     }
-    require(__DIR__ . "/../vendor/autoload.php");
+    require(__DIR__ . "/../lib/autoload.php");
 
     GlobalErrorHandler::createOverrides();
 
@@ -38,15 +38,14 @@ function main() {
     // URL: /
     Common::$router->addRoute(
         "#^/$#",
-        "CarlBennett\\Tools\\Controllers\\RedirectSoft",
-        "CarlBennett\\Tools\\Views\\RedirectSoftHtml",
-        "/user/login"
+        "CarlBennett\\Tools\\Controllers\\Index",
+        "CarlBennett\\Tools\\Views\\IndexHtml"
     );
-    // URL: /user/login
+    // URL: /gandalf
     Common::$router->addRoute(
-        "#^/user/login/?$#",
-        "CarlBennett\\Tools\\Controllers\\User\\Login",
-        "CarlBennett\\Tools\\Views\\User\\LoginHtml"
+        "#^/gandalf/?$#",
+        "CarlBennett\\Tools\\Controllers\\Gandalf",
+        "CarlBennett\\Tools\\Views\\GandalfHtml"
     );
     // URL: *
     Common::$router->addRoute(

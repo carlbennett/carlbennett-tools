@@ -2,6 +2,7 @@
     "name": "carlbennett/carlbennett-tools",
     "description": "Tools created by and for Carl Bennett",
     "type": "project",
+    "homepage": "https://github.com/carlbennett/carlbennett-tools",
     "license": "proprietary",
     "authors": [
         {
@@ -9,6 +10,9 @@
             "email": "carl@carlbennett.me"
         }
     ],
+    "config": {
+        "vendor-dir": "lib"
+    },
     "autoload": {
         "psr-4": {
             "CarlBennett\\MVC\\Controllers\\": "vendor/carlbennett/php-mvc/controllers/",

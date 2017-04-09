@@ -4,27 +4,25 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c6080917c377688b07eecdda0cb55336",
+    "hash": "e975dda855aa489a4c9f54c4cb581ef5",
     "content-hash": "4f8c7f5282956c17cfb485d07ce62208",
     "packages": [
         {
             "name": "carlbennett/php-mvc",
-            "version": "2.1.2",
+            "version": "2.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/carlbennett/php-mvc.git",
-                "reference": "d867a436be1e304ded9a0d09fd6d034358894b89"
+                "reference": "e5003f1715ecacc99216f4c3ae1baf6fefb37781"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/carlbennett/php-mvc/zipball/d867a436be1e304ded9a0d09fd6d034358894b89",
-                "reference": "d867a436be1e304ded9a0d09fd6d034358894b89",
+                "url": "https://api.github.com/repos/carlbennett/php-mvc/zipball/e5003f1715ecacc99216f4c3ae1baf6fefb37781",
+                "reference": "e5003f1715ecacc99216f4c3ae1baf6fefb37781",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
-                "ext-geoip": "*",
-                "ext-gmp": "*",
                 "ext-http": "*",
                 "ext-json": "*",
                 "ext-mbstring": "*",
@@ -33,14 +31,19 @@
                 "ext-pdo": "*",
                 "php-64bit": ">=5.5.0"
             },
+            "suggest": {
+                "ext-geoip": "*",
+                "ext-gmp": "*"
+            },
             "type": "library",
             "autoload": {
                 "psr-4": {
                     "CarlBennett\\MVC\\Libraries\\": "src/libraries"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "AGPLv3"
+                "AGPL-3.0"
             ],
             "authors": [
                 {
@@ -48,7 +51,7 @@
                     "email": "carl@carlbennett.me"
                 }
             ],
-            "description": "A web content management system (CMS) compatible for use as a frontend and backend.",
+            "description": "A PHP micro-framework for use as a frontend and/or backend",
             "homepage": "https://github.com/carlbennett/php-mvc",
             "keywords": [
                 "api",
@@ -63,11 +66,7 @@
                 "restful",
                 "system"
             ],
-            "support": {
-                "source": "https://github.com/carlbennett/php-mvc/tree/2.1.2",
-                "issues": "https://github.com/carlbennett/php-mvc/issues"
-            },
-            "time": "2016-08-25 01:52:21"
+            "time": "2016-12-29 02:24:19"
         }
     ],
     "packages-dev": [],

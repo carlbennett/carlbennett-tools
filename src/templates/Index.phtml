@@ -1,0 +1,8 @@
+<?php namespace CarlBennett\Tools\Templates; $title = "Tool Index"; ?>
+<?php require("./header.inc.phtml"); ?>
+<h1><?=$title;?></h1>
+<p><table><thead><tr><th>Pattern</th><th>Controller</th></tr></thead><tbody>
+<?php foreach ($this->getContext()->routes as $route => $controller) { ?>
+<tr><td><?=$route?></td><td><?=$controller[0]?></td></tr>
+<?php } ?></thead></table></p>
+<?php require("./footer.inc.phtml"); ?>
