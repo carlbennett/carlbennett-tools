@@ -1,4 +1,7 @@
 {
+    "bnetdocs": {
+        "user_auth_pepper": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    },
     "memcache": {
         "connect_timeout": 1.0,
         "tcp_nodelay": true,
