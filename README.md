@@ -1,7 +1,6 @@
 # carlbennett-tools
 
-[![Build Status](https://travis-ci.org/carlbennett/carlbennett-tools.svg?branch=master)]
-(https://travis-ci.org/carlbennett/carlbennett-tools)
+[![Build Status](https://travis-ci.org/carlbennett/carlbennett-tools.svg?branch=master)](https://travis-ci.org/carlbennett/carlbennett-tools)
 
 Carl's Tools (carlbennett-tools) is a website dedicated to housing a collection
 of tools/utilities authored by [@carlbennett](https://github.com/carlbennett).
