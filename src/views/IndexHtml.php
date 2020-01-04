@@ -18,6 +18,6 @@ class IndexHtml extends View {
       throw new IncorrectModelException();
     }
     (new Template($model, 'Index'))->render();
-    $model->_responseHeaders['Content-Type'] = $view->getMimeType();
+    $model->_responseHeaders['Content-Type'] = $this->getMimeType();
   }
 }

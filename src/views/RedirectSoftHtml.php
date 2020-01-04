@@ -18,6 +18,6 @@ class RedirectSoftHtml extends View {
       throw new IncorrectModelException();
     }
     (new Template($model, 'RedirectSoft'))->render();
-    $model->_responseHeaders['Content-Type'] = $view->getMimeType();
+    $model->_responseHeaders['Content-Type'] = $this->getMimeType();
   }
 }

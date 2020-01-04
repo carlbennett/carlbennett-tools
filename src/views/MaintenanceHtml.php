@@ -18,6 +18,6 @@ class MaintenanceHtml extends View {
       throw new IncorrectModelException();
     }
     (new Template($model, 'Maintenance'))->render();
-    $model->_responseHeaders['Content-Type'] = $view->getMimeType();
+    $model->_responseHeaders['Content-Type'] = $this->getMimeType();
   }
 }
