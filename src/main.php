@@ -19,16 +19,16 @@ use \CarlBennett\Tools\Libraries\Common;
 
 function main() {
 
-    if (!file_exists(__DIR__ . "/../lib/autoload.php")) {
+    if (!file_exists(__DIR__ . '/../lib/autoload.php')) {
         http_response_code(500);
-        exit("Server misconfigured. Please run `composer install`.");
+        exit('Server misconfigured. Please run `composer install`.');
     }
-    require(__DIR__ . "/../lib/autoload.php");
+    require(__DIR__ . '/../lib/autoload.php');
 
     GlobalErrorHandler::createOverrides();
 
     Common::$config = json_decode(
-        file_get_contents(__DIR__ . "/../etc/config.json")
+        file_get_contents(__DIR__ . '/../etc/config.json')
     );
 
     Common::$cache = new Cache(Common::$config->memcache->servers);
@@ -37,27 +37,27 @@ function main() {
 
     // URL: /
     Common::$router->addRoute(
-        "#^/$#",
-        "CarlBennett\\Tools\\Controllers\\Index",
-        "CarlBennett\\Tools\\Views\\IndexHtml"
+        '#^/$#',
+        'CarlBennett\\Tools\\Controllers\\Index',
+        'CarlBennett\\Tools\\Views\\IndexHtml'
     );
     // URL: /bnetdocs/createpassword
     Common::$router->addRoute(
-        "#^/bnetdocs/createpassword/?$#",
-        "CarlBennett\\Tools\\Controllers\\BNETDocs\\CreatePassword",
-        "CarlBennett\\Tools\\Views\\BNETDocs\\CreatePasswordHtml"
+        '#^/bnetdocs/createpassword/?$#',
+        'CarlBennett\\Tools\\Controllers\\BNETDocs\\CreatePassword',
+        'CarlBennett\\Tools\\Views\\BNETDocs\\CreatePasswordHtml'
     );
     // URL: /gandalf
     Common::$router->addRoute(
-        "#^/gandalf/?$#",
-        "CarlBennett\\Tools\\Controllers\\Gandalf",
-        "CarlBennett\\Tools\\Views\\GandalfHtml"
+        '#^/gandalf/?$#',
+        'CarlBennett\\Tools\\Controllers\\Gandalf',
+        'CarlBennett\\Tools\\Views\\GandalfHtml'
     );
     // URL: *
     Common::$router->addRoute(
-        "#.*#",
-        "CarlBennett\\Tools\\Controllers\\Maintenance",
-        "CarlBennett\\Tools\\Views\\MaintenanceHtml"
+        '#.*#',
+        'CarlBennett\\Tools\\Controllers\\Maintenance',
+        'CarlBennett\\Tools\\Views\\MaintenanceHtml'
     );
 
     Common::$router->route();
