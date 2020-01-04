@@ -10,7 +10,6 @@
 
 namespace CarlBennett\Tools;
 
-use \CarlBennett\MVC\Libraries\Cache;
 use \CarlBennett\MVC\Libraries\GlobalErrorHandler;
 use \CarlBennett\MVC\Libraries\Router;
 use \CarlBennett\MVC\Libraries\Exceptions\ControllerNotFoundException;
@@ -29,8 +28,6 @@ function main() {
     Common::$config = json_decode(
         file_get_contents(__DIR__ . '/../etc/config.json')
     );
-
-    Common::$cache = new Cache(Common::$config->memcache->servers);
 
     Common::$router = new Router();
 
