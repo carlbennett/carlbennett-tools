@@ -40,12 +40,6 @@ function main() {
         'CarlBennett\\Tools\\Controllers\\Index',
         'CarlBennett\\Tools\\Views\\IndexHtml'
     );
-    // URL: /bnetdocs/createpassword
-    Common::$router->addRoute(
-        '#^/bnetdocs/createpassword/?$#',
-        'CarlBennett\\Tools\\Controllers\\BNETDocs\\CreatePassword',
-        'CarlBennett\\Tools\\Views\\BNETDocs\\CreatePasswordHtml'
-    );
     // URL: /gandalf
     Common::$router->addRoute(
         '#^/gandalf/?$#',
