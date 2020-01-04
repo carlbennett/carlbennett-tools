@@ -1,12 +1,11 @@
 <?php
 /**
- * carlbennett-tools (c) by Carl Bennett <carl@carlbennett.me>
+ * The application entrypoint, where main initialization occurs.
  *
- * carlbennett-tools is licensed under a
- * Creative Commons Attribution-ShareAlike 4.0 International License.
- *
- * You should have received a copy of the license along with this
- * work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+ * @package CarlBennett\Tools
+ * @author Carl Bennett <carl@carlbennett.me>
+ * @copyright 2016-2020 Carl Bennett
+ * @license Proprietary
  */
 
 namespace CarlBennett\Tools;
