@@ -52,6 +52,12 @@ function main() {
         'CarlBennett\\Tools\\Controllers\\Gandalf',
         'CarlBennett\\Tools\\Views\\GandalfHtml'
     );
+    // URL: /plex
+    Common::$router->addRoute(
+        '#^/plex/?$#',
+        'CarlBennett\\Tools\\Controllers\\Plex\\Index',
+        'CarlBennett\\Tools\\Views\\Plex\\IndexHtml'
+    );
     // URL: *
     Common::$router->addRoute(
         '#.*#',
