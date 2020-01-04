@@ -26,6 +26,9 @@
         }
     },
     "require": {
-        "carlbennett/php-mvc": "^2.1"
+        "carlbennett/php-mvc": "^2.1",
+        "ext-gmp": "*",
+        "ext-json": "*",
+        "php-64bit": ">=5.5.0"
     }
 }
