@@ -9,16 +9,15 @@ use \CarlBennett\MVC\Libraries\View;
 use \CarlBennett\Tools\Models\RedirectSoft as RedirectSoftModel;
 
 class RedirectSoftHtml extends View {
-
   public function getMimeType() {
-    return "text/html;charset=utf-8";
+    return 'text/html;charset=utf-8';
   }
 
   public function render(Model &$model) {
     if (!$model instanceof RedirectSoftModel) {
       throw new IncorrectModelException();
     }
-    (new Template($model, "RedirectSoft"))->render();
+    (new Template($model, 'RedirectSoft'))->render();
+    $model->_responseHeaders['Content-Type'] = $view->getMimeType();
   }
-
 }

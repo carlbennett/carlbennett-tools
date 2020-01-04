@@ -19,10 +19,7 @@ class CreatePassword extends Controller {
     self::doThings($model, $post_args);
 
     $view->render($model);
-
-    $model->_responseCode                    = 200;
-    $model->_responseHeaders["Content-Type"] = $view->getMimeType();
-
+    $model->_responseCode = 200;
     return $model;
 
   }
