@@ -1,5 +1,5 @@
 #!/bin/bash
 
 pushd $(dirname $0)/..
-sudo rsync -avz --delete-after etc LICENSE.txt lib src /var/www/tools.carlbennett.me/
+sudo rsync -avz --delete-after --exclude-from=.gitignore etc LICENSE.txt lib src /var/www/tools.carlbennett.me/
 popd
