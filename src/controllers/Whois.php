@@ -13,10 +13,12 @@ class Whois extends Controller {
     $query = $router->getRequestQueryArray();
 
     $model->query = (isset($query['q']) ? $query['q'] : null);
+    $model->recursive = (isset($query['r']) ? $query['r'] : '1');
 
     if (!empty($model->query)) {
+      $r = (!$model->recursive ? '-n ' : '');
       $model->query_result = shell_exec(
-        'whois ' . escapeshellcmd($model->query) . ' 2>&1'
+        'whois ' . $r . escapeshellcmd($model->query) . ' 2>&1'
       );
     }
 

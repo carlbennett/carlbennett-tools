@@ -8,5 +8,6 @@ class Whois extends Model {
 
   public $query;
   public $query_result;
+  public $recursive;
 
 }
