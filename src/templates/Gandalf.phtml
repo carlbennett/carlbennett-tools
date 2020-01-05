@@ -2,8 +2,10 @@
 $style = 'body{background-color:black;}';?>
 <?php require("./header.inc.phtml"); ?>
 <div class="container">
-  <iframe width="960" height="720"
-    src="//www.youtube.com/embed/Sagg08DrO5U?autoplay=1&amp;iv_load_policy=3"
-    frameborder="0" allowfullscreen></iframe>
+  <div class="embed-responsive embed-responsive-16by9">
+    <iframe
+      src="//www.youtube.com/embed/Sagg08DrO5U?autoplay=1&amp;iv_load_policy=3"
+      allowfullscreen></iframe>
+  </div>
 </div>
 <?php require("./footer.inc.phtml"); ?>
