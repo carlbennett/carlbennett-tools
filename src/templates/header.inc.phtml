@@ -1,11 +1,15 @@
-<?php namespace CarlBennett\Tools\Templates; ?>
+<?php
+namespace CarlBennett\Tools\Templates;
+use \CarlBennett\MVC\Libraries\Common;
+$_header_url = parse_url(getenv('REQUEST_URI'), PHP_URL_PATH);
+?>
 <!DOCTYPE html>
 <html lang="en-US">
   <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <link rel="stylesheet" href="/a/bootstrap-4.4.1.min.css" integrity="sha384-VCJ24wAA8cbrQVUeefVG2FtarSp6jtIke/0wNTz9uLdboxWR8fZO/jTGH/SWvKnc" crossorigin="anonymous"/>
-    <title><?=$title?> - Carl's Tools</title>
+    <title><?=$title?> - Carl's Toolbox</title>
 <?php foreach ($this->additional_css as $css) {
     echo "    <link rel=\"stylesheet\" href=\"$css\" type=\"text/css\"/>\n";
 } ?>
@@ -15,31 +19,25 @@
 </head><body>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="/">Tools</a>
+  <a class="navbar-brand" href="/">Carl's Toolbox</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Link</a>
+      <li class="nav-item<?=($_header_url == '/home' ? ' active' : '')?>">
+        <a class="nav-link" href="<?=Common::relativeUrlToAbsolute('/home')?>">Home<?=($_header_url == '/home' ? ' <span class="sr-only">(current)</span>' : '')?></a>
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Dropdown
+          Select a Tool
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
+          <a class="dropdown-item" href="<?=Common::relativeUrlToAbsolute('/gandalf')?>">Gandalf</a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">Something else here</a>
+          <a class="dropdown-item" href="<?=Common::relativeUrlToAbsolute('/plex/requests')?>">Plex Requests</a>
+          <a class="dropdown-item" href="<?=Common::relativeUrlToAbsolute('/plex/users')?>">Plex Users</a>
         </div>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
       </li>
     </ul>
   </div>
