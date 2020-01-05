@@ -62,11 +62,17 @@ function main() {
             'CarlBennett\\Tools\\Controllers\\Index',
             'CarlBennett\\Tools\\Views\\IndexHtml'
         );
-        // URL: /plex
+        // URL: /plex/requests
         Common::$router->addRoute(
-            '#^/plex/?$#',
-            'CarlBennett\\Tools\\Controllers\\Plex\\Index',
-            'CarlBennett\\Tools\\Views\\Plex\\IndexHtml'
+            '#^/plex/requests/?$#',
+            'CarlBennett\\Tools\\Controllers\\Plex\\Requests',
+            'CarlBennett\\Tools\\Views\\Plex\\RequestsHtml'
+        );
+        // URL: /plex/users
+        Common::$router->addRoute(
+            '#^/plex/users/?$#',
+            'CarlBennett\\Tools\\Controllers\\Plex\\Users',
+            'CarlBennett\\Tools\\Views\\Plex\\UsersHtml'
         );
         // URL: /whois
         Common::$router->addRoute(
