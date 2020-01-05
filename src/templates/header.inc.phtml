@@ -37,6 +37,8 @@ $_header_url = parse_url(getenv('REQUEST_URI'), PHP_URL_PATH);
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="<?=Common::relativeUrlToAbsolute('/plex/requests')?>">Plex Requests</a>
           <a class="dropdown-item" href="<?=Common::relativeUrlToAbsolute('/plex/users')?>">Plex Users</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="<?=Common::relativeUrlToAbsolute('/whois')?>">Whois</a>
         </div>
       </li>
     </ul>

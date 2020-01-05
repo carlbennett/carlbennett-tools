@@ -68,6 +68,12 @@ function main() {
             'CarlBennett\\Tools\\Controllers\\Plex\\Index',
             'CarlBennett\\Tools\\Views\\Plex\\IndexHtml'
         );
+        // URL: /whois
+        Common::$router->addRoute(
+            '#^/whois/?$#',
+            'CarlBennett\\Tools\\Controllers\\Whois',
+            'CarlBennett\\Tools\\Views\\WhoisHtml'
+        );
         // URL: *
         Common::$router->addRoute(
             '#.*#',
