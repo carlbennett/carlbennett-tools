@@ -31,30 +31,51 @@ function main() {
 
     Common::$router = new Router();
 
-    // URL: /
-    Common::$router->addRoute(
-        '#^/$#',
-        'CarlBennett\\Tools\\Controllers\\Index',
-        'CarlBennett\\Tools\\Views\\IndexHtml'
-    );
-    // URL: /gandalf
-    Common::$router->addRoute(
-        '#^/gandalf/?$#',
-        'CarlBennett\\Tools\\Controllers\\Gandalf',
-        'CarlBennett\\Tools\\Views\\GandalfHtml'
-    );
-    // URL: /plex
-    Common::$router->addRoute(
-        '#^/plex/?$#',
-        'CarlBennett\\Tools\\Controllers\\Plex\\Index',
-        'CarlBennett\\Tools\\Views\\Plex\\IndexHtml'
-    );
-    // URL: *
-    Common::$router->addRoute(
-        '#.*#',
-        'CarlBennett\\Tools\\Controllers\\Maintenance',
-        'CarlBennett\\Tools\\Views\\MaintenanceHtml'
-    );
+    if (Common::$config->maintenance[0]) {
+
+        // URL: *
+        Common::$router->addRoute(
+            '#.*#',
+            'CarlBennett\\Tools\\Controllers\\Maintenance',
+            'CarlBennett\\Tools\\Views\\MaintenanceHtml',
+            Common::$config->maintenance[1]
+        );
+
+    } else {
+
+        // URL: /
+        Common::$router->addRoute(
+            '#^/$#',
+            'CarlBennett\\Tools\\Controllers\\RedirectSoft',
+            'CarlBennett\\Tools\\Views\\RedirectSoftHtml',
+            '/home'
+        );
+        // URL: /gandalf
+        Common::$router->addRoute(
+            '#^/gandalf/?$#',
+            'CarlBennett\\Tools\\Controllers\\Gandalf',
+            'CarlBennett\\Tools\\Views\\GandalfHtml'
+        );
+        // URL: /home
+        Common::$router->addRoute(
+            '#^/home/?$#',
+            'CarlBennett\\Tools\\Controllers\\Index',
+            'CarlBennett\\Tools\\Views\\IndexHtml'
+        );
+        // URL: /plex
+        Common::$router->addRoute(
+            '#^/plex/?$#',
+            'CarlBennett\\Tools\\Controllers\\Plex\\Index',
+            'CarlBennett\\Tools\\Views\\Plex\\IndexHtml'
+        );
+        // URL: *
+        Common::$router->addRoute(
+            '#.*#',
+            'CarlBennett\\Tools\\Controllers\\PageNotFound',
+            'CarlBennett\\Tools\\Views\\PageNotFoundHtml'
+        );
+
+    }
 
     Common::$router->route();
     Common::$router->send();

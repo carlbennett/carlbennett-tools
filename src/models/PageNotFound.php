@@ -4,8 +4,4 @@ namespace CarlBennett\Tools\Models;
 
 use \CarlBennett\MVC\Libraries\Model;
 
-class Maintenance extends Model {
-
-    public $message;
-
-}
+class PageNotFound extends Model {}

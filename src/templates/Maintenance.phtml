@@ -1,6 +1,5 @@
 <?php namespace CarlBennett\Tools\Templates; $title = "Maintenance"; ?>
 <?php require("./header.inc.phtml"); ?>
 <h1><?=$title?></h1>
-<p>This website is currently undergoing routine maintenance and will be back in
-a little while. Stay tuned for updates.</p>
+<p><?=$this->getContext()->message?></p>
 <?php require("./footer.inc.phtml"); ?>
