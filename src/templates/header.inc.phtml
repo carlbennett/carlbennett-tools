@@ -1,7 +1,14 @@
 <?php namespace CarlBennett\Tools\Templates; ?>
 <!DOCTYPE html>
-<html><head>
-<title><?=$title?> - Carl's Tools</title>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <link rel="stylesheet" href="/a/bootstrap-4.4.1.min.css" integrity="sha384-VCJ24wAA8cbrQVUeefVG2FtarSp6jtIke/0wNTz9uLdboxWR8fZO/jTGH/SWvKnc" crossorigin="anonymous"/>
+    <title><?=$title?> - Carl's Tools</title>
+<?php foreach ($this->additional_css as $css) {
+    echo "    <link rel=\"stylesheet\" href=\"$css\" type=\"text/css\"/>\n";
+} ?>
 <?php if (isset($style) && !empty($style)) { ?><style type="text/css">
 <?php echo $style; ?>
 </style><?php } ?>
