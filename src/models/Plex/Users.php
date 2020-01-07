@@ -4,4 +4,8 @@ namespace CarlBennett\Tools\Models\Plex;
 
 use \CarlBennett\MVC\Libraries\Model;
 
-class Users extends Model {}
+class Users extends Model {
+
+  public $users;
+
+}

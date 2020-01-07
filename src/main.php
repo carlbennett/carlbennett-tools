@@ -10,10 +10,10 @@
 
 namespace CarlBennett\Tools;
 
+use \CarlBennett\MVC\Libraries\Common;
+use \CarlBennett\MVC\Libraries\Exceptions\ControllerNotFoundException;
 use \CarlBennett\MVC\Libraries\GlobalErrorHandler;
 use \CarlBennett\MVC\Libraries\Router;
-use \CarlBennett\MVC\Libraries\Exceptions\ControllerNotFoundException;
-use \CarlBennett\Tools\Libraries\Common;
 
 function main() {
 
