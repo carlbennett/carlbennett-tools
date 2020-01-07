@@ -1,7 +1,40 @@
-<?php namespace CarlBennett\Tools\Templates; $title = 'Plex Users'; ?>
-<?php require('./header.inc.phtml'); ?>
+<?php
+namespace CarlBennett\Tools\Templates;
+use \CarlBennett\MVC\Libraries\Common;
+$title = 'Plex Users';
+require('./header.inc.phtml'); ?>
 <div class="container">
+  <? require('./WIP.inc.phtml'); ?>
+  <div class="float-right"><a class="btn btn-lg btn-success" href="<?=Common::relativeUrlToAbsolute('/plex/users/add')?>">Add User</a></div>
   <h1><?=$title;?></h1>
-  <p>TODO</p>
+  <table class="table table-hover table-striped">
+    <thead class="thead-dark"><tr>
+      <th scope="col">Username &amp; Email</th>
+      <th scope="col">Added</th>
+      <th scope="col"></th>
+    </tr></thead>
+    <tbody>
+<?php foreach ($this->getContext()->users as $user) {
+        $id = filter_var($user->getId(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $username = filter_var($user->getUsername(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $email = filter_var($user->getEmail(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        if (empty($username) && !empty($email)) {
+          $name = $email;
+        } else if (!empty($username) && empty($email)) {
+          $name = $username;
+        } else {
+          $name = $username . '<br/><span class="text-secondary">' . $email . '</span>';
+        } ?>
+      <tr>
+        <td><?=$name?></td>
+        <td><time datetime="<?=$user->getDateAdded()->format(DATE_W3C)?>"><?=$user->getDateAdded()->format('D, M jS, Y')?></time></td>
+        <td class="text-right">
+          <a class="btn btn-sm btn-primary" href="<?=Common::relativeUrlToAbsolute('/plex/users/edit?id=' . $id)?>">Edit</a>
+          <a class="btn btn-sm btn-danger" href="<?=Common::relativeUrlToAbsolute('/plex/users/delete?id=' . $id)?>">Delete</a>
+        </td>
+      </tr>
+<?php } ?>
+    </tbody>
+  </table>
 </div>
 <?php require('./footer.inc.phtml'); ?>
