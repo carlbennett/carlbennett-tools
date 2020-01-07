@@ -12,6 +12,7 @@ use \InvalidArgumentException;
 use \LengthException;
 use \PDO;
 use \PDOException;
+use \StdClass;
 use \UnexpectedValueException;
 
 class User implements IDatabaseObject {
@@ -37,17 +38,27 @@ class User implements IDatabaseObject {
   protected $risk;
   protected $username;
 
-  public function __construct(string $id = '') {
-    $this->_id = $id;
-    $this->allocate();
+  public function __construct($value) {
+    if (is_null($value) || is_string($value)) {
+      $this->_id = $value;
+      $this->allocate();
+      return;
+    }
+
+    if ($value instanceof StdClass) {
+      $this->allocateObject($value);
+      return;
+    }
+
+    throw new InvalidArgumentException('value must be a string or StdClass');
   }
 
   public function allocate() {
     // from the IDatabaseObject interface
     $id = $this->_id;
 
-    if (!is_string($id)) {
-      throw new InvalidArgumentException('value must be a string');
+    if (!(is_null($id) || is_string($id))) {
+      throw new InvalidArgumentException('value must be null or a string');
     }
 
     $this->setDateAdded(new DateTime('now', new DateTimeZone('Etc/UTC')));
@@ -81,23 +92,23 @@ class User implements IDatabaseObject {
     }
 
     $r = $q->fetchObject();
+    $q->closeCursor();
 
-    $tz = new DateTimeZone('Etc/UTC');
-
-    $this->setDateAdded(new DateTime($r->date_added), $tz);
-    $this->setDateRemoved(
-      $r->date_removed ? new DateTime($r->date_removed, $tz) : null
-    );
-    $this->setEmail($r->email);
-    $this->setId($r->id);
-    $this->setNotes($r->notes);
-    $this->setRisk($r->risk);
-    $this->setUsername($r->username);
+    $this->allocateObject($r);
   }
 
-  public function allocateMany() {
-    // from the IDatabaseObject interface
-    throw new \RuntimeException('TODO');
+  protected function allocateObject(StdClass $value) {
+    $tz = new DateTimeZone('Etc/UTC');
+
+    $this->setDateAdded(new DateTime($value->date_added), $tz);
+    $this->setDateRemoved(
+      $value->date_removed ? new DateTime($value->date_removed, $tz) : null
+    );
+    $this->setEmail($value->email);
+    $this->setId($value->id);
+    $this->setNotes($value->notes);
+    $this->setRisk($value->risk);
+    $this->setUsername($value->username);
   }
 
   public function commit() {
@@ -111,7 +122,10 @@ class User implements IDatabaseObject {
     }
 
     $q = Common::$database->prepare('
-      SELECT UuidFromBin(`id`) AS `id` FROM `plex_users`
+      SELECT
+        `date_added`, `date_removed`, `email`, UuidFromBin(`id`) AS `id`,
+        `notes`, `risk`, `username`
+      FROM `plex_users`
       ORDER BY `date_added`, `username`, `email`;
     ');
 
@@ -120,7 +134,7 @@ class User implements IDatabaseObject {
 
     $r = array();
     while ($obj = $q->fetchObject()) {
-      $r[] = new self($obj->id);
+      $r[] = new self($obj);
     }
 
     $q->closeCursor();
