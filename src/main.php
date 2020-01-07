@@ -15,6 +15,8 @@ use \CarlBennett\MVC\Libraries\DatabaseDriver;
 use \CarlBennett\MVC\Libraries\GlobalErrorHandler;
 use \CarlBennett\MVC\Libraries\Router;
 
+use \CarlBennett\Tools\Libraries\Authentication;
+
 function main() {
 
     if (!file_exists(__DIR__ . '/../lib/autoload.php')) {
@@ -38,6 +40,8 @@ function main() {
     DatabaseDriver::$timeout       = Common::$config->mysql->timeout;
     DatabaseDriver::$timezone      = Common::$config->mysql->timezone;
     DatabaseDriver::$username      = Common::$config->mysql->username;
+
+    Authentication::verify();
 
     $router = new Router(
       'CarlBennett\\Tools\\Controllers\\',
