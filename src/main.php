@@ -11,7 +11,7 @@
 namespace CarlBennett\Tools;
 
 use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\MVC\Libraries\Exceptions\ControllerNotFoundException;
+use \CarlBennett\MVC\Libraries\DatabaseDriver;
 use \CarlBennett\MVC\Libraries\GlobalErrorHandler;
 use \CarlBennett\MVC\Libraries\Router;
 
@@ -25,72 +25,68 @@ function main() {
 
     GlobalErrorHandler::createOverrides();
 
-    Common::$config = json_decode(
-        file_get_contents(__DIR__ . '/../etc/config.json')
-    );
+    date_default_timezone_set('Etc/UTC');
 
-    Common::$router = new Router();
+    Common::$config = json_decode(file_get_contents(
+        __DIR__ . '/../etc/config.json'
+    ));
+
+    DatabaseDriver::$character_set = Common::$config->mysql->character_set;
+    DatabaseDriver::$database_name = Common::$config->mysql->database;
+    DatabaseDriver::$password      = Common::$config->mysql->password;
+    DatabaseDriver::$servers       = Common::$config->mysql->servers;
+    DatabaseDriver::$timeout       = Common::$config->mysql->timeout;
+    DatabaseDriver::$timezone      = Common::$config->mysql->timezone;
+    DatabaseDriver::$username      = Common::$config->mysql->username;
+
+    $router = new Router(
+      'CarlBennett\\Tools\\Controllers\\',
+      'CarlBennett\\Tools\\Views\\'
+    );
 
     if (Common::$config->maintenance[0]) {
 
         // URL: *
-        Common::$router->addRoute(
-            '#.*#',
-            'CarlBennett\\Tools\\Controllers\\Maintenance',
-            'CarlBennett\\Tools\\Views\\MaintenanceHtml',
+        $router->addRoute(
+            '#.*#', 'Maintenance', 'MaintenanceHtml',
             Common::$config->maintenance[1]
         );
 
     } else {
 
         // URL: /
-        Common::$router->addRoute(
-            '#^/$#',
-            'CarlBennett\\Tools\\Controllers\\RedirectSoft',
-            'CarlBennett\\Tools\\Views\\RedirectSoftHtml',
-            '/home'
+        $router->addRoute(
+            '#^/$#', 'RedirectSoft', 'RedirectSoftHtml', '/home'
         );
         // URL: /gandalf
-        Common::$router->addRoute(
-            '#^/gandalf/?$#',
-            'CarlBennett\\Tools\\Controllers\\Gandalf',
-            'CarlBennett\\Tools\\Views\\GandalfHtml'
+        $router->addRoute(
+            '#^/gandalf/?$#', 'Gandalf', 'GandalfHtml'
         );
         // URL: /home
-        Common::$router->addRoute(
-            '#^/home/?$#',
-            'CarlBennett\\Tools\\Controllers\\Index',
-            'CarlBennett\\Tools\\Views\\IndexHtml'
+        $router->addRoute(
+            '#^/home/?$#', 'Index', 'IndexHtml'
         );
         // URL: /plex/requests
-        Common::$router->addRoute(
-            '#^/plex/requests/?$#',
-            'CarlBennett\\Tools\\Controllers\\Plex\\Requests',
-            'CarlBennett\\Tools\\Views\\Plex\\RequestsHtml'
+        $router->addRoute(
+            '#^/plex/requests/?$#', 'Plex\\Requests', 'Plex\\RequestsHtml'
         );
         // URL: /plex/users
-        Common::$router->addRoute(
-            '#^/plex/users/?$#',
-            'CarlBennett\\Tools\\Controllers\\Plex\\Users',
-            'CarlBennett\\Tools\\Views\\Plex\\UsersHtml'
+        $router->addRoute(
+            '#^/plex/users/?$#', 'Plex\\Users', 'Plex\\UsersHtml'
         );
         // URL: /whois
-        Common::$router->addRoute(
-            '#^/whois/?$#',
-            'CarlBennett\\Tools\\Controllers\\Whois',
-            'CarlBennett\\Tools\\Views\\WhoisHtml'
+        $router->addRoute(
+            '#^/whois/?$#', 'Whois', 'WhoisHtml'
         );
         // URL: *
-        Common::$router->addRoute(
-            '#.*#',
-            'CarlBennett\\Tools\\Controllers\\PageNotFound',
-            'CarlBennett\\Tools\\Views\\PageNotFoundHtml'
+        $router->addRoute(
+            '#.*#', 'PageNotFound', 'PageNotFoundHtml'
         );
 
     }
 
-    Common::$router->route();
-    Common::$router->send();
+    $router->route();
+    $router->send();
 
 }
 

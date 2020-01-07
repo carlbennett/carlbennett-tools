@@ -14,6 +14,7 @@
             }
         ],
         "timeout": 3,
+        "timezone": "+00:00",
         "username": "carlbennett_tools"
     }
 }
