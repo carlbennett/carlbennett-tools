@@ -26,9 +26,7 @@ require("./header.inc.phtml");
     </div>
   </form>
 <?php if (!empty($query_result)) { ?>
-  <div class="form-group">
-    <textarea rows="20" class="form-control text-monospace" readonly><?=filter_var($query_result, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></textarea>
-  </div>
+  <code><?=nl2br(filter_var($query_result, FILTER_SANITIZE_FULL_SPECIAL_CHARS))?></code>
 <?php } ?>
 </div>
 <?php require("./footer.inc.phtml"); ?>
