@@ -7,5 +7,6 @@ use \CarlBennett\MVC\Libraries\Common;
 </div>
 <div class="text-center">
   <a class="btn btn-primary" href="javascript:history.go(-1);">Back</a>
-  <a class="btn btn-success" href="<?=Common::relativeUrlToAbsolute('/login?return=' . rawurlencode(getenv('REQUEST_URI')))?>">Log in</a>
+  <a class="btn btn-success" href="<?=Common::relativeUrlToAbsolute(
+    '/user/login?return=' . rawurlencode(getenv('REQUEST_URI')))?>">Log in</a>
 </div>

@@ -78,6 +78,10 @@ function main() {
         $router->addRoute(
             '#^/plex/users/?$#', 'Plex\\Users', 'Plex\\UsersHtml'
         );
+        // URL: /user/login
+        $router->addRoute(
+            '#^/user/login/?$#', 'User\\Login', 'User\\LoginHtml'
+        );
         // URL: /whois
         $router->addRoute(
             '#^/whois/?$#', 'Whois', 'WhoisHtml'
