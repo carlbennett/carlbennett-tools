@@ -7,34 +7,35 @@ $return = (
 if (!empty($return) && substr($return, 0, 1) != '/') $return = null;
 if (!empty($return)) $return = Common::relativeUrlToAbsolute($return);
 $email = $this->getContext()->email;
-$error = $this->getContext()->error;
+$feedback = $this->getContext()->feedback;
 require("./header.inc.phtml"); ?>
 <div class="container">
-  <div class="card mx-auto<?=($error ? ' border-danger' : '')?>" style="width:18rem;">
+  <div class="card mx-auto" style="width:18rem;">
+    <h3 class="card-header text-lg-center"><?=$title;?></h3>
     <div class="card-body">
-      <h2 class="card-title text-center mb-4"><?=$title;?></h2>
       <form method="POST">
         <div class="form-group">
           <label class="sr-only" for="email">Email address</label>
-          <input class="form-control" type="email" id="email" name="email" placeholder="Email address" value="<?=filter_var($email, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>"/>
+          <input class="form-control<?=(isset($feedback['email']) ? ' is-invalid' : '')?>" type="email" id="email" name="email" placeholder="Email address" value="<?=filter_var($email, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>" tabindex="1"<?=(empty($feedback) || isset($feedback['email']) ? ' autofocus' : '')?>/>
+<?php if (isset($feedback['email'])) { ?>
+          <div class="invalid-feedback"><?=$feedback['email']?></div>
+<?php } ?>
         </div>
         <div class="form-group">
           <label class="sr-only" for="password">Password</label>
-          <input class="form-control" type="password" id="password" name="password" placeholder="Password" value=""/>
+          <input class="form-control<?=(isset($feedback['password']) ? ' is-invalid' : '')?>" type="password" id="password" name="password" placeholder="Password" value="" tabindex="2"<?=(isset($feedback['password']) ? ' autofocus' : '')?>/>
+<?php if (isset($feedback['password'])) { ?>
+          <div class="invalid-feedback"><?=$feedback['password']?></div>
+<?php } ?>
         </div>
         <div class="form-group text-center">
 <?php if (!empty($return)) { ?>
-          <a class="btn btn-primary" href="<?=filter_var($return, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>">Back</a>
+          <a class="btn btn-primary" href="<?=filter_var($return, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>" tabindex="3">Back</a>
 <?php } ?>
-          <button class="btn btn-success" type="submit">Submit</button>
+          <button class="btn btn-success" type="submit" tabindex="4">Submit</button>
         </div>
       </form>
     </div>
-<?php if ($error) { ?>
-    <div class="card-footer bg-danger font-weight-bold text-center text-white">
-      <?=$error?>
-    </div>
-<?php } ?>
   </div>
 </div>
 <?php require("./footer.inc.phtml"); ?>
