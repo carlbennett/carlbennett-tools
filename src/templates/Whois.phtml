@@ -2,6 +2,7 @@
 namespace CarlBennett\Tools\Templates;
 use \CarlBennett\MVC\Libraries\Common;
 $title = 'Whois';
+$error = $this->getContext()->error;
 $query = $this->getContext()->query;
 $query_result = $this->getContext()->query_result;
 $recursive = $this->getContext()->recursive;
@@ -25,6 +26,11 @@ require("./header.inc.phtml");
       <button type="submit" class="btn btn-primary">Search</button>
     </div>
   </form>
+<?php if ($error) { ?>
+  <div class="alert alert-danger">
+    <?=$error?>
+  </div>
+<?php } ?>
 <?php if (!empty($query_result)) { ?>
   <code><?=nl2br(filter_var($query_result, FILTER_SANITIZE_FULL_SPECIAL_CHARS))?></code>
 <?php } ?>
