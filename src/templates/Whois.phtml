@@ -11,12 +11,12 @@ require("./header.inc.phtml");
   <h1><?=$title;?></h1>
   <form method="GET" action="<?=Common::relativeUrlToAbsolute('/whois')?>">
     <div class="form-group">
-      <input type="text" class="form-control" id="query" name="q" placeholder="Search query" value="<?=filter_var($query, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>"/>
-      <div class="form-check">
+      <input type="text" class="form-control mb-2" id="query" name="q" placeholder="Search query" value="<?=filter_var($query, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>"/>
+      <div class="form-check form-check-inline">
         <input class="form-check-input" type="radio" value="0" id="recursiveOff" name="r"<?=(!$recursive ? ' checked' : '')?>/>
         <label class="form-check-label" for="recursiveOff">Recursive Off</label>
       </div>
-      <div class="form-check">
+      <div class="form-check form-check-inline">
         <input class="form-check-input" type="radio" value="1" id="recursiveOn" name="r"<?=($recursive ? ' checked' : '')?>/>
         <label class="form-check-label" for="recursiveOn">Recursive On</label>
       </div>
