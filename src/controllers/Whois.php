@@ -17,13 +17,17 @@ class Whois extends Controller {
     $model->query = (isset($query['q']) ? $query['q'] : null);
     $model->recursive = (isset($query['r']) ? $query['r'] : '1');
 
-    if (empty($model->query) || !DomainValidator::validate($model->query)) {
-      $model->error = 'Query is empty or not a valid domain';
-    } else {
-      $r = (!$model->recursive ? '-n ' : '');
-      $model->query_result = shell_exec(
-        'whois ' . $r . '"' . escapeshellarg($model->query) . '" 2>&1'
-      );
+    if (!is_null($model->query)) {
+      if (empty($model->query)) {
+        $model->error = 'Query must be non-empty';
+      } else if (!DomainValidator::validate($model->query)) {
+        $model->error = 'Query is not a valid domain';
+      } else {
+        $r = (!$model->recursive ? '-n ' : '');
+        $model->query_result = shell_exec(
+          'whois ' . $r . '"' . escapeshellarg($model->query) . '" 2>&1'
+        );
+      }
     }
 
     $view->render($model);
