@@ -19,7 +19,6 @@ class Whois extends Controller {
 
     if (empty($model->query) || !DomainValidator::validate($model->query)) {
       $model->error = 'Query is empty or not a valid domain';
-      $model->query_result = null;
     } else {
       $r = (!$model->recursive ? '-n ' : '');
       $model->query_result = shell_exec(

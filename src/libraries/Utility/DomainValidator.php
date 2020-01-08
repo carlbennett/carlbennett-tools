@@ -3,10 +3,8 @@
 namespace CarlBennett\Tools\Libraries\Utility;
 
 class DomainValidator {
-
   // <https://stackoverflow.com/a/4694816>
-  protected static function is_valid_domain_name($domain_name)
-  {
+  public static function validate(string $value) {
     return (
       preg_match( // valid chars check
         "/^([a-z\d](-*[a-z\d])*)(\.([a-z\d](-*[a-z\d])*))*$/i", $domain_name
@@ -19,9 +17,4 @@ class DomainValidator {
       )
     );
   }
-
-  public static function validate(string $value) {
-    return self::is_valid_domain_name($value);
-  }
-
 }
