@@ -25,7 +25,7 @@ class Whois extends Controller {
       } else {
         $r = (!$model->recursive ? '-n ' : '');
         $model->query_result = shell_exec(
-          'whois ' . $r . '"' . escapeshellarg($model->query) . '" 2>&1'
+          'whois ' . $r . escapeshellarg($model->query) . ' 2>&1'
         );
       }
     }
