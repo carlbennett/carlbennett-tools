@@ -10,7 +10,6 @@ use \DateTime;
 use \DateTimeZone;
 use \InvalidArgumentException;
 use \PDO;
-use \PDOException;
 
 /**
  * Authentication
@@ -202,32 +201,27 @@ class Authentication {
 
     $fingerprint = false;
 
-    try {
-      $stmt = Common::$database->prepare('
-        SELECT `user_id`, `ip_address`, `user_agent`
-        FROM `user_sessions`
-        WHERE `id` = :id AND (
-          `expires_datetime` = NULL OR
-          :dt < `expires_datetime`
-        ) LIMIT 1;
-      ');
+    $stmt = Common::$database->prepare('
+      SELECT `user_id`, `ip_address`, `user_agent`
+      FROM `user_sessions`
+      WHERE `id` = :id AND (
+        `expires_datetime` = NULL OR
+        :dt < `expires_datetime`
+      ) LIMIT 1;
+    ');
 
-      $stmt->bindParam(':id', $key, PDO::PARAM_STR);
-      $stmt->bindParam(':dt', $dt_now_str, PDO::PARAM_STR);
+    $stmt->bindParam(':id', $key, PDO::PARAM_STR);
+    $stmt->bindParam(':dt', $dt_now_str, PDO::PARAM_STR);
 
-      $r = $stmt->execute();
+    $r = $stmt->execute();
 
-      if ($r) {
-        $fingerprint = $stmt->fetch(PDO::FETCH_ASSOC);
-      }
-
-      $stmt->closeCursor();
-
-    } catch (PDOException $e) {
-      throw new QueryException('Cannot lookup user session key', $e);
-    } finally {
-      return $fingerprint;
+    if ($r) {
+      $fingerprint = $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    $stmt->closeCursor();
+
+    return $fingerprint;
   }
 
   /**
@@ -258,34 +252,29 @@ class Authentication {
 
     $r = false;
 
-    try {
-      $stmt = Common::$database->prepare('
-        INSERT INTO `user_sessions` (
-          `id`, `user_id`, `ip_address`, `user_agent`,
-          `created_datetime`, `expires_datetime`
-        ) VALUES (
-          :id, :user_id, :ip_address, :user_agent,
-          :created_dt, :expires_dt
-        ) ON DUPLICATE KEY UPDATE
-          `ip_address` = :ip_address, `user_agent` = :user_agent
-        ;
-      ');
+    $stmt = Common::$database->prepare('
+      INSERT INTO `user_sessions` (
+        `id`, `user_id`, `ip_address`, `user_agent`,
+        `created_datetime`, `expires_datetime`
+      ) VALUES (
+        :id, :user_id, :ip_address, :user_agent,
+        :created_dt, :expires_dt
+      ) ON DUPLICATE KEY UPDATE
+        `ip_address` = :ip_address, `user_agent` = :user_agent
+      ;
+    ');
 
-      $stmt->bindParam(':id', $key, PDO::PARAM_STR);
-      $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-      $stmt->bindParam(':ip_address', $ip_address, PDO::PARAM_STR);
-      $stmt->bindParam(':user_agent', $user_agent, PDO::PARAM_STR);
-      $stmt->bindParam(':created_dt', $created_str, PDO::PARAM_STR);
-      $stmt->bindParam(':expires_dt', $expires_str, PDO::PARAM_STR);
+    $stmt->bindParam(':id', $key, PDO::PARAM_STR);
+    $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+    $stmt->bindParam(':ip_address', $ip_address, PDO::PARAM_STR);
+    $stmt->bindParam(':user_agent', $user_agent, PDO::PARAM_STR);
+    $stmt->bindParam(':created_dt', $created_str, PDO::PARAM_STR);
+    $stmt->bindParam(':expires_dt', $expires_str, PDO::PARAM_STR);
 
-      $r = $stmt->execute();
-      $stmt->closeCursor();
+    $r = $stmt->execute();
+    $stmt->closeCursor();
 
-    } catch (PDOException $e) {
-      throw new QueryException('Cannot store user session key', $e);
-    } finally {
-      return $r;
-    }
+    return $r;
   }
 
   /**
