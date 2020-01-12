@@ -9,5 +9,6 @@ class Login extends Model {
   public $email;
   public $feedback;
   public $password;
+  public $return;
 
 }

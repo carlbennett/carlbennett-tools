@@ -1,11 +1,7 @@
 <?php namespace CarlBennett\Tools\Templates\User;
 use \CarlBennett\MVC\Libraries\Common;
 $title = 'Log in';
-$return = (
-  isset($_REQUEST) && isset($_REQUEST['return']) ? $_REQUEST['return'] : null
-);
-if (!empty($return) && substr($return, 0, 1) != '/') $return = null;
-if (!empty($return)) $return = Common::relativeUrlToAbsolute($return);
+$return = $this->getContext()->return;
 $email = $this->getContext()->email;
 $feedback = $this->getContext()->feedback;
 require("./header.inc.phtml"); ?>

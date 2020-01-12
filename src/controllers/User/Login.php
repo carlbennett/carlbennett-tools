@@ -2,6 +2,7 @@
 
 namespace CarlBennett\Tools\Controllers\User;
 
+use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\MVC\Libraries\Controller;
 use \CarlBennett\MVC\Libraries\Router;
 use \CarlBennett\MVC\Libraries\View;
@@ -20,6 +21,9 @@ class Login extends Controller {
 
     $query = $router->getRequestQueryArray();
     $return = (isset($query['return']) ? $query['return'] : null);
+    if (!empty($return) && substr($return, 0, 1) != '/') $return = null;
+    if (!empty($return)) $return = Common::relativeUrlToAbsolute($return);
+    $model->return = $return;
 
     if ($router->getRequestMethod() == 'POST') {
       $this->processLogin($model);
@@ -60,5 +64,8 @@ class Login extends Controller {
     }
 
     Authentication::login($user);
+    if (!empty($model->return)) {
+      header('Location: ' . $model->return);
+    }
   }
 }
