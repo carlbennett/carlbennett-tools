@@ -1,6 +1,6 @@
 <?php
 
-namespace CarlBennett\Tools\Libraries\Plex;
+namespace CarlBennett\Tools\Libraries;
 
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\MVC\Libraries\DatabaseDriver;
@@ -27,6 +27,9 @@ class User implements IDatabaseObject {
   const OPTION_ACL_PLEX_USERS    = 0x00000020;
   const OPTION_RESERVED          = 0xFFFFFFCE;
 
+  const PASSWORD_CHECK_VERIFIED = 1;
+  const PASSWORD_CHECK_EXPIRED  = 2;
+
   const UUID_REGEX = '/([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}){1}/';
 
   private $_id;
@@ -37,7 +40,6 @@ class User implements IDatabaseObject {
   protected $id;
   protected $options_bitmask;
   protected $password_hash;
-  protected $password_salt;
 
   public function __construct($value) {
     if (is_null($value) || is_string($value)) {
@@ -75,9 +77,9 @@ class User implements IDatabaseObject {
 
     $q = Common::$database->prepare('
       SELECT
-        `date_added`, `display_name`, `email`, UuidFromBin(`id`),
-        `options_bitmask`, `password_hash`, `password_salt`
-      FROM `plex_users` WHERE id = UuidToBin(:id) LIMIT 1;
+        `date_added`, `display_name`, `email`, UuidFromBin(`id`) AS `id`,
+        `options_bitmask`, `password_hash`
+      FROM `users` WHERE id = UuidToBin(:id) LIMIT 1;
     ');
     $q->bindParam(':id', $id, PDO::PARAM_STR);
 
@@ -107,12 +109,40 @@ class User implements IDatabaseObject {
     $this->setName($value->display_name);
     $this->setOptionsBitmask($value->options_bitmask);
     $this->setPasswordHash($value->password_hash);
-    $this->setPasswordSalt($value->password_salt);
+  }
+
+  public function checkPassword(string $password) {
+    $hash = $this->getPasswordHash();
+    $rehash = password_needs_rehash($hash, PASSWORD_BCRYPT, array(
+      'cost' => Common::$config->users->bcrypt_cost,
+    ));
+    $verified = password_verify($password, $hash);
+
+    $r = 0;
+
+    if ($verified) $r |= self::PASSWORD_CHECK_VERIFIED;
+    if ($rehash)   $r |= self::PASSWORD_CHECK_EXPIRED;
+
+    return $r;
   }
 
   public function commit() {
     // from the IDatabaseObject interface
     throw new \RuntimeException('TODO');
+  }
+
+  public static function createPassword(string $password) {
+    if (!is_string($password)) {
+      throw new InvalidArgumentException('value must be a string');
+    }
+
+    if (empty($password)) {
+      throw new LengthException('value must not be empty');
+    }
+
+    return password_hash($password, PASSWORD_BCRYPT, array(
+      'cost' => Common::$config->users->bcrypt_cost,
+    ));
   }
 
   public static function getAll() {
@@ -122,9 +152,9 @@ class User implements IDatabaseObject {
 
     $q = Common::$database->prepare('
       SELECT
-        `date_added`, `display_name`, `email`, UuidFromBin(`id`),
-        `options_bitmask`, `password_hash`, `password_salt`
-      FROM `plex_users`
+        `date_added`, `display_name`, `email`, UuidFromBin(`id`) AS `id`,
+        `options_bitmask`, `password_hash`
+      FROM `users`
       ORDER BY `date_added`, `display_name`, `email`;
     ');
 
@@ -134,6 +164,32 @@ class User implements IDatabaseObject {
     $r = array();
     while ($obj = $q->fetchObject()) {
       $r[] = new self($obj);
+    }
+
+    $q->closeCursor();
+    return $r;
+  }
+
+  public static function getByEmail(string $value) {
+    if (!isset(Common::$database)) {
+      Common::$database = DatabaseDriver::getDatabaseObject();
+    }
+
+    $q = Common::$database->prepare('
+      SELECT
+        `date_added`, `display_name`, `email`, UuidFromBin(`id`) AS `id`,
+        `options_bitmask`, `password_hash`
+      FROM `users` WHERE `email` = :email;
+    ');
+    $q->bindParam(':email', $value, PDO::PARAM_STR);
+
+    $r = $q->execute();
+    if (!$r) return $r;
+
+    if ($q->rowCount()) {
+      $r = new self($q->fetchObject());
+    } else {
+      $r = false;
     }
 
     $q->closeCursor();
@@ -162,10 +218,6 @@ class User implements IDatabaseObject {
 
   public function getPasswordHash() {
     return $this->password_hash;
-  }
-
-  public function getPasswordSalt() {
-    return $this->password_salt;
   }
 
   public function setDateAdded(DateTime $value) {
@@ -239,18 +291,6 @@ class User implements IDatabaseObject {
     }
 
     $this->password_hash = $value;
-  }
-
-  public function setPasswordSalt(string $value) {
-    if (!is_string($value)) {
-      throw new InvalidArgumentException('value must be a string');
-    }
-
-    if (empty($value)) {
-      throw new LengthException('value must be non-empty');
-    }
-
-    $this->password_salt = $value;
   }
 
 }

@@ -18,6 +18,6 @@
         "username": "carlbennett_tools"
     },
     "users": {
-        "user_password_pepper": "sample secret"
+        "bcrypt_cost": 10
     }
 }

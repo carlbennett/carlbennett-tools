@@ -116,9 +116,8 @@ class Authentication {
     }
     return hash( 'sha1',
       mt_rand() . getenv('REMOTE_ADDR') .
-      $user->getId() . $user->getEmail() . $user->getUsername() .
-      $user->getPasswordHash() . $user->getPasswordSalt() .
-      Common::$config->users->user_password_pepper
+      $user->getId() . $user->getEmail() . $user->getName() .
+      $user->getPasswordHash()
     );
   }
 
