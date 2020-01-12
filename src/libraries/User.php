@@ -270,7 +270,7 @@ class User implements IDatabaseObject {
       ));
     }
 
-    $this->notes = $value;
+    $this->display_name = $value;
   }
 
   public function setOptionsBitmask(int $value) {
