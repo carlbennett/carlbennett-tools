@@ -54,7 +54,7 @@ class Authentication {
     }
 
     $stmt = Common::$database->prepare('
-      DELETE FROM `user_sessions` WHERE `id` = :id LIMIT 1;
+      DELETE FROM `user_sessions` WHERE `id` = UNHEX(:id) LIMIT 1;
     ');
 
     $stmt->bindParam(':id', $key, PDO::PARAM_STR);
@@ -202,9 +202,9 @@ class Authentication {
     $fingerprint = false;
 
     $stmt = Common::$database->prepare('
-      SELECT `user_id`, `ip_address`, `user_agent`
+      SELECT UuidFromBin(`user_id`) AS `user_id`, `ip_address`, `user_agent`
       FROM `user_sessions`
-      WHERE `id` = :id AND (
+      WHERE `id` = UNHEX(:id) AND (
         `expires_datetime` = NULL OR
         :dt < `expires_datetime`
       ) LIMIT 1;
@@ -257,7 +257,7 @@ class Authentication {
         `id`, `user_id`, `ip_address`, `user_agent`,
         `created_datetime`, `expires_datetime`
       ) VALUES (
-        :id, :user_id, :ip_address, :user_agent,
+        UNHEX(:id), UuidToBin(:user_id), :ip_address, :user_agent,
         :created_dt, :expires_dt
       ) ON DUPLICATE KEY UPDATE
         `ip_address` = :ip_address, `user_agent` = :user_agent
@@ -265,7 +265,7 @@ class Authentication {
     ');
 
     $stmt->bindParam(':id', $key, PDO::PARAM_STR);
-    $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+    $stmt->bindParam(':user_id', $user_id, PDO::PARAM_STR);
     $stmt->bindParam(':ip_address', $ip_address, PDO::PARAM_STR);
     $stmt->bindParam(':user_agent', $user_agent, PDO::PARAM_STR);
     $stmt->bindParam(':created_dt', $created_str, PDO::PARAM_STR);
