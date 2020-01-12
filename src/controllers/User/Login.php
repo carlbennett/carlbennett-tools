@@ -25,12 +25,12 @@ class Login extends Controller {
     if (!empty($return)) $return = Common::relativeUrlToAbsolute($return);
     $model->return = $return;
 
+    $model->_responseCode = 200;
     if ($router->getRequestMethod() == 'POST') {
       $this->processLogin($model);
     }
 
     $view->render($model);
-    $model->_responseCode = 200;
     return $model;
   }
 
@@ -65,6 +65,7 @@ class Login extends Controller {
 
     Authentication::login($user);
     if (!empty($model->return)) {
+      $model->_responseCode = 303;
       header('Location: ' . $model->return);
     }
   }
