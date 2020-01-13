@@ -1,7 +1,9 @@
 <?php
 namespace CarlBennett\Tools\Templates;
 use \CarlBennett\MVC\Libraries\Common;
+use \CarlBennett\Tools\Libraries\Authentication;
 $_header_url = parse_url(getenv('REQUEST_URI'), PHP_URL_PATH);
+$_header_user = Authentication::$user;
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -43,6 +45,12 @@ $_header_url = parse_url(getenv('REQUEST_URI'), PHP_URL_PATH);
         </div>
       </li>
     </ul>
+<?php if (!$_header_user) { ?>
+    <a class="btn btn-sm btn-outline-success my-2 my-sm-0" tabindex="-1" href="<?=Common::relativeUrlToAbsolute('/user/login?return=' . rawurlencode(getenv('REQUEST_URI')))?>">Log in</a>
+<?php } else { ?>
+    <span class="nav-item navbar-text mx-3"><?=$_header_user->getName()?></span>
+    <a class="btn btn-sm btn-outline my-2 my-sm-0" tabindex="-1" href="<?=Common::relativeUrlToAbsolute('/user/logout')?>">Log out</a>
+<?php } ?>
   </div>
 </nav>
 
