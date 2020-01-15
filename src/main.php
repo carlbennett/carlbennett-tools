@@ -82,10 +82,6 @@ function main() {
         $router->addRoute(
             '#^/user/login/?$#', 'User\\Login', 'User\\LoginHtml'
         );
-        // URL: /whois
-        $router->addRoute(
-            '#^/whois/?$#', 'Whois', 'WhoisHtml'
-        );
         // URL: *
         $router->addRoute(
             '#.*#', 'PageNotFound', 'PageNotFoundHtml'
