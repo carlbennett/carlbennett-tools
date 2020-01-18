@@ -22,7 +22,7 @@ require("./header.inc.phtml"); ?>
         $key = filter_var($key, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $val = filter_var($val, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 ?>
-      <tr><th scope="row" class="text-right"><?=$key?></th><td class="text-left"><?=$val?></td></tr>
+      <tr><th scope="row" class="text-right"><?=$key?></th><td class="text-left"><?=(empty($val) ? '<em>not available</em>' : $val)?></td></tr>
 <?php } ?>
 <?php } else { ?>
       <tr><th scope="row" class="text-right">GeoIP Info</th><td class="text-left"><em>not available</em></td></tr>
