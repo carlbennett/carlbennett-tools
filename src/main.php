@@ -78,6 +78,19 @@ function main() {
         $router->addRoute(
             '#^/plex/users/?$#', 'Plex\\Users', 'Plex\\UsersHtml'
         );
+        // URL: /remoteaddress /remoteaddress.html
+        $router->addRoute(
+            '#^/remoteaddress(?:\.html)?/?$#',
+            'RemoteAddress', 'RemoteAddressHtml'
+        );
+        // URL: /remoteaddress.json
+        $router->addRoute(
+            '#^/remoteaddress\.json$#', 'RemoteAddress', 'RemoteAddressJSON'
+        );
+        // URL: /remoteaddress.txt
+        $router->addRoute(
+            '#^/remoteaddress\.txt$#', 'RemoteAddress', 'RemoteAddressPlain'
+        );
         // URL: /user/login
         $router->addRoute(
             '#^/user/login/?$#', 'User\\Login', 'User\\LoginHtml'

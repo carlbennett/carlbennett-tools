@@ -1,0 +1,33 @@
+<?php namespace CarlBennett\Tools\Templates;
+use \CarlBennett\MVC\Libraries\Common;
+$title = 'Remote Address';
+$geoip = $this->getContext()->geoip_info;
+$ip = $this->getContext()->ip_address;
+require("./header.inc.phtml"); ?>
+<div class="container">
+  <h1>Remote Address</h1>
+  <div class="align-middle mb-2">
+    <strong>Alternative formats:</strong>
+    <a class="btn btn-sm btn-primary" href="<?=Common::relativeUrlToAbsolute('/remoteaddress.json')?>">Json</a>
+    <a class="btn btn-sm btn-primary" href="<?=Common::relativeUrlToAbsolute('/remoteaddress.txt')?>">Plaintext</a>
+  </div>
+  <table class="table table-sm">
+    <thead></thead>
+    <tbody>
+      <tr><th scope="row" class="text-right">IP Address</th><td class="text-left"><code><?=filter_var($ip, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></code></td></tr>
+<?php if ($geoip) { ?>
+<?php foreach ($geoip as $key => $val) {
+        if ($key == 'country_code3') { $key = 'country_code_3'; }
+        $key = ucwords(str_replace('_', ' ', $key));
+        $key = filter_var($key, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $val = filter_var($val, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+?>
+      <tr><th scope="row" class="text-right"><?=$key?></th><td class="text-left"><?=$val?></td></tr>
+<?php } ?>
+<?php } else { ?>
+      <tr><th scope="row" class="text-right">GeoIP Info</th><td class="text-left"><em>not available</em></td></tr>
+<?php } ?>
+    </tbody>
+  </table>
+</div>
+<?php require("./footer.inc.phtml"); ?>
