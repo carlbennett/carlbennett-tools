@@ -21,6 +21,7 @@ require('./header.inc.phtml'); ?>
         $id = filter_var($user->getId(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $username = filter_var($user->getUsername(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $email = filter_var($user->getEmail(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $removed = (!is_null($user->getDateRemoved()) ? ' <span class="badge badge-danger">Removed</span>' : '');
         if (empty($username) && !empty($email)) {
           $name = $email;
         } else if (!empty($username) && empty($email)) {
@@ -29,7 +30,7 @@ require('./header.inc.phtml'); ?>
           $name = $username . '<br/><span class="text-secondary">' . $email . '</span>';
         } ?>
       <tr>
-        <td><?=$name?></td>
+        <td><?=$name?><?=$removed?></td>
         <td><time datetime="<?=$user->getDateAdded()->format(DATE_W3C)?>"><?=$user->getDateAdded()->format('D, M jS, Y')?></time></td>
         <td class="text-right">
           <a class="btn btn-sm btn-primary" href="<?=Common::relativeUrlToAbsolute('/plex/users/edit?id=' . $id)?>">Edit</a>
