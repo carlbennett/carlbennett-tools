@@ -8,7 +8,6 @@ require('./header.inc.phtml'); ?>
   <h1><?=$title;?></h1>
   <?php require('./LoginRequired.inc.phtml'); ?>
 <?php } else { ?>
-  <?php require('./WIP.inc.phtml'); ?>
   <div class="float-right"><a class="btn btn-lg btn-success" href="<?=Common::relativeUrlToAbsolute('/plex/users/add')?>">Add User</a></div>
   <h1><?=$title;?></h1>
   <table class="table table-hover table-striped">

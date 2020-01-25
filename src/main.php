@@ -78,6 +78,11 @@ function main() {
         $router->addRoute(
             '#^/plex/users/?$#', 'Plex\\Users', 'Plex\\UsersHtml'
         );
+        // URL: /plex/users/edit
+        $router->addRoute(
+            '#^/plex/users/edit/?$#',
+            'Plex\\Users\\Edit', 'Plex\\Users\\EditHtml'
+        );
         // URL: /remoteaddress /remoteaddress.html
         $router->addRoute(
             '#^/remoteaddress(?:\.html)?/?$#',
