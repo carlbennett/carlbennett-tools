@@ -1,14 +1,7 @@
 <?php
 namespace CarlBennett\Tools\Templates;
-use \CarlBennett\MVC\Libraries\Common;
 $title = 'Edit Plex User';
-require('./header.inc.phtml'); ?>
-<div class="container">
-  <h1><?=$title;?></h1>
-<?php if ($this->getContext()->user === false) { ?>
-  <?php require('./LoginRequired.inc.phtml'); ?>
-<?php } else { ?>
-  <?php require('./WIP.inc.phtml'); ?>
-<?php } ?>
-</div>
-<?php require('./footer.inc.phtml'); ?>
+$user = $this->getContext()->user;
+require('./header.inc.phtml');
+require('./Plex/Users/UserForm.inc.phtml');
+require('./footer.inc.phtml');

@@ -1,0 +1,69 @@
+<?php namespace CarlBennett\Tools\Templates; ?>
+<div class="container">
+<?php if ($user === false) { ?>
+  <h1><?=$title;?></h1>
+  <?php require('./LoginRequired.inc.phtml'); ?>
+<?php } else {
+  $fmt = 'D, M j, Y H:i A T';
+  $date_added = $user->getDateAdded();
+  $date_removed = $user->getDateRemoved();
+  $email = filter_var($user->getEmail(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+  $id = filter_var($user->getId(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+  $notes = filter_var($user->getNotes(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+  $risk = $user->getRisk();
+  $username = filter_var($user->getUsername(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+  $date_added = $date_added->format($fmt);
+  $date_removed = (!is_null($date_removed) ? $date_removed->format($fmt) : '<em>(not removed)</em>');
+
+  $date_added = str_replace('00:00 AM UTC', '', $date_added);
+  $date_removed = str_replace('00:00 AM UTC', '', $date_removed);
+?>
+  <h1><?=$title;?></h1>
+  <form method="POST">
+    <table class="table table-bordered table-hover">
+      <thead></thead><tbody>
+        <tr>
+          <th scope="row" class="align-middle text-right"><label class="m-0" for="id">Id</label></th>
+          <td><input class="form-control form-control-sm" type="text" id="id" name="id" value="<?=$id?>" readonly/></td>
+        </tr>
+        <tr>
+          <th scope="row" class="align-middle text-right"><label class="m-0" for="username">Username</label></th>
+          <td><input class="form-control form-control-sm" type="text" id="username" name="username" placeholder="Enter the username here" value="<?=$username?>"/></td>
+        </tr>
+        <tr>
+          <th scope="row" class="align-middle text-right"><label class="m-0" for="email">Email address</label></th>
+          <td><input class="form-control form-control-sm" type="email" id="email" name="email" placeholder="Enter the email address here" value="<?=$email?>"/></td>
+        </tr>
+        <tr>
+          <th scope="row" class="align-middle text-right"><label class="m-0" for="risk">Risk</label></th>
+          <td>
+            <select class="form-control form-control-sm" id="risk" name="risk">
+              <option value="0"<?=($risk === 0 ? ' selected' : '')?> class="bg-danger text-dark">Unassessed</option>
+              <option value="1"<?=($risk === 1 ? ' selected' : '')?> class="bg-success text-dark">Low</option>
+              <option value="2"<?=($risk === 2 ? ' selected' : '')?> class="bg-warning text-dark">Medium</option>
+              <option value="3"<?=($risk === 3 ? ' selected' : '')?> class="bg-danger text-dark">High</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row" class="align-top text-right"><label class="m-0" for="notes">Notes</label></th>
+          <td><textarea class="form-control form-control-sm" style="min-height:90px;" id="notes" name="notes" placeholder="Enter notes here"><?=$notes?></textarea></td>
+        </tr>
+        <tr>
+          <th scope="row" class="align-middle text-right">Date Added</th>
+          <td><?=$date_added?></td>
+        </tr>
+        <tr>
+          <th scope="row" class="align-middle text-right">Date Removed</th>
+          <td><?=$date_removed?></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="text-center">
+      <input class="btn btn-danger" type="submit" name="action" value="Delete"/>
+      <input class="btn btn-success" type="submit" name="action" value="Save"/>
+    </div>
+  </form>
+<?php } ?>
+</div>
