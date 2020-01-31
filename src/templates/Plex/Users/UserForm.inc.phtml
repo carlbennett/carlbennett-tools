@@ -1,26 +1,21 @@
 <?php
-  $fmt = 'D, M j, Y H:i A T';
+  $fmt = 'D, M j, Y g:i A T';
   $date_added = $plex_user->getDateAdded();
   $date_removed = $plex_user->getDateRemoved();
-  $email = filter_var($plex_user->getEmail(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-  $id = filter_var($plex_user->getId(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-  $notes = filter_var($plex_user->getNotes(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-  $risk = $plex_user->getRisk();
-  $username = filter_var($plex_user->getUsername(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+  $email = filter_var($this->getContext()->email, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+  $notes = filter_var($this->getContext()->notes, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+  $risk = $this->getContext()->risk;
+  $username = filter_var($this->getContext()->username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
   $date_added = $date_added->format($fmt);
   $date_removed = (!is_null($date_removed) ? $date_removed->format($fmt) : '<em>(not removed)</em>');
 
-  $date_added = str_replace('00:00 AM UTC', '', $date_added);
-  $date_removed = str_replace('00:00 AM UTC', '', $date_removed);
+  $date_added = str_replace('12:00 AM UTC', '', $date_added);
+  $date_removed = str_replace('12:00 AM UTC', '', $date_removed);
 ?>
   <form method="POST">
     <table class="table table-borderless table-hover">
       <thead></thead><tbody>
-        <tr>
-          <th scope="row" class="align-middle text-right"><label class="m-0" for="id">Id</label></th>
-          <td><input class="form-control form-control-sm" type="text" id="id" name="id" value="<?=$id?>" readonly/></td>
-        </tr>
         <tr>
           <th scope="row" class="align-middle text-right"><label class="m-0" for="username">Username</label></th>
           <td><input class="form-control form-control-sm" type="text" id="username" name="username" placeholder="Enter the username here" value="<?=$username?>"/></td>

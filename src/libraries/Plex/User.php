@@ -17,6 +17,8 @@ use \UnexpectedValueException;
 
 class User implements IDatabaseObject {
 
+  const DATE_SQL = 'Y-m-d H:i:s';
+
   const MAX_EMAIL    = 191;
   const MAX_NOTES    = 65535;
   const MAX_USERNAME = 191;
@@ -113,7 +115,57 @@ class User implements IDatabaseObject {
 
   public function commit() {
     // from the IDatabaseObject interface
-    throw new \RuntimeException('TODO');
+
+    if (!isset(Common::$database)) {
+      Common::$database = DatabaseDriver::getDatabaseObject();
+    }
+
+    $q = Common::$database->prepare('
+      INSERT INTO `plex_users` (
+        `date_added`, `date_removed`, `email`, `id`, `notes`, `risk`,
+        `username`
+      ) VALUES (
+        :added, :removed, :email, UuidToBin(:id), :notes, :risk, :username
+      ) ON DUPLICATE KEY UPDATE
+        `date_added` = :added, `date_removed` = :removed, `email` = :email,
+        `notes` = :notes, `risk` = :risk, `username` = :username
+      ;
+    ');
+
+    $date_added = $this->date_added->format(self::DATE_SQL);
+
+    $date_removed = (
+      is_null($this->date_removed) ?
+      null : $this->date_removed->format(self::DATE_SQL)
+    );
+
+    $q->bindParam(':added', $date_added, PDO::PARAM_STR);
+
+    $q->bindParam(':removed', $date_removed, (
+      is_null($date_removed) ? PDO::PARAM_NULL : PDO::PARAM_STR
+    ));
+
+    $q->bindParam(':email', $this->email, (
+      is_null($this->email) ? PDO::PARAM_NULL : PDO::PARAM_STR
+    ));
+
+    $q->bindParam(':id', $this->id, PDO::PARAM_STR);
+
+    $q->bindParam(':notes', $this->notes, (
+      is_null($this->notes) ? PDO::PARAM_NULL : PDO::PARAM_STR
+    ));
+
+    $q->bindParam(':risk', $this->risk, PDO::PARAM_INT);
+
+    $q->bindParam(':username', $this->username, (
+      is_null($this->username) ? PDO::PARAM_NULL : PDO::PARAM_STR
+    ));
+
+    $r = $q->execute();
+    if (!$r) return $r;
+
+    $q->closeCursor();
+    return $r;
   }
 
   public static function getAll() {
