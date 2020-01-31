@@ -150,11 +150,7 @@ class User implements IDatabaseObject {
     ));
 
     $q->bindParam(':id', $this->id, PDO::PARAM_STR);
-
-    $q->bindParam(':notes', $this->notes, (
-      is_null($this->notes) ? PDO::PARAM_NULL : PDO::PARAM_STR
-    ));
-
+    $q->bindParam(':notes', $this->notes, PDO::PARAM_STR);
     $q->bindParam(':risk', $this->risk, PDO::PARAM_INT);
 
     $q->bindParam(':username', $this->username, (
