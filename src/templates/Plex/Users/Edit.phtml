@@ -1,7 +1,20 @@
 <?php
 namespace CarlBennett\Tools\Templates;
 $title = 'Edit Plex User';
+$plex_user = $this->getContext()->plex_user;
 $user = $this->getContext()->user;
 require('./header.inc.phtml');
-require('./Plex/Users/UserForm.inc.phtml');
-require('./footer.inc.phtml');
+?>
+<div class="container">
+  <h1><?=$title;?></h1>
+<?php
+if (!$user) {
+  require('./LoginRequired.inc.phtml');
+} else if (!$plex_user) { 
+  require('./Plex/Users/UserNotFound.inc.phtml');
+} else {
+  require('./Plex/Users/UserForm.inc.phtml');
+}
+?>
+</div>
+<?php require('./footer.inc.phtml');

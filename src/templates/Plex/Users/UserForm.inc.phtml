@@ -1,17 +1,12 @@
-<?php namespace CarlBennett\Tools\Templates; ?>
-<div class="container">
-<?php if ($user === false) { ?>
-  <h1><?=$title;?></h1>
-  <?php require('./LoginRequired.inc.phtml'); ?>
-<?php } else {
+<?php
   $fmt = 'D, M j, Y H:i A T';
-  $date_added = $user->getDateAdded();
-  $date_removed = $user->getDateRemoved();
-  $email = filter_var($user->getEmail(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-  $id = filter_var($user->getId(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-  $notes = filter_var($user->getNotes(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-  $risk = $user->getRisk();
-  $username = filter_var($user->getUsername(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+  $date_added = $plex_user->getDateAdded();
+  $date_removed = $plex_user->getDateRemoved();
+  $email = filter_var($plex_user->getEmail(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+  $id = filter_var($plex_user->getId(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+  $notes = filter_var($plex_user->getNotes(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+  $risk = $plex_user->getRisk();
+  $username = filter_var($plex_user->getUsername(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
   $date_added = $date_added->format($fmt);
   $date_removed = (!is_null($date_removed) ? $date_removed->format($fmt) : '<em>(not removed)</em>');
@@ -19,7 +14,6 @@
   $date_added = str_replace('00:00 AM UTC', '', $date_added);
   $date_removed = str_replace('00:00 AM UTC', '', $date_removed);
 ?>
-  <h1><?=$title;?></h1>
   <form method="POST">
     <table class="table table-bordered table-hover">
       <thead></thead><tbody>
@@ -65,5 +59,3 @@
       <input class="btn btn-success" type="submit" name="action" value="Save"/>
     </div>
   </form>
-<?php } ?>
-</div>

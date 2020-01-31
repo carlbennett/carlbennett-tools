@@ -11,15 +11,18 @@ use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
 use \CarlBennett\Tools\Libraries\User;
 use \CarlBennett\Tools\Models\Plex\Users\Edit as EditModel;
 
+use \Exception;
+
 class Edit extends Controller {
   public function &run(Router &$router, View &$view, array &$args) {
-    $form = $router->getRequestBodyArray();
     $model = new EditModel();
-    $query = $router->getRequestQueryArray();
-    $user = Authentication::$user;
+    $model->user = Authentication::$user;
 
-    if (!$user || !($user->getOptionsBitmask() & User::OPTION_ACL_PLEX_USERS)) {
-      $model->user = false;
+    $form = $router->getRequestBodyArray();
+    $query = $router->getRequestQueryArray();
+
+    if (!$model->user ||
+      !($model->user->getOptionsBitmask() & User::OPTION_ACL_PLEX_USERS)) {
       $view->render($model);
       $model->_responseCode = 401;
       return $model;
@@ -27,7 +30,17 @@ class Edit extends Controller {
 
     $id = (isset($query['id']) ? $query['id'] : null);
     if (!empty($id)) {
-      $model->user = new PlexUser($id);
+      try {
+        $model->plex_user = new PlexUser($id);
+      } catch (Exception $e) {
+        $model->plex_user = null;
+      }
+    }
+
+    if (!$model->plex_user) {
+      $view->render($model);
+      $model->_responseCode = 404;
+      return $model;
     }
 
     $view->render($model);
