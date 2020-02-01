@@ -64,23 +64,23 @@ function main() {
         );
         // URL: /gandalf
         $router->addRoute(
-            '#^/gandalf/?$#', 'Gandalf', 'GandalfHtml'
+            '#^/gandalf$#', 'Gandalf', 'GandalfHtml'
         );
         // URL: /home
         $router->addRoute(
-            '#^/home/?$#', 'Index', 'IndexHtml'
+            '#^/home$#', 'Index', 'IndexHtml'
         );
         // URL: /plex/requests
         $router->addRoute(
-            '#^/plex/requests/?$#', 'Plex\\Requests', 'Plex\\RequestsHtml'
+            '#^/plex/requests$#', 'Plex\\Requests', 'Plex\\RequestsHtml'
         );
         // URL: /plex/users
         $router->addRoute(
-            '#^/plex/users/?$#', 'Plex\\Users', 'Plex\\UsersHtml'
+            '#^/plex/users$#', 'Plex\\Users', 'Plex\\UsersHtml'
         );
         // URL: /plex/users/edit
         $router->addRoute(
-            '#^/plex/users/edit/?$#',
+            '#^/plex/users/edit$#',
             'Plex\\Users\\Edit', 'Plex\\Users\\EditHtml'
         );
         // URL: /remoteaddress /remoteaddress.html
@@ -98,7 +98,7 @@ function main() {
         );
         // URL: /user/login
         $router->addRoute(
-            '#^/user/login/?$#', 'User\\Login', 'User\\LoginHtml'
+            '#^/user/login$#', 'User\\Login', 'User\\LoginHtml'
         );
         // URL: *
         $router->addRoute(
