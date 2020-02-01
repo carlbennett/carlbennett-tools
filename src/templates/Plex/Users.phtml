@@ -2,6 +2,31 @@
 namespace CarlBennett\Tools\Templates;
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
+$highlight_id = $this->getContext()->id;
+$highlight_act = $this->getContext()->hl;
+if (!empty($highlight_id)) {
+  try {
+    $highlight_user = new PlexUser($highlight_id);
+  } catch (Exception $e) {
+    $highlight_user = null;
+  }
+}
+if ($highlight_user) {
+  $highlight_user_email = $highlight_user->getEmail();
+  $highlight_user_name = $highlight_user->getUsername();
+  if (empty($highlight_user_name) && !empty($highlight_user_email)) {
+    $highlight_name = $highlight_user_email;
+  } else if (!empty($highlight_user_name) && empty($highlight_user_email)) {
+    $highlight_name = $highlight_user_name;
+  } else {
+    $highlight_name = sprintf('%s (%s)', $highlight_user_name, $highlight_user_email);
+  }
+}
+switch (strtolower($highlight_act)) {
+  case 'add': $highlight_act = 'added'; break;
+  case 'edit': $highlight_act = 'edited'; break;
+  default: $highlight_act = null;
+}
 $title = 'Plex Users';
 require('./header.inc.phtml'); ?>
 <div class="container">
@@ -9,6 +34,11 @@ require('./header.inc.phtml'); ?>
   <h1><?=$title;?></h1>
   <?php require('./LoginRequired.inc.phtml'); ?>
 <?php } else { ?>
+<?php if (!empty($highlight_name) && !empty($highlight_act)) { ?>
+  <div class="alert alert-info">
+    The Plex user <strong><?=$highlight_name?></strong> was <?=$highlight_act?>.
+  </div>
+<?php } ?>
   <div class="float-right"><a class="btn btn-lg btn-success" href="<?=Common::relativeUrlToAbsolute('/plex/users/add')?>">Add User</a></div>
   <h1><?=$title;?></h1>
   <table class="table table-hover table-striped">
@@ -29,7 +59,7 @@ require('./header.inc.phtml'); ?>
         } else if (!empty($username) && empty($email)) {
           $name = $username;
         } else {
-          $name = $username . '<br/><span class="text-secondary">' . $email . '</span>';
+          $name = sprintf('%s<br/><span class="text-secondary">%s</span>', $username, $email);
         }
         switch ($risk) {
           case PlexUser::RISK_UNASSESSED: $risk = array('danger', 'Unassessed'); break;

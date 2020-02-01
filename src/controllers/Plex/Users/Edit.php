@@ -2,6 +2,7 @@
 
 namespace CarlBennett\Tools\Controllers\Plex\Users;
 
+use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\MVC\Libraries\Controller;
 use \CarlBennett\MVC\Libraries\Router;
 use \CarlBennett\MVC\Libraries\View;
@@ -57,6 +58,12 @@ class Edit extends Controller {
 
     if ($router->getRequestMethod() == 'POST') {
       $this->post($model, $form);
+      $view->render($model);
+      $model->_responseCode = 303;
+      $model->_responseHeaders['Location'] = Common::relativeUrlToAbsolute(
+        sprintf('/plex/users?id=%s&hl=edit', rawurlencode($model->id))
+      );
+      return $model;
     }
 
     $view->render($model);

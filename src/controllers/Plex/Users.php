@@ -9,6 +9,7 @@ use \CarlBennett\MVC\Libraries\View;
 use \CarlBennett\Tools\Libraries\Authentication;
 use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
 use \CarlBennett\Tools\Libraries\User;
+use \CarlBennett\Tools\Libraries\Utility\HTTPForm;
 use \CarlBennett\Tools\Models\Plex\Users as UsersModel;
 
 class Users extends Controller {
@@ -22,6 +23,12 @@ class Users extends Controller {
     } else {
       $model->users = PlexUser::getAll();
     }
+
+    $query = $router->getRequestQueryArray();
+    $query = new HTTPForm($query);
+
+    $model->id = $query->get('id');
+    $model->hl = $query->get('hl');
 
     $view->render($model);
     $model->_responseCode = ($model->users ? 200 : 401);
