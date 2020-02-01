@@ -10,16 +10,16 @@ if (!empty($highlight_id)) {
   } catch (Exception $e) {
     $highlight_user = null;
   }
-}
-if ($highlight_user) {
-  $highlight_user_email = $highlight_user->getEmail();
-  $highlight_user_name = $highlight_user->getUsername();
-  if (empty($highlight_user_name) && !empty($highlight_user_email)) {
-    $highlight_name = $highlight_user_email;
-  } else if (!empty($highlight_user_name) && empty($highlight_user_email)) {
-    $highlight_name = $highlight_user_name;
-  } else {
-    $highlight_name = sprintf('%s (%s)', $highlight_user_name, $highlight_user_email);
+  if ($highlight_user) {
+    $highlight_user_email = $highlight_user->getEmail();
+    $highlight_user_name = $highlight_user->getUsername();
+    if (empty($highlight_user_name) && !empty($highlight_user_email)) {
+      $highlight_name = $highlight_user_email;
+    } else if (!empty($highlight_user_name) && empty($highlight_user_email)) {
+      $highlight_name = $highlight_user_name;
+    } else {
+      $highlight_name = sprintf('%s (%s)', $highlight_user_name, $highlight_user_email);
+    }
   }
 }
 switch (strtolower($highlight_act)) {
