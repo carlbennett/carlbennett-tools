@@ -85,7 +85,7 @@ function main() {
         );
         // URL: /remoteaddress /remoteaddress.html
         $router->addRoute(
-            '#^/remoteaddress(?:\.html)?/?$#',
+            '#^/remoteaddress(?:\.html?)?$#',
             'RemoteAddress', 'RemoteAddressHtml'
         );
         // URL: /remoteaddress.json
