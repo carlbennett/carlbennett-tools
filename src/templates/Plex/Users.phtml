@@ -1,6 +1,7 @@
 <?php
 namespace CarlBennett\Tools\Templates;
 use \CarlBennett\MVC\Libraries\Common;
+use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
 $title = 'Plex Users';
 require('./header.inc.phtml'); ?>
 <div class="container">
@@ -21,18 +22,32 @@ require('./header.inc.phtml'); ?>
         $id = filter_var($user->getId(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $username = filter_var($user->getUsername(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $email = filter_var($user->getEmail(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $removed = (!is_null($user->getDateRemoved()) ? ' <span class="badge badge-danger">Removed</span>' : '');
+        $removed = (!is_null($user->getDateRemoved()) ? ' <span class="badge badge-danger">Removed</span> ' : '');
+        $risk = $user->getRisk();
         if (empty($username) && !empty($email)) {
           $name = $email;
         } else if (!empty($username) && empty($email)) {
           $name = $username;
         } else {
           $name = $username . '<br/><span class="text-secondary">' . $email . '</span>';
-        } ?>
+        }
+        switch ($risk) {
+          case PlexUser::RISK_UNASSESSED: $risk = array('danger', 'Unassessed'); break;
+          case PlexUser::RISK_LOW: $risk = array('success', 'Low'); break;
+          case PlexUser::RISK_MEDIUM: $risk = array('warning', 'Medium'); break;
+          case PlexUser::RISK_HIGH: $risk = array('danger', 'High'); break;
+          default: $risk = array('info', sprintf('Unknown (%d)', $risk));
+        }
+        if (empty($removed)) {
+          $risk = sprintf(' <span class="badge badge-%s">%s Risk</span> ', $risk[0], $risk[1]);
+        } else {
+          $risk = '';
+        }
+        ?>
       <tr>
-        <td><?=$name?><?=$removed?></td>
+        <td><?=$name?></td>
         <td><time datetime="<?=$user->getDateAdded()->format(DATE_W3C)?>"><?=$user->getDateAdded()->format('D, M jS, Y')?></time></td>
-        <td class="text-right">
+        <td class="text-right"><?=$risk?><?=$removed?>
           <a class="btn btn-sm btn-primary" href="<?=Common::relativeUrlToAbsolute('/plex/users/edit?id=' . $id)?>">Edit</a>
         </td>
       </tr>
