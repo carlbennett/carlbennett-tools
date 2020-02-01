@@ -1,6 +1,6 @@
 <?php
 namespace CarlBennett\Tools\Templates;
-$title = 'Edit Plex User';
+$title = 'Add Plex User';
 $plex_user = $this->getContext()->plex_user;
 $user = $this->getContext()->user;
 require('./header.inc.phtml');
@@ -10,8 +10,6 @@ require('./header.inc.phtml');
 <?php
 if (!$user) {
   require('./LoginRequired.inc.phtml');
-} else if (!$plex_user) {
-  require('./Plex/Users/UserNotFound.inc.phtml');
 } else {
   require('./Plex/Users/UserForm.inc.phtml');
 }

@@ -78,6 +78,11 @@ function main() {
         $router->addRoute(
             '#^/plex/users$#', 'Plex\\Users', 'Plex\\UsersHtml'
         );
+        // URL: /plex/users/add
+        $router->addRoute(
+            '#^/plex/users/add$#',
+            'Plex\\Users\\Add', 'Plex\\Users\\AddHtml'
+        );
         // URL: /plex/users/edit
         $router->addRoute(
             '#^/plex/users/edit$#',
