@@ -9,7 +9,7 @@
 
   $fmt = 'D, M j, Y g:i A T';
 
-  $date_added = $date_added->format($fmt);
+  $date_added = (!is_null($date_added) ? $date_added->format($fmt) : '<em>(not added)</em>');
   $date_removed = (!is_null($date_removed) ? $date_removed->format($fmt) : '<em>(not removed)</em>');
 
   $date_added = str_replace('12:00 AM UTC', '', $date_added);

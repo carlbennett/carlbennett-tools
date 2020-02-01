@@ -63,7 +63,6 @@ class User implements IDatabaseObject {
       throw new InvalidArgumentException('value must be null or a string');
     }
 
-    $this->setDateAdded(new DateTime('now', new DateTimeZone('Etc/UTC')));
     $this->setRisk(self::RISK_UNASSESSED);
 
     if (empty($id)) return;

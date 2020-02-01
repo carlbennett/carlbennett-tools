@@ -56,6 +56,7 @@ class Add extends Controller {
     $plex_user->setEmail($model->email);
     $plex_user->setRisk($model->risk);
     $plex_user->setNotes($model->notes);
+    $plex_user->setDateAdded(new DateTime('now', new DateTimeZone('Etc/UTC')));
 
     $plex_user->commit();
   }
