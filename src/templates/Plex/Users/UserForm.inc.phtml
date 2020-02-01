@@ -1,11 +1,13 @@
 <?php
-  $fmt = 'D, M j, Y g:i A T';
   $date_added = $plex_user->getDateAdded();
   $date_removed = $plex_user->getDateRemoved();
   $email = filter_var($this->getContext()->email, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+  $id = $this->getContext()->id;
   $notes = filter_var($this->getContext()->notes, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
   $risk = $this->getContext()->risk;
   $username = filter_var($this->getContext()->username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+  $fmt = 'D, M j, Y g:i A T';
 
   $date_added = $date_added->format($fmt);
   $date_removed = (!is_null($date_removed) ? $date_removed->format($fmt) : '<em>(not removed)</em>');
@@ -50,7 +52,13 @@
       </tbody>
     </table>
     <div class="text-center">
+      <a class="btn btn-primary" href="javascript:history.go(-1);">Back</a>
+<?php if (empty($id)) { ?>
+      <input class="btn btn-success" type="submit" name="action" value="Add"/>
+<?php } else { ?>
+      &nbsp;&nbsp;
       <input class="btn btn-danger" type="submit" name="action" value="Delete"/>
       <input class="btn btn-success" type="submit" name="action" value="Save"/>
+<?php } ?>
     </div>
   </form>

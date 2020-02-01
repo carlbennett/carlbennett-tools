@@ -10,7 +10,7 @@ use \CarlBennett\Tools\Libraries\Authentication;
 use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
 use \CarlBennett\Tools\Libraries\User;
 use \CarlBennett\Tools\Libraries\Utility\HTTPForm;
-use \CarlBennett\Tools\Models\Plex\Users\Add as AddModel;
+use \CarlBennett\Tools\Models\Plex\Users\UserForm as UserFormModel;
 
 use \DateTime;
 use \DateTimeZone;
@@ -18,7 +18,7 @@ use \Exception;
 
 class Add extends Controller {
   public function &run(Router &$router, View &$view, array &$args) {
-    $model = new AddModel();
+    $model = new UserFormModel();
     $model->user = Authentication::$user;
 
     $form = $router->getRequestBodyArray();

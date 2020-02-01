@@ -7,7 +7,7 @@ use \CarlBennett\MVC\Libraries\Model;
 use \CarlBennett\MVC\Libraries\Template;
 use \CarlBennett\MVC\Libraries\View;
 
-use \CarlBennett\Tools\Models\Plex\Users\Add as AddModel;
+use \CarlBennett\Tools\Models\Plex\Users\UserForm as UserFormModel;
 
 class AddHtml extends View {
   public function getMimeType() {
@@ -15,7 +15,7 @@ class AddHtml extends View {
   }
 
   public function render(Model &$model) {
-    if (!$model instanceof AddModel) {
+    if (!$model instanceof UserFormModel) {
       throw new IncorrectModelException();
     }
     (new Template($model, 'Plex/Users/Add'))->render();

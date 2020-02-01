@@ -7,7 +7,7 @@ use \CarlBennett\MVC\Libraries\Model;
 use \CarlBennett\MVC\Libraries\Template;
 use \CarlBennett\MVC\Libraries\View;
 
-use \CarlBennett\Tools\Models\Plex\Users\Edit as EditModel;
+use \CarlBennett\Tools\Models\Plex\Users\UserForm as UserFormModel;
 
 class EditHtml extends View {
   public function getMimeType() {
@@ -15,7 +15,7 @@ class EditHtml extends View {
   }
 
   public function render(Model &$model) {
-    if (!$model instanceof EditModel) {
+    if (!$model instanceof UserFormModel) {
       throw new IncorrectModelException();
     }
     (new Template($model, 'Plex/Users/Edit'))->render();
