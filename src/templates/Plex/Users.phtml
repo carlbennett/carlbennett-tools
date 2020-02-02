@@ -41,7 +41,7 @@ require('./header.inc.phtml'); ?>
 <?php } ?>
   <div class="float-right"><a class="btn btn-lg btn-success" href="<?=Common::relativeUrlToAbsolute('/plex/users/add')?>">Add User</a></div>
   <h1><?=$title;?></h1>
-  <table class="table table-hover table-striped">
+  <table id="plex_users" class="table table-hover table-striped">
     <thead class="thead-dark"><tr>
       <th scope="col">Username &amp; Email</th>
       <th scope="col">Added</th>
@@ -84,6 +84,13 @@ require('./header.inc.phtml'); ?>
 <?php } ?>
     </tbody>
   </table>
+<?php ob_start(); ?>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $('#plex_users').DataTable();
+    });
+  </script>
+<?php $_footer_script = ob_get_clean(); ?>
 <?php } ?>
 </div>
 <?php require('./footer.inc.phtml'); ?>
