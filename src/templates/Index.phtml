@@ -5,11 +5,14 @@
   <div class="row">
     <table class="table table-bordered table-hover">
       <thead class="thead-light">
-        <tr><th scope="col">Pattern</th><th scope="col">Controller</th></tr>
+        <tr><th scope="col">Pattern</th><th scope="col">Controller</th><th scope="col">View</th></tr>
       </thead>
       <tbody>
-<?php foreach ($this->getContext()->routes as $route => $controller) { ?>
-        <tr><td><?=$route?></td><td><?=$controller[0]?></td></tr>
+<?php foreach ($this->getContext()->routes as $route => $args) {
+        $controller = $args[0];
+        $view = $args[1];
+?>
+        <tr><td><?=$route?></td><td><?=$controller?></td><td><?=$view?></td></tr>
 <?php } ?>
       </tbody>
     </table>
