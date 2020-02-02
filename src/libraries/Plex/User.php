@@ -119,6 +119,14 @@ class User implements IDatabaseObject {
       Common::$database = DatabaseDriver::getDatabaseObject();
     }
 
+    if (empty($this->id)) {
+      $q = Common::$database->query('SELECT UUID();');
+      if (!$q) return $q;
+
+      $this->id = $q->fetch(PDO::FETCH_NUM)[0];
+      $q->closeCursor();
+    }
+
     $q = Common::$database->prepare('
       INSERT INTO `plex_users` (
         `date_added`, `date_removed`, `email`, `id`, `notes`, `risk`,
