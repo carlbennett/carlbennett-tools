@@ -57,13 +57,15 @@ class Edit extends Controller {
     $model->username = $form->get('username', $model->plex_user->getUsername());
 
     if ($router->getRequestMethod() == 'POST') {
-      $this->post($model, $form);
-      $view->render($model);
-      $model->_responseCode = 303;
-      $model->_responseHeaders['Location'] = Common::relativeUrlToAbsolute(
-        sprintf('/plex/users?id=%s&hl=edit', rawurlencode($model->id))
-      );
-      return $model;
+      $model->error = $this->post($model, $form);
+      if ($model->error === UserFormModel::ERROR_SUCCESS) {
+        $view->render($model);
+        $model->_responseCode = 303;
+        $model->_responseHeaders['Location'] = Common::relativeUrlToAbsolute(
+          sprintf('/plex/users?id=%s&hl=edit', rawurlencode($model->id))
+        );
+        return $model;
+      }
     }
 
     $view->render($model);
@@ -73,7 +75,14 @@ class Edit extends Controller {
 
   protected function post($model, $form) {
     $plex_user = $model->plex_user;
-    if (!$plex_user) return;
+    if (!$plex_user)
+      return UserFormModel::ERROR_NULL_PLEX_USER;
+
+    if (empty($model->username) && empty($model->email))
+      return UserFormModel::ERROR_EMPTY_USERNAME_AND_EMAIL;
+
+    if ($model->risk < 0 || $model->risk > 3)
+      return UserFormModel::ERROR_INVALID_RISK;
 
     $plex_user->setUsername($model->username);
     $plex_user->setEmail($model->email);
@@ -88,6 +97,9 @@ class Edit extends Controller {
       $plex_user->setDateRemoved(null);
     }
 
-    $plex_user->commit();
+    if (!$plex_user->commit())
+      return UserFormModel::ERROR_INTERNAL_ERROR;
+
+    return UserFormModel::ERROR_SUCCESS;
   }
 }

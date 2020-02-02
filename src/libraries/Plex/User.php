@@ -244,12 +244,14 @@ class User implements IDatabaseObject {
     $this->date_removed = $value;
   }
 
-  public function setEmail($value) {
+  public function setEmail($value, $auto_null = true) {
     if (!(is_null($value) || is_string($value))) {
       throw new InvalidArgumentException(
         'value must be null or a string'
       );
     }
+
+    if ($auto_null && is_string($value) && empty($value)) { $value = null; }
 
     if (is_string($value) && strlen($value) > self::MAX_EMAIL) {
       throw new LengthException(sprintf(
@@ -296,12 +298,14 @@ class User implements IDatabaseObject {
     $this->risk = $value;
   }
 
-  public function setUsername($value) {
+  public function setUsername($value, $auto_null = true) {
     if (!(is_null($value) || is_string($value))) {
       throw new InvalidArgumentException(
         'value must be null or a string'
       );
     }
+
+    if ($auto_null && is_string($value) && empty($value)) { $value = null; }
 
     if (is_string($value) && strlen($value) > self::MAX_USERNAME) {
       throw new LengthException(sprintf(
