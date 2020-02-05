@@ -73,11 +73,10 @@
       </tbody>
     </table>
     <div class="text-center">
-      <a class="btn btn-primary" href="javascript:history.go(-1);">Back</a>
+      <a class="btn btn-primary mr-2" href="javascript:history.go(-1);">Back</a>
 <?php if (empty($id)) { ?>
       <input class="btn btn-success" type="submit" name="action" value="Add"/>
 <?php } else { ?>
-      &nbsp;&nbsp;
       <input class="btn btn-danger" type="submit" name="action" value="Delete"/>
       <input class="btn btn-success" type="submit" name="action" value="Save"/>
 <?php } ?>
