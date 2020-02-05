@@ -45,6 +45,7 @@ require('./header.inc.phtml'); ?>
     <thead class="thead-dark"><tr>
       <th scope="col">Username &amp; Email</th>
       <th scope="col">Added</th>
+      <th scope="col">Risk</th>
       <th scope="col"></th>
     </tr></thead>
     <tbody>
@@ -62,24 +63,19 @@ require('./header.inc.phtml'); ?>
           $name = sprintf('%s<br/><span class="text-secondary">%s</span>', $plex_username, $plex_email);
         }
         switch ($risk) {
-          case PlexUser::RISK_UNASSESSED: $risk = array('danger', 'Unassessed'); break;
+          case PlexUser::RISK_UNASSESSED: $risk = array('secondary', 'Unassessed'); break;
           case PlexUser::RISK_LOW: $risk = array('success', 'Low'); break;
           case PlexUser::RISK_MEDIUM: $risk = array('warning', 'Medium'); break;
           case PlexUser::RISK_HIGH: $risk = array('danger', 'High'); break;
           default: $risk = array('info', sprintf('Unknown (%d)', $risk));
         }
-        if (empty($removed)) {
-          $risk = sprintf(' <span class="badge badge-%s">%s Risk</span> ', $risk[0], $risk[1]);
-        } else {
-          $risk = '';
-        }
+        $risk = sprintf(' <span class="badge badge-%s">%s Risk</span> ', $risk[0], $risk[1]);
         ?>
       <tr>
         <td><?=$name?></td>
         <td><time datetime="<?=$user->getDateAdded()->format(DATE_W3C)?>"><?=$user->getDateAdded()->format('D, M jS, Y')?></time></td>
-        <td class="text-right"><?=$risk?><?=$removed?>
-          <a class="btn btn-sm btn-primary" href="<?=Common::relativeUrlToAbsolute('/plex/users/edit?id=' . $id)?>">Edit</a>
-        </td>
+        <td class="text-center"><?=$risk?><?=$removed?></td>
+        <td class="text-right"><a class="btn btn-sm btn-primary" href="<?=Common::relativeUrlToAbsolute('/plex/users/edit?id=' . $id)?>">Edit</a></td>
       </tr>
 <?php } ?>
     </tbody>
@@ -87,7 +83,14 @@ require('./header.inc.phtml'); ?>
 <?php ob_start(); ?>
   <script type="text/javascript">
     $(document).ready(function(){
-      $('#plex_users').DataTable();
+      $('#plex_users').DataTable({
+        "columns": [
+          null,
+          null,
+          null,
+          { "orderable": false }
+        ]
+      });
     });
   </script>
 <?php $_footer_script = ob_get_clean(); ?>
