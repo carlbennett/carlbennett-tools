@@ -1,6 +1,7 @@
 <?php
 namespace CarlBennett\Tools\Templates;
 use \CarlBennett\MVC\Libraries\Common;
+use \CarlBennett\MVC\Libraries\Gravatar;
 use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
 $highlight_id = $this->getContext()->id;
 $highlight_act = $this->getContext()->hl;
@@ -51,6 +52,7 @@ require('./header.inc.phtml'); ?>
     </tr></thead>
     <tbody>
 <?php foreach ($this->getContext()->users as $user) {
+        $avatar = filter_var((new Gravatar($user->getPlexEmail()))->getUrl(32, 'mp'), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $date_added = $user->getDateAdded()->format('D, M jS, Y');
         $id = filter_var($user->getId(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $notes = filter_var($user->getNotes(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -76,7 +78,10 @@ require('./header.inc.phtml'); ?>
         $risk = sprintf(' <span class="badge badge-%s">%s Risk</span> ', $risk[0], $risk[1]);
         ?>
       <tr>
-        <td><?=$name?></td>
+        <td>
+          <div class="d-table-cell align-middle"><img class="mr-2" src="<?=$avatar?>"/></div>
+          <div class="d-table-cell"><?=$name?></div>
+        </td>
         <td><time datetime="<?=$user->getDateAdded()->format(DATE_W3C)?>"><?=$date_added?></time></td>
         <td class="text-center"><?=$risk?><?=$removed?></td>
         <td><?=$notes?></td>
