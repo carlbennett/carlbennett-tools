@@ -1,5 +1,6 @@
 <?php
   namespace CarlBennett\Tools\Templates;
+  use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
   use \CarlBennett\Tools\Models\Plex\Users\UserForm;
 
   $date_added = $plex_user->getDateAdded();
@@ -50,10 +51,10 @@
           <th scope="row" class="align-middle text-right"><label class="m-0" for="risk">Risk</label></th>
           <td>
             <select class="form-control form-control-sm" id="risk" name="risk">
-              <option value="0"<?=($risk === 0 ? ' selected' : '')?> class="bg-danger text-dark">Unassessed</option>
-              <option value="1"<?=($risk === 1 ? ' selected' : '')?> class="bg-success text-dark">Low</option>
-              <option value="2"<?=($risk === 2 ? ' selected' : '')?> class="bg-warning text-dark">Medium</option>
-              <option value="3"<?=($risk === 3 ? ' selected' : '')?> class="bg-danger text-dark">High</option>
+              <option value="<?=PlexUser::RISK_UNASSESSED?>"<?=($risk === PlexUser::RISK_UNASSESSED ? ' selected' : '')?> class="bg-danger text-dark">Unassessed</option>
+              <option value="<?=PlexUser::RISK_LOW?>"<?=($risk === PlexUser::RISK_LOW ? ' selected' : '')?> class="bg-success text-dark">Low</option>
+              <option value="<?=PlexUser::RISK_MEDIUM?>"<?=($risk === PlexUser::RISK_MEDIUM ? ' selected' : '')?> class="bg-warning text-dark">Medium</option>
+              <option value="<?=PlexUser::RISK_HIGH?>"<?=($risk === PlexUser::RISK_HIGH ? ' selected' : '')?> class="bg-danger text-dark">High</option>
             </select>
           </td>
         </tr>
