@@ -38,6 +38,7 @@ class User implements IDatabaseObject {
   protected $id;
   protected $notes;
   protected $risk;
+  protected $user_id;
   protected $username;
 
   public function __construct($value) {
@@ -76,7 +77,7 @@ class User implements IDatabaseObject {
     $q = Common::$database->prepare('
       SELECT
         `date_added`, `date_removed`, `email`, UuidFromBin(`id`) AS `id`,
-        `notes`, `risk`, `username`
+        `notes`, `risk`, `user_id`, `username`
       FROM `plex_users` WHERE id = UuidToBin(:id) LIMIT 1;
     ');
     $q->bindParam(':id', $id, PDO::PARAM_STR);
@@ -109,6 +110,7 @@ class User implements IDatabaseObject {
     $this->setId($value->id);
     $this->setNotes($value->notes);
     $this->setRisk($value->risk);
+    $this->setUserId($value->user_id);
     $this->setUsername($value->username);
   }
 
@@ -130,12 +132,14 @@ class User implements IDatabaseObject {
     $q = Common::$database->prepare('
       INSERT INTO `plex_users` (
         `date_added`, `date_removed`, `email`, `id`, `notes`, `risk`,
-        `username`
+        `user_id`, `username`
       ) VALUES (
-        :added, :removed, :email, UuidToBin(:id), :notes, :risk, :username
+        :added, :removed, :email, UuidToBin(:id), :notes, :risk, :user_id,
+        :username
       ) ON DUPLICATE KEY UPDATE
         `date_added` = :added, `date_removed` = :removed, `email` = :email,
-        `notes` = :notes, `risk` = :risk, `username` = :username
+        `notes` = :notes, `risk` = :risk, `user_id` = :user_id,
+        `username` = :username
       ;
     ');
 
@@ -160,6 +164,10 @@ class User implements IDatabaseObject {
     $q->bindParam(':notes', $this->notes, PDO::PARAM_STR);
     $q->bindParam(':risk', $this->risk, PDO::PARAM_INT);
 
+    $q->bindParam(':user_id', $this->user_id, (
+      is_null($this->user_id) ? PDO::PARAM_NULL : PDO::PARAM_STR
+    ));
+
     $q->bindParam(':username', $this->username, (
       is_null($this->username) ? PDO::PARAM_NULL : PDO::PARAM_STR
     ));
@@ -179,7 +187,7 @@ class User implements IDatabaseObject {
     $q = Common::$database->prepare('
       SELECT
         `date_added`, `date_removed`, `email`, UuidFromBin(`id`) AS `id`,
-        `notes`, `risk`, `username`
+        `notes`, `risk`, `user_id`, `username`
       FROM `plex_users`
       ORDER BY `date_added`, `username`, `email`;
     ');
@@ -218,6 +226,11 @@ class User implements IDatabaseObject {
 
   public function getRisk() {
     return $this->risk;
+  }
+
+  /* Retrieves the primary user id associated with this plex user. */
+  public function getUserId() {
+    return $this->user_id;
   }
 
   public function getUsername() {
@@ -296,6 +309,17 @@ class User implements IDatabaseObject {
     }
 
     $this->risk = $value;
+  }
+
+  public function setUserId($value) {
+    if (!(is_null($value) || is_string($value)
+      || preg_match(self::UUID_REGEX, $value) === 1)) {
+      throw new InvalidArgumentException(
+        'value must be null or a string in UUID format'
+      );
+    }
+
+    $this->user_id = $value;
   }
 
   public function setUsername($value, $auto_null = true) {
