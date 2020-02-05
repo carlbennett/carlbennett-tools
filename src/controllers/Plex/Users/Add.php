@@ -20,13 +20,14 @@ use \Exception;
 class Add extends Controller {
   public function &run(Router &$router, View &$view, array &$args) {
     $model = new UserFormModel();
-    $model->user = Authentication::$user;
+    $model->active_user = Authentication::$user;
 
     $form = $router->getRequestBodyArray();
     $query = $router->getRequestQueryArray();
 
-    if (!$model->user ||
-      !($model->user->getOptionsBitmask() & User::OPTION_ACL_PLEX_USERS)) {
+    if (!($model->active_user && (
+      $model->active_user->getOptionsBitmask() & User::OPTION_ACL_PLEX_USERS
+    ))) {
       $view->render($model);
       $model->_responseCode = 401;
       return $model;

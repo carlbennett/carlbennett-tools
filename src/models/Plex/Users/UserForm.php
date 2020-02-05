@@ -13,13 +13,13 @@ class UserForm extends Model {
   const ERROR_INVALID_RISK = 4;
 
   public $action;
+  public $active_user;
   public $email;
   public $error;
   public $id;
   public $notes;
   public $plex_user;
   public $risk;
-  public $user;
   public $username;
 
 }

@@ -1,14 +1,14 @@
 <?php
 namespace CarlBennett\Tools\Templates;
 $title = 'Edit Plex User';
+$active_user = $this->getContext()->active_user;
 $plex_user = $this->getContext()->plex_user;
-$user = $this->getContext()->user;
 require('./header.inc.phtml');
 ?>
 <div class="container">
   <h1><?=$title;?></h1>
 <?php
-if (!$user) {
+if (!$active_user) {
   require('./LoginRequired.inc.phtml');
 } else if (!$plex_user) {
   require('./Plex/Users/UserNotFound.inc.phtml');
