@@ -41,16 +41,19 @@ require('./header.inc.phtml'); ?>
 <?php } ?>
   <div class="float-right"><a class="btn btn-lg btn-success" href="<?=Common::relativeUrlToAbsolute('/plex/users/add')?>">Add User</a></div>
   <h1><?=$title;?></h1>
-  <table id="plex_users" class="table table-hover table-striped">
+  <table id="plex_users" class="nowrap table table-hover table-striped w-100">
     <thead class="thead-dark"><tr>
       <th scope="col">Username &amp; Email</th>
       <th scope="col">Added</th>
       <th scope="col">Risk</th>
+      <th scope="col">Notes</th>
       <th scope="col"></th>
     </tr></thead>
     <tbody>
 <?php foreach ($this->getContext()->users as $user) {
+        $date_added = $user->getDateAdded()->format('D, M jS, Y');
         $id = filter_var($user->getId(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $notes = filter_var($user->getNotes(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $plex_email = filter_var($user->getPlexEmail(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $plex_username = filter_var($user->getPlexUsername(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $removed = (!is_null($user->getDateRemoved()) ? ' <span class="badge badge-danger">Removed</span> ' : '');
@@ -62,6 +65,7 @@ require('./header.inc.phtml'); ?>
         } else {
           $name = sprintf('%s<br/><span class="text-secondary">%s</span>', $plex_username, $plex_email);
         }
+        if (empty($notes)) { $notes = '<em>&ndash;</em>'; }
         switch ($risk) {
           case PlexUser::RISK_UNASSESSED: $risk = array('secondary', 'Unassessed'); break;
           case PlexUser::RISK_LOW: $risk = array('success', 'Low'); break;
@@ -73,8 +77,9 @@ require('./header.inc.phtml'); ?>
         ?>
       <tr>
         <td><?=$name?></td>
-        <td><time datetime="<?=$user->getDateAdded()->format(DATE_W3C)?>"><?=$user->getDateAdded()->format('D, M jS, Y')?></time></td>
+        <td><time datetime="<?=$user->getDateAdded()->format(DATE_W3C)?>"><?=$date_added?></time></td>
         <td class="text-center"><?=$risk?><?=$removed?></td>
+        <td><?=$notes?></td>
         <td class="text-right"><a class="btn btn-sm btn-primary" href="<?=Common::relativeUrlToAbsolute('/plex/users/edit?id=' . $id)?>">Edit</a></td>
       </tr>
 <?php } ?>
@@ -88,9 +93,11 @@ require('./header.inc.phtml'); ?>
           { responsivePriority: 1, targets: 0 },
           { responsivePriority: 3, targets: 1 },
           { responsivePriority: 2, targets: 2 },
-          { responsivePriority: 1, targets: 3 }
+          { responsivePriority: 4, targets: 3 },
+          { responsivePriority: 1, targets: 4 }
         ],
         "columns": [
+          null,
           null,
           null,
           null,
