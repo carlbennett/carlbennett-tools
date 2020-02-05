@@ -5,11 +5,11 @@
 
   $date_added = $plex_user->getDateAdded();
   $date_removed = $plex_user->getDateRemoved();
-  $email = filter_var($this->getContext()->email, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
   $id = $this->getContext()->id;
   $notes = filter_var($this->getContext()->notes, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+  $plex_email = filter_var($this->getContext()->plex_email, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+  $plex_username = filter_var($this->getContext()->plex_username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
   $risk = $this->getContext()->risk;
-  $username = filter_var($this->getContext()->username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
   $fmt = 'D, M j, Y g:i A T';
 
@@ -40,12 +40,12 @@
     <table class="table table-borderless table-hover">
       <thead></thead><tbody>
         <tr>
-          <th scope="row" class="align-middle text-right"><label class="m-0" for="username">Username</label></th>
-          <td><input class="form-control form-control-sm" type="text" id="username" name="username" placeholder="Enter the username here" value="<?=$username?>"/></td>
+          <th scope="row" class="align-middle text-right"><label class="m-0" for="plex_username">Username</label></th>
+          <td><input class="form-control form-control-sm" type="text" id="plex_username" name="plex_username" placeholder="Enter the Plex username here" value="<?=$plex_username?>"/></td>
         </tr>
         <tr>
-          <th scope="row" class="align-middle text-right"><label class="m-0" for="email">Email address</label></th>
-          <td><input class="form-control form-control-sm" type="email" id="email" name="email" placeholder="Enter the email address here" value="<?=$email?>"/></td>
+          <th scope="row" class="align-middle text-right"><label class="m-0" for="plex_email">Email address</label></th>
+          <td><input class="form-control form-control-sm" type="email" id="plex_email" name="plex_email" placeholder="Enter the Plex email address here" value="<?=$plex_email?>"/></td>
         </tr>
         <tr>
           <th scope="row" class="align-middle text-right"><label class="m-0" for="risk">Risk</label></th>

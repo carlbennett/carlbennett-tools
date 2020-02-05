@@ -11,8 +11,8 @@ if (!empty($highlight_id)) {
     $highlight_user = null;
   }
   if ($highlight_user) {
-    $highlight_user_email = $highlight_user->getEmail();
-    $highlight_user_name = $highlight_user->getUsername();
+    $highlight_user_email = $highlight_user->getPlexEmail();
+    $highlight_user_name = $highlight_user->getPlexUsername();
     if (empty($highlight_user_name) && !empty($highlight_user_email)) {
       $highlight_name = $highlight_user_email;
     } else if (!empty($highlight_user_name) && empty($highlight_user_email)) {
@@ -50,16 +50,16 @@ require('./header.inc.phtml'); ?>
     <tbody>
 <?php foreach ($this->getContext()->users as $user) {
         $id = filter_var($user->getId(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $username = filter_var($user->getUsername(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $email = filter_var($user->getEmail(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $plex_email = filter_var($user->getPlexEmail(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $plex_username = filter_var($user->getPlexUsername(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $removed = (!is_null($user->getDateRemoved()) ? ' <span class="badge badge-danger">Removed</span> ' : '');
         $risk = $user->getRisk();
-        if (empty($username) && !empty($email)) {
-          $name = $email;
-        } else if (!empty($username) && empty($email)) {
-          $name = $username;
+        if (empty($plex_username) && !empty($plex_email)) {
+          $name = $plex_email;
+        } else if (!empty($plex_username) && empty($plex_email)) {
+          $name = $plex_username;
         } else {
-          $name = sprintf('%s<br/><span class="text-secondary">%s</span>', $username, $email);
+          $name = sprintf('%s<br/><span class="text-secondary">%s</span>', $plex_username, $plex_email);
         }
         switch ($risk) {
           case PlexUser::RISK_UNASSESSED: $risk = array('danger', 'Unassessed'); break;

@@ -36,10 +36,14 @@ class Add extends Controller {
     $model->plex_user = new PlexUser(null);
     $form = new HTTPForm($form);
 
-    $model->username = $form->get('username', $model->plex_user->getUsername());
-    $model->email = $form->get('email', $model->plex_user->getEmail());
-    $model->risk = $form->get('risk', $model->plex_user->getRisk());
     $model->notes = $form->get('notes', $model->plex_user->getNotes());
+    $model->plex_email = $form->get(
+      'plex_email', $model->plex_user->getPlexEmail()
+    );
+    $model->plex_username = $form->get(
+      'plex_username', $model->plex_user->getPlexUsername()
+    );
+    $model->risk = $form->get('risk', $model->plex_user->getRisk());
 
     if ($router->getRequestMethod() == 'POST') {
       $model->error = $this->post($model, $form);
@@ -63,17 +67,17 @@ class Add extends Controller {
     if (!$plex_user)
       return UserFormModel::ERROR_NULL_PLEX_USER;
 
-    if (empty($model->username) && empty($model->email))
+    if (empty($model->plex_username) && empty($model->plex_email))
       return UserFormModel::ERROR_EMPTY_USERNAME_AND_EMAIL;
 
     if ($model->risk < 0 || $model->risk > 3)
       return UserFormModel::ERROR_INVALID_RISK;
 
-    $plex_user->setUsername($model->username);
-    $plex_user->setEmail($model->email);
-    $plex_user->setRisk($model->risk);
-    $plex_user->setNotes($model->notes);
     $plex_user->setDateAdded(new DateTime('now', new DateTimeZone('Etc/UTC')));
+    $plex_user->setNotes($model->notes);
+    $plex_user->setPlexEmail($model->plex_email);
+    $plex_user->setPlexUsername($model->plex_username);
+    $plex_user->setRisk($model->risk);
 
     if (!$plex_user->commit())
       return UserFormModel::ERROR_INTERNAL_ERROR;
