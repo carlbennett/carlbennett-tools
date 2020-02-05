@@ -5,6 +5,7 @@ namespace CarlBennett\Tools\Libraries\Plex;
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\MVC\Libraries\DatabaseDriver;
 use \CarlBennett\Tools\Libraries\IDatabaseObject;
+use \CarlBennett\Tools\Libraries\BaseUser;
 
 use \DateTime;
 use \DateTimeZone;
@@ -76,7 +77,8 @@ class User implements IDatabaseObject {
 
     $q = Common::$database->prepare('
       SELECT `date_added`, `date_removed`, UuidFromBin(`id`) AS `id`, `notes`,
-             `plex_email`, `plex_username`, `risk`, `user_id`
+             `plex_email`, `plex_username`, `risk`,
+             UuidFromBin(`user_id`) AS `user_id`
       FROM `plex_users` WHERE `id` = UuidToBin(:id) LIMIT 1;
     ');
     $q->bindParam(':id', $id, PDO::PARAM_STR);
@@ -134,11 +136,11 @@ class User implements IDatabaseObject {
         `plex_username`, `risk`, `user_id`
       ) VALUES (
         :added, :removed, UuidToBin(:id), :notes, :plex_email, :plex_username,
-        :risk, :user_id
+        :risk, UuidToBin(:user_id)
       ) ON DUPLICATE KEY UPDATE
         `date_added` = :added, `date_removed` = :removed, `notes` = :notes,
         `plex_email` = :plex_email, `plex_username` = :plex_username,
-        `risk` = :risk, `user_id` = :user_id
+        `risk` = :risk, `user_id` = UuidToBin(:user_id)
       ;
     ');
 
@@ -186,7 +188,8 @@ class User implements IDatabaseObject {
 
     $q = Common::$database->prepare('
       SELECT `date_added`, `date_removed`, UuidFromBin(`id`) AS `id`, `notes`,
-             `plex_email`, `plex_username`, `risk`, `user_id`
+             `plex_email`, `plex_username`, `risk`,
+             UuidFromBin(`user_id`) AS `user_id`
       FROM `plex_users` ORDER BY `date_added`, `plex_username`, `plex_email`;
     ');
 
@@ -230,7 +233,12 @@ class User implements IDatabaseObject {
     return $this->risk;
   }
 
-  /* Retrieves the primary user id associated with this plex user. */
+  public function getUser() {
+    return (
+      is_null($this->user_id) ? $this->user_id : new BaseUser($this->user_id)
+    );
+  }
+
   public function getUserId() {
     return $this->user_id;
   }
@@ -327,6 +335,12 @@ class User implements IDatabaseObject {
     }
 
     $this->risk = $value;
+  }
+
+  public function setUser(BaseUser $value) {
+    return $this->setUserId(
+      is_null($value) ? $value : $value->getId()
+    );
   }
 
   public function setUserId($value) {

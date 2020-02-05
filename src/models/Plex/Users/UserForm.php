@@ -14,12 +14,13 @@ class UserForm extends Model {
 
   public $action;
   public $active_user;
-  public $email;
   public $error;
   public $id;
   public $notes;
+  public $plex_email;
   public $plex_user;
+  public $plex_username;
   public $risk;
-  public $username;
+  public $user_id;
 
 }

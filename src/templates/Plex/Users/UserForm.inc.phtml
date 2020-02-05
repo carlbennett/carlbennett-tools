@@ -10,6 +10,7 @@
   $plex_email = filter_var($this->getContext()->plex_email, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
   $plex_username = filter_var($this->getContext()->plex_username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
   $risk = $this->getContext()->risk;
+  $user_id = $this->getContext()->user_id;
 
   $fmt = 'D, M j, Y g:i A T';
 
@@ -46,6 +47,10 @@
         <tr>
           <th scope="row" class="align-middle text-right"><label class="m-0" for="plex_email">Email address</label></th>
           <td><input class="form-control form-control-sm" type="email" id="plex_email" name="plex_email" placeholder="Enter the Plex email address here" value="<?=$plex_email?>"/></td>
+        </tr>
+        <tr>
+          <th scope="row" class="align-middle text-right"><label class="m-0" for="user_id">Linked user</label></th>
+          <td><input class="form-control form-control-sm" type="text" id="user_id" _id="user_id" placeholder="Enter the user id to link to here" value="<?=$user_id?>"/></td>
         </tr>
         <tr>
           <th scope="row" class="align-middle text-right"><label class="m-0" for="risk">Risk</label></th>

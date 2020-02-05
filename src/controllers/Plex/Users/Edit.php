@@ -60,6 +60,7 @@ class Edit extends Controller {
       'plex_username', $model->plex_user->getPlexUsername()
     );
     $model->risk = $form->get('risk', $model->plex_user->getRisk());
+    $model->user_id = $form->get('user_id', $model->plex_user->getUserId());
 
     if ($router->getRequestMethod() == 'POST') {
       $model->error = $this->post($model, $form);
@@ -89,10 +90,14 @@ class Edit extends Controller {
     if ($model->risk < 0 || $model->risk > 3)
       return UserFormModel::ERROR_INVALID_RISK;
 
+    if (is_string($model->user_id) && empty($model->user_id))
+      $model->user_id = null;
+
     $plex_user->setNotes($model->notes);
     $plex_user->setPlexEmail($model->plex_email);
     $plex_user->setPlexUsername($model->plex_username);
     $plex_user->setRisk($model->risk);
+    $plex_user->setUserId($model->user_id);
 
     if ($model->action == 'Delete') {
       $plex_user->setDateRemoved(

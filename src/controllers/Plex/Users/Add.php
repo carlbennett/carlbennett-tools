@@ -44,6 +44,7 @@ class Add extends Controller {
       'plex_username', $model->plex_user->getPlexUsername()
     );
     $model->risk = $form->get('risk', $model->plex_user->getRisk());
+    $model->user_id = $form->get('user_id', $model->plex_user->getUserId());
 
     if ($router->getRequestMethod() == 'POST') {
       $model->error = $this->post($model, $form);
@@ -78,6 +79,7 @@ class Add extends Controller {
     $plex_user->setPlexEmail($model->plex_email);
     $plex_user->setPlexUsername($model->plex_username);
     $plex_user->setRisk($model->risk);
+    $plex_user->setUserId($model->user_id);
 
     if (!$plex_user->commit())
       return UserFormModel::ERROR_INTERNAL_ERROR;
