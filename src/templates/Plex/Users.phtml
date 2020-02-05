@@ -79,13 +79,13 @@ require('./header.inc.phtml'); ?>
         ?>
       <tr>
         <td>
-          <div class="d-table-cell align-middle"><img class="mr-2" src="<?=$avatar?>"/></div>
-          <div class="d-table-cell"><?=$name?></div>
+          <div class="d-table-cell align-middle"><img class="rounded mr-2" src="<?=$avatar?>"/></div>
+          <div class="d-table-cell align-middle"><?=$name?></div>
         </td>
-        <td><time datetime="<?=$user->getDateAdded()->format(DATE_W3C)?>"><?=$date_added?></time></td>
-        <td class="text-center"><?=$risk?><?=$removed?></td>
-        <td><?=$notes?></td>
-        <td class="text-right"><a class="btn btn-sm btn-primary" href="<?=Common::relativeUrlToAbsolute('/plex/users/edit?id=' . $id)?>">Edit</a></td>
+        <td class="align-middle"><time datetime="<?=$user->getDateAdded()->format(DATE_W3C)?>"><?=$date_added?></time></td>
+        <td class="align-middle text-center"><?=$risk?><?=$removed?></td>
+        <td class="align-middle"><?=$notes?></td>
+        <td class="align-middle text-right"><a class="btn btn-sm btn-primary" href="<?=Common::relativeUrlToAbsolute('/plex/users/edit?id=' . $id)?>">Edit</a></td>
       </tr>
 <?php } ?>
     </tbody>
