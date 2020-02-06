@@ -17,7 +17,8 @@ use \UnexpectedValueException;
 
 class User implements IDatabaseObject {
 
-  const DEFAULT_OPTION = 0x00000000;
+  const DEFAULT_OPTION   = 0x00000000;
+  const DEFAULT_TIMEZONE = 'America/Chicago';
 
   const MAX_DISPLAY_NAME = 191;
   const MAX_EMAIL        = 191;
@@ -40,6 +41,7 @@ class User implements IDatabaseObject {
   protected $id;
   protected $options_bitmask;
   protected $password_hash;
+  protected $timezone;
 
   public function __construct($value) {
     if (is_null($value) || is_string($value)) {
@@ -78,7 +80,7 @@ class User implements IDatabaseObject {
     $q = Common::$database->prepare('
       SELECT
         `date_added`, `display_name`, `email`, UuidFromBin(`id`) AS `id`,
-        `options_bitmask`, `password_hash`
+        `options_bitmask`, `password_hash`, `timezone`
       FROM `users` WHERE id = UuidToBin(:id) LIMIT 1;
     ');
     $q->bindParam(':id', $id, PDO::PARAM_STR);
@@ -109,6 +111,7 @@ class User implements IDatabaseObject {
     $this->setName($value->display_name);
     $this->setOptionsBitmask($value->options_bitmask);
     $this->setPasswordHash($value->password_hash);
+    $this->setTimezone($value->timezone);
   }
 
   public function checkPassword(string $password) {
@@ -153,7 +156,7 @@ class User implements IDatabaseObject {
     $q = Common::$database->prepare('
       SELECT
         `date_added`, `display_name`, `email`, UuidFromBin(`id`) AS `id`,
-        `options_bitmask`, `password_hash`
+        `options_bitmask`, `password_hash`, `timezone`
       FROM `users`
       ORDER BY `date_added`, `display_name`, `email`;
     ');
@@ -178,7 +181,7 @@ class User implements IDatabaseObject {
     $q = Common::$database->prepare('
       SELECT
         `date_added`, `display_name`, `email`, UuidFromBin(`id`) AS `id`,
-        `options_bitmask`, `password_hash`
+        `options_bitmask`, `password_hash`, `timezone`
       FROM `users` WHERE `email` = :email;
     ');
     $q->bindParam(':email', $value, PDO::PARAM_STR);
@@ -218,6 +221,10 @@ class User implements IDatabaseObject {
 
   public function getPasswordHash() {
     return $this->password_hash;
+  }
+
+  public function getTimezone() {
+    return $this->timezone;
   }
 
   public function setDateAdded(DateTime $value) {
@@ -291,6 +298,18 @@ class User implements IDatabaseObject {
     }
 
     $this->password_hash = $value;
+  }
+
+  public function setTimezone(string $value) {
+    if (!is_string($value)) {
+      throw new InvalidArgumentException('value must be a string');
+    }
+
+    if (empty($value)) {
+      throw new LengthException('value must be non-empty');
+    }
+
+    $this->timezone = $value;
   }
 
 }
