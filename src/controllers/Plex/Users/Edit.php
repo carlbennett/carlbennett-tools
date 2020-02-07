@@ -4,6 +4,7 @@ namespace CarlBennett\Tools\Controllers\Plex\Users;
 
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\MVC\Libraries\Controller;
+use \CarlBennett\MVC\Libraries\DateTime;
 use \CarlBennett\MVC\Libraries\Router;
 use \CarlBennett\MVC\Libraries\View;
 
@@ -13,7 +14,6 @@ use \CarlBennett\Tools\Libraries\User;
 use \CarlBennett\Tools\Libraries\Utility\HTTPForm;
 use \CarlBennett\Tools\Models\Plex\Users\UserForm as UserFormModel;
 
-use \DateTime;
 use \DateTimeZone;
 use \Exception;
 
