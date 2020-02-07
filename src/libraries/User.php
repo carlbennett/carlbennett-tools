@@ -235,6 +235,10 @@ class User implements IDatabaseObject {
     return $this->timezone;
   }
 
+  public function getTimezoneObject() {
+    return new DateTimeZone($this->timezone);
+  }
+
   public function setDateAdded(DateTime $value) {
     if (!$value instanceof DateTime) {
       throw new InvalidArgumentException(
