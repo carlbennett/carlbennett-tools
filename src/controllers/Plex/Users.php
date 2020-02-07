@@ -15,10 +15,10 @@ use \CarlBennett\Tools\Models\Plex\Users as UsersModel;
 class Users extends Controller {
   public function &run(Router &$router, View &$view, array &$args) {
     $model = new UsersModel();
+    $model->active_user = Authentication::$user;
 
-    $user = Authentication::$user;
-
-    if (!$user || !($user->getOptionsBitmask() & User::OPTION_ACL_PLEX_USERS)) {
+    if (!$model->active_user
+      || !$model->active_user->getOption(User::OPTION_ACL_PLEX_USERS)) {
       $model->users = false;
     } else {
       $model->users = PlexUser::getAll();

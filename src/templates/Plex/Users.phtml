@@ -3,6 +3,7 @@ namespace CarlBennett\Tools\Templates;
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\MVC\Libraries\Gravatar;
 use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
+use \DateTimeZone;
 $highlight_id = $this->getContext()->id;
 $highlight_act = $this->getContext()->hl;
 if (!empty($highlight_id)) {
@@ -35,6 +36,7 @@ require('./header.inc.phtml'); ?>
   <h1><?=$title;?></h1>
   <?php require('./LoginRequired.inc.phtml'); ?>
 <?php } else { ?>
+<?php $tz = $this->getContext()->active_user->getTimezoneObject(); ?>
 <?php if (!empty($highlight_name) && !empty($highlight_act)) { ?>
   <div class="alert alert-info">
     The Plex user <strong><?=$highlight_name?></strong> was <?=$highlight_act?>.
@@ -53,14 +55,13 @@ require('./header.inc.phtml'); ?>
     <tbody>
 <?php foreach ($this->getContext()->users as $user) {
         $avatar = filter_var((new Gravatar($user->getPlexEmail()))->getUrl(32, 'mp'), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $date_added = array($user->getDateAdded()->format('D, M jS, Y'), $user->getDateAdded()->format('g:i A T'));
+        $date_added = array($user->getDateAdded()->format('D, M jS, Y', $tz), $user->getDateAdded()->format('g:i A T', $tz));
         $id = filter_var($user->getId(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $notes = filter_var($user->getNotes(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $plex_email = filter_var($user->getPlexEmail(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $plex_username = filter_var($user->getPlexUsername(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $removed = (!is_null($user->getDateRemoved()) ? ' <span class="badge badge-danger">Removed</span> ' : '');
         $risk = $user->getRisk();
-        if ($date_added[1] == '12:00 AM UTC') { $date_added[1] = ''; }
         if (empty($plex_username) && !empty($plex_email)) {
           $name = $plex_email;
         } else if (!empty($plex_username) && empty($plex_email)) {
@@ -83,7 +84,7 @@ require('./header.inc.phtml'); ?>
           <div class="d-table-cell align-middle"><img class="rounded mr-2" src="<?=$avatar?>"/></div>
           <div class="d-table-cell align-middle"><?=$name?></div>
         </td>
-        <td class="align-middle"><time datetime="<?=$user->getDateAdded()->format(DATE_W3C)?>"><?=$date_added[0]?><br/><span class="text-secondary"><?=$date_added[1]?></span></time></td>
+        <td class="align-middle"><time datetime="<?=$user->getDateAdded()->format(DATE_W3C, $tz)?>"><?=$date_added[0]?><br/><span class="text-secondary"><?=$date_added[1]?></span></time></td>
         <td class="align-middle text-center"><?=$risk?><?=$removed?></td>
         <td class="align-middle"><?=$notes?></td>
         <td class="align-middle text-right"><a class="btn btn-sm btn-primary" href="<?=Common::relativeUrlToAbsolute('/plex/users/edit?id=' . $id)?>">Edit</a></td>
