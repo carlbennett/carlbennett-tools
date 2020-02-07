@@ -18,7 +18,7 @@ use \UnexpectedValueException;
 class User implements IDatabaseObject {
 
   const DEFAULT_OPTION   = 0x00000000;
-  const DEFAULT_TIMEZONE = 'America/Chicago';
+  const DEFAULT_TIMEZONE = 'Etc/UTC';
 
   const MAX_DISPLAY_NAME = 191;
   const MAX_EMAIL        = 191;
