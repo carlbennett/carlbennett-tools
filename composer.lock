@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "carlbennett/php-mvc",
-            "version": "2.3.19",
+            "version": "2.3.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/carlbennett/php-mvc.git",
-                "reference": "4af483df9044dba8646af90c135befb6422af5b1"
+                "reference": "86918e42b7ed7f8dafec9a49aa431f2a005ebee3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/carlbennett/php-mvc/zipball/4af483df9044dba8646af90c135befb6422af5b1",
-                "reference": "4af483df9044dba8646af90c135befb6422af5b1",
+                "url": "https://api.github.com/repos/carlbennett/php-mvc/zipball/86918e42b7ed7f8dafec9a49aa431f2a005ebee3",
+                "reference": "86918e42b7ed7f8dafec9a49aa431f2a005ebee3",
                 "shasum": ""
             },
             "require": {
@@ -65,7 +65,7 @@
                 "restful",
                 "system"
             ],
-            "time": "2019-12-28T19:51:31+00:00"
+            "time": "2020-02-07T09:23:29+00:00"
         }
     ],
     "packages-dev": [],
