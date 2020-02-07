@@ -1,40 +1,38 @@
 <?php
-  namespace CarlBennett\Tools\Templates;
-  use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
-  use \CarlBennett\Tools\Models\Plex\Users\UserForm;
+namespace CarlBennett\Tools\Templates;
+use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
+use \CarlBennett\Tools\Models\Plex\Users\UserForm;
 
-  $date_added = $plex_user->getDateAdded();
-  $date_removed = $plex_user->getDateRemoved();
-  $id = $this->getContext()->id;
-  $notes = filter_var($this->getContext()->notes, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-  $plex_email = filter_var($this->getContext()->plex_email, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-  $plex_username = filter_var($this->getContext()->plex_username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-  $risk = $this->getContext()->risk;
-  $user_id = $this->getContext()->user_id;
+$date_added = $plex_user->getDateAdded();
+$date_removed = $plex_user->getDateRemoved();
+$id = $this->getContext()->id;
+$notes = filter_var($this->getContext()->notes, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$plex_email = filter_var($this->getContext()->plex_email, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$plex_username = filter_var($this->getContext()->plex_username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$risk = $this->getContext()->risk;
+$user_id = $this->getContext()->user_id;
 
-  $fmt = 'D, M j, Y g:i A T';
+$tz = $this->getContext()->active_user->getTimezoneObject();
+$fmt = 'D, M j, Y g:i A T';
 
-  $date_added = (!is_null($date_added) ? $date_added->format($fmt) : '<em>(not added)</em>');
-  $date_removed = (!is_null($date_removed) ? $date_removed->format($fmt) : '<em>(not removed)</em>');
+$date_added = (!is_null($date_added) ? $date_added->format($fmt, $tz) : '<em>(not added)</em>');
+$date_removed = (!is_null($date_removed) ? $date_removed->format($fmt, $tz) : '<em>(not removed)</em>');
 
-  $date_added = str_replace('12:00 AM UTC', '', $date_added);
-  $date_removed = str_replace('12:00 AM UTC', '', $date_removed);
+$error = $this->getContext()->error;
+switch ($error) {
+  case UserForm::ERROR_SUCCESS:
+    $error = ''; break;
+  case UserForm::ERROR_INTERNAL_ERROR:
+    $error = 'An internal error occurred while processing the request.'; break;
+  case UserForm::ERROR_NULL_PLEX_USER:
+    $error = 'The Plex user was null during processing of the request.'; break;
+  case UserForm::ERROR_EMPTY_USERNAME_AND_EMAIL:
+    $error = 'The <strong>username</strong> and <strong>email address</strong> cannot both be empty.'; break;
+  case UserForm::ERROR_INVALID_RISK:
+    $error = 'The selected risk option is invalid, choose a proper risk value.'; break;
+}
 
-  $error = $this->getContext()->error;
-  switch ($error) {
-    case UserForm::ERROR_SUCCESS:
-      $error = ''; break;
-    case UserForm::ERROR_INTERNAL_ERROR:
-      $error = 'An internal error occurred while processing the request.'; break;
-    case UserForm::ERROR_NULL_PLEX_USER:
-      $error = 'The Plex user was null during processing of the request.'; break;
-    case UserForm::ERROR_EMPTY_USERNAME_AND_EMAIL:
-      $error = 'The <strong>username</strong> and <strong>email address</strong> cannot both be empty.'; break;
-    case UserForm::ERROR_INVALID_RISK:
-      $error = 'The selected risk option is invalid, choose a proper risk value.'; break;
-  }
-?>
-<?php if (!empty($error)) { ?>
+if (!empty($error)) { ?>
   <div class="alert alert-danger"><?=$error?></div>
 <?php } ?>
   <form method="POST">
