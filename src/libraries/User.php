@@ -215,6 +215,14 @@ class User implements IDatabaseObject {
     return $this->display_name;
   }
 
+  public function getOption(int $value) {
+    if (!is_int($value)) {
+      throw new InvalidArgumentException('value must be an int');
+    }
+
+    return ($this->options_bitmask & $value);
+  }
+
   public function getOptionsBitmask() {
     return $this->options_bitmask;
   }
@@ -278,6 +286,22 @@ class User implements IDatabaseObject {
     }
 
     $this->display_name = $value;
+  }
+
+  public function setOption(int $option, bool $value) {
+    if (!is_int($option)) {
+      throw new InvalidArgumentException('option must be an int');
+    }
+
+    if (!is_bool($value)) {
+      throw new InvalidArgumentException('value must be a bool');
+    }
+
+    if ($value) {
+      $this->options_bitmask |= $option;
+    } else {
+      $this->options_bitmask &= ~$option;
+    }
   }
 
   public function setOptionsBitmask(int $value) {
