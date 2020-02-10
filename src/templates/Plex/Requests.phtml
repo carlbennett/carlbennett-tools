@@ -1,7 +1,17 @@
-<?php namespace CarlBennett\Tools\Templates; $title = 'Plex Requests'; ?>
-<?php require('./header.inc.phtml'); ?>
+<?php
+namespace CarlBennett\Tools\Templates;
+$title = 'Plex Requests';
+$active_user = $this->getContext()->active_user;
+require('./header.inc.phtml');
+?>
 <div class="container">
   <h1><?=$title;?></h1>
-  <p>TODO</p>
+<?php
+if (!$active_user) {
+  require('./LoginRequired.inc.phtml');
+} else {
+  echo '<p>TODO</p>';
+}
+?>
 </div>
-<?php require('./footer.inc.phtml'); ?>
+<?php require('./footer.inc.phtml');
