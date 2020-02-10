@@ -84,6 +84,8 @@ class Add extends Controller {
     if (!$plex_user->commit())
       return UserFormModel::ERROR_INTERNAL_ERROR;
 
+    $model->id = $plex_user->getId();
+
     return UserFormModel::ERROR_SUCCESS;
   }
 }
