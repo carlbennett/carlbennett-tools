@@ -4,7 +4,7 @@
         "This website is currently undergoing routine maintenance and will be back in a little while. Stay tuned for updates."
     ],
     "mysql": {
-        "character_set": "utf8",
+        "character_set": "utf8mb4",
         "database": "carlbennett_tools",
         "password": "sample password",
         "servers": [
