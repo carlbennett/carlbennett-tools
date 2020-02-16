@@ -2,8 +2,16 @@
 namespace CarlBennett\Tools\Templates;
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\Tools\Libraries\Authentication;
-$_header_url = parse_url(getenv('REQUEST_URI'), PHP_URL_PATH);
 $_header_user = Authentication::$user;
+function _header_active($url, $sr) {
+  $current_url = parse_url(getenv('REQUEST_URI'), PHP_URL_PATH);
+  $match = (substr($current_url, 0, strlen($url)) == $url);
+  if (!$match) return '';
+  if ($sr)
+    return ' <span class="sr-only">(current)</span>';
+  else
+    return ' active';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en-US" class="h-100">
@@ -31,20 +39,26 @@ $_header_user = Authentication::$user;
   </button>
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item<?=($_header_url == '/home' ? ' active' : '')?>">
-        <a class="nav-link" href="<?=Common::relativeUrlToAbsolute('/home')?>">Home<?=($_header_url == '/home' ? ' <span class="sr-only">(current)</span>' : '')?></a>
+      <li class="nav-item<?=_header_active('/home', false)?>">
+        <a class="nav-link" href="<?=Common::relativeUrlToAbsolute('/home')?>">Home<?=_header_active('/home', true)?></a>
+      </li>
+      <li class="nav-item dropdown<?=_header_active('/plex/', false)?>">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarPlexDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Plex<?=_header_active('/plex/', true)?>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarPlexDropdown">
+          <a class="dropdown-item<?=_header_active('/plex/requests', false)?>" href="<?=Common::relativeUrlToAbsolute('/plex/requests')?>">Plex Requests<?=_header_active('/plex/requests', true)?></a>
+          <a class="dropdown-item<?=_header_active('/plex/users', false)?>" href="<?=Common::relativeUrlToAbsolute('/plex/users')?>">Plex Users<?=_header_active('/plex/users', true)?></a>
+        </div>
       </li>
       <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Select a Tool
+        <a class="nav-link dropdown-toggle" href="#" id="navbarOtherDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Other
         </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="<?=Common::relativeUrlToAbsolute('/gandalf')?>">Gandalf</a>
+        <div class="dropdown-menu" aria-labelledby="navbarOtherDropdown">
+          <a class="dropdown-item<?=_header_active('/gandalf', false)?>" href="<?=Common::relativeUrlToAbsolute('/gandalf')?>">Gandalf<?=_header_active('/gandalf', true)?></a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="<?=Common::relativeUrlToAbsolute('/plex/requests')?>">Plex Requests</a>
-          <a class="dropdown-item" href="<?=Common::relativeUrlToAbsolute('/plex/users')?>">Plex Users</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="<?=Common::relativeUrlToAbsolute('/remoteaddress')?>">Remote Address</a>
+          <a class="dropdown-item<?=_header_active('/remoteaddress', false)?>" href="<?=Common::relativeUrlToAbsolute('/remoteaddress')?>">Remote Address<?=_header_active('/remoteaddress', true)?></a>
         </div>
       </li>
     </ul>
