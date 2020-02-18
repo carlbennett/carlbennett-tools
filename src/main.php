@@ -70,6 +70,14 @@ function main() {
         $router->addRoute(
             '#^/home$#', 'Index', 'IndexHtml'
         );
+        // URL: /paste
+        $router->addRoute(
+            '#^/paste$#', 'Paste', 'PasteHtml'
+        );
+        // URL: /paste/:id
+        $router->addRoute(
+            '#^/paste/([A-Za-z0-9]+)$#', 'Paste\\View', 'Paste\\ViewHtml'
+        );
         // URL: /plex/requests
         $router->addRoute(
             '#^/plex/requests$#', 'Plex\\Requests', 'Plex\\RequestsHtml'

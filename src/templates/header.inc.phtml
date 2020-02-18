@@ -42,6 +42,9 @@ function _header_active($url, $sr) {
       <li class="nav-item<?=_header_active('/home', false)?>">
         <a class="nav-link" href="<?=Common::relativeUrlToAbsolute('/home')?>">Home<?=_header_active('/home', true)?></a>
       </li>
+      <li class="nav-item<?=_header_active('/paste', false)?>">
+        <a class="nav-link" href="<?=Common::relativeUrlToAbsolute('/paste')?>">Pastebin<?=_header_active('/paste', true)?></a>
+      </li>
       <li class="nav-item dropdown<?=_header_active('/plex/', false)?>">
         <a class="nav-link dropdown-toggle" href="#" id="navbarPlexDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Plex<?=_header_active('/plex/', true)?>
