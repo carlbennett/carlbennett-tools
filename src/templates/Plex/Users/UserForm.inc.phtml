@@ -4,7 +4,7 @@ use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
 use \CarlBennett\Tools\Models\Plex\Users\UserForm;
 
 $date_added = $plex_user->getDateAdded();
-$date_removed = $plex_user->getDateRemoved();
+$date_disabled = $plex_user->getDateDisabled();
 $id = $this->getContext()->id;
 $notes = filter_var($this->getContext()->notes, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $plex_email = filter_var($this->getContext()->plex_email, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -16,7 +16,7 @@ $tz = $this->getContext()->active_user->getTimezoneObject();
 $fmt = 'D, M j, Y g:i A T';
 
 $date_added = (!is_null($date_added) ? $date_added->format($fmt, $tz) : '<em>(not added)</em>');
-$date_removed = (!is_null($date_removed) ? $date_removed->format($fmt, $tz) : '<em>(not removed)</em>');
+$date_disabled = (!is_null($date_disabled) ? $date_disabled->format($fmt, $tz) : '<em>(not disabled)</em>');
 
 $error = $this->getContext()->error;
 switch ($error) {
@@ -70,8 +70,8 @@ if (!empty($error)) { ?>
           <td><?=$date_added?></td>
         </tr>
         <tr>
-          <th scope="row" class="align-middle text-right">Date Removed</th>
-          <td><?=$date_removed?></td>
+          <th scope="row" class="align-middle text-right">Date Disabled</th>
+          <td><?=$date_disabled?></td>
         </tr>
       </tbody>
     </table>
@@ -80,7 +80,7 @@ if (!empty($error)) { ?>
 <?php if (empty($id)) { ?>
       <input class="btn btn-success" type="submit" name="action" value="Add"/>
 <?php } else { ?>
-      <input class="btn btn-danger" type="submit" name="action" value="Delete"/>
+      <input class="btn btn-danger" type="submit" name="action" value="Disable"/>
       <input class="btn btn-success" type="submit" name="action" value="Save"/>
 <?php } ?>
     </div>

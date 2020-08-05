@@ -99,12 +99,12 @@ class Edit extends Controller {
     $plex_user->setRisk($model->risk);
     $plex_user->setUserId($model->user_id);
 
-    if ($model->action == 'Delete') {
-      $plex_user->setDateRemoved(
+    if ($model->action == 'Disable') {
+      $plex_user->setDateDisabled(
         new DateTime('now', new DateTimeZone('Etc/UTC'))
       );
     } else {
-      $plex_user->setDateRemoved(null);
+      $plex_user->setDateDisabled(null);
     }
 
     if (!$plex_user->commit())

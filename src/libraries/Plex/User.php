@@ -34,7 +34,7 @@ class User implements IDatabaseObject {
   private $_id;
 
   protected $date_added;
-  protected $date_removed;
+  protected $date_disabled;
   protected $id;
   protected $notes;
   protected $plex_email;
@@ -76,7 +76,7 @@ class User implements IDatabaseObject {
     }
 
     $q = Common::$database->prepare('
-      SELECT `date_added`, `date_removed`, UuidFromBin(`id`) AS `id`, `notes`,
+      SELECT `date_added`, `date_disabled`, UuidFromBin(`id`) AS `id`, `notes`,
              `plex_email`, `plex_username`, `risk`,
              UuidFromBin(`user_id`) AS `user_id`
       FROM `plex_users` WHERE `id` = UuidToBin(:id) LIMIT 1;
@@ -104,8 +104,8 @@ class User implements IDatabaseObject {
     $tz = new DateTimeZone('Etc/UTC');
 
     $this->setDateAdded(new DateTime($value->date_added), $tz);
-    $this->setDateRemoved(
-      $value->date_removed ? new DateTime($value->date_removed, $tz) : null
+    $this->setDateDisabled(
+      $value->date_disabled ? new DateTime($value->date_disabled, $tz) : null
     );
     $this->setId($value->id);
     $this->setNotes($value->notes);
@@ -132,13 +132,13 @@ class User implements IDatabaseObject {
 
     $q = Common::$database->prepare('
       INSERT INTO `plex_users` (
-        `date_added`, `date_removed`, `id`, `notes`, `plex_email`,
+        `date_added`, `date_disabled`, `id`, `notes`, `plex_email`,
         `plex_username`, `risk`, `user_id`
       ) VALUES (
-        :added, :removed, UuidToBin(:id), :notes, :plex_email, :plex_username,
+        :added, :disabled, UuidToBin(:id), :notes, :plex_email, :plex_username,
         :risk, UuidToBin(:user_id)
       ) ON DUPLICATE KEY UPDATE
-        `date_added` = :added, `date_removed` = :removed, `notes` = :notes,
+        `date_added` = :added, `date_disabled` = :disabled, `notes` = :notes,
         `plex_email` = :plex_email, `plex_username` = :plex_username,
         `risk` = :risk, `user_id` = UuidToBin(:user_id)
       ;
@@ -146,15 +146,15 @@ class User implements IDatabaseObject {
 
     $date_added = $this->date_added->format(self::DATE_SQL);
 
-    $date_removed = (
-      is_null($this->date_removed) ?
-      null : $this->date_removed->format(self::DATE_SQL)
+    $date_disabled = (
+      is_null($this->date_disabled) ?
+      null : $this->date_disabled->format(self::DATE_SQL)
     );
 
     $q->bindParam(':added', $date_added, PDO::PARAM_STR);
 
-    $q->bindParam(':removed', $date_removed, (
-      is_null($date_removed) ? PDO::PARAM_NULL : PDO::PARAM_STR
+    $q->bindParam(':disabled', $date_disabled, (
+      is_null($date_disabled) ? PDO::PARAM_NULL : PDO::PARAM_STR
     ));
 
     $q->bindParam(':id', $this->id, PDO::PARAM_STR);
@@ -187,7 +187,7 @@ class User implements IDatabaseObject {
     }
 
     $q = Common::$database->prepare('
-      SELECT `date_added`, `date_removed`, UuidFromBin(`id`) AS `id`, `notes`,
+      SELECT `date_added`, `date_disabled`, UuidFromBin(`id`) AS `id`, `notes`,
              `plex_email`, `plex_username`, `risk`,
              UuidFromBin(`user_id`) AS `user_id`
       FROM `plex_users` ORDER BY `date_added`, `plex_username`, `plex_email`;
@@ -209,8 +209,8 @@ class User implements IDatabaseObject {
     return $this->date_added;
   }
 
-  public function getDateRemoved() {
-    return $this->date_removed;
+  public function getDateDisabled() {
+    return $this->date_disabled;
   }
 
   public function getId() {
@@ -253,14 +253,14 @@ class User implements IDatabaseObject {
     $this->date_added = $value;
   }
 
-  public function setDateRemoved($value) {
+  public function setDateDisabled($value) {
     if (!(is_null($value) || $value instanceof DateTime)) {
       throw new InvalidArgumentException(
         'value must be null or a DateTime object'
       );
     }
 
-    $this->date_removed = $value;
+    $this->date_disabled = $value;
   }
 
   public function setId(string $value) {
