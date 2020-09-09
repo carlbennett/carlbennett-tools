@@ -2,7 +2,14 @@
 namespace CarlBennett\Tools\Templates;
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\Tools\Libraries\Authentication;
+use \LogicException;
 $_header_user = Authentication::$user;
+if (!isset($title)) {
+  throw new LogicException('template variable not set before include of header template: $title');
+}
+if (!isset($title_suffix)) { /* this should be allowed to be empty, however */
+  $title_suffix = ' &ndash; Carl&apos;s Toolbox';
+}
 function _header_active($url, $sr) {
   $current_url = parse_url(getenv('REQUEST_URI'), PHP_URL_PATH);
   $match = (substr($current_url, 0, strlen($url)) == $url);
@@ -22,12 +29,12 @@ function _header_active($url, $sr) {
     <link rel="stylesheet" href="/a/bootstrap-4.4.1-slate.min.css" integrity="sha384-tfnMnZ6k273p3mDqSKikc9aXSvumltGq76Tbo+VMydpXeD5EDZwbQWo7nbZz+wc9" crossorigin="anonymous"/>
     <link rel="stylesheet" type="text/css" href="/a/datatables.min.css"/>
     <link rel="stylesheet" type="text/css" href="/a/theme.css"/>
-    <title><?=$title?> &ndash; Carl&apos;s Toolbox</title>
+    <title><?=$title . $title_suffix?></title>
 <?php foreach ($this->additional_css as $css) {
     echo "    <link rel=\"stylesheet\" href=\"$css\" type=\"text/css\"/>\n";
 } ?>
 <?php if (isset($style) && !empty($style)) { ?>
-    <style type="text/css"><?php echo $style; ?></style>
+    <style type="text/css"><?=$style?></style>
 <?php } ?>
   </head>
 <body class="d-flex flex-column h-100">
