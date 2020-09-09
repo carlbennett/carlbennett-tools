@@ -1,0 +1,14 @@
+<?php
+namespace CarlBennett\Tools\Templates;
+$title = 'Welcome to Carl&apos;s Plex';
+$active_user = $this->getContext()->active_user;
+require('./header.inc.phtml');
+?>
+<div class="container">
+  <h1><?=$title;?></h1>
+
+  <div class="alert alert-danger">
+    <p class="m-0"><strong>Error:</strong> This webpage is under maintenance.</p>
+  </div>
+</div>
+<?php require('./footer.inc.phtml');

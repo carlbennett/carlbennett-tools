@@ -96,6 +96,10 @@ function main() {
             '#^/plex/users/edit$#',
             'Plex\\Users\\Edit', 'Plex\\Users\\EditHtml'
         );
+        // URL: /plex/welcome
+        $router->addRoute(
+            '#^/plex/welcome$#', 'Plex\\Welcome', 'Plex\\WelcomeHtml'
+        );
         // URL: /remoteaddress /remoteaddress.html
         $router->addRoute(
             '#^/remoteaddress(?:\.html?)?$#',
