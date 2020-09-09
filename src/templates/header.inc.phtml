@@ -59,6 +59,8 @@ function _header_active($url, $sr) {
         <div class="dropdown-menu" aria-labelledby="navbarPlexDropdown">
           <a class="dropdown-item<?=_header_active('/plex/requests', false)?>" href="<?=Common::relativeUrlToAbsolute('/plex/requests')?>">Plex Requests<?=_header_active('/plex/requests', true)?></a>
           <a class="dropdown-item<?=_header_active('/plex/users', false)?>" href="<?=Common::relativeUrlToAbsolute('/plex/users')?>">Plex Users<?=_header_active('/plex/users', true)?></a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item<?=_header_active('/plex/welcome', false)?>" href="<?=Common::relativeUrlToAbsolute('/plex/welcome')?>">Welcome<?=_header_active('/plex/welcome', true)?></a>
         </div>
       </li>
       <li class="nav-item dropdown">
