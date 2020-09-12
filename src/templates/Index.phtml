@@ -1,21 +1,38 @@
-<?php namespace CarlBennett\Tools\Templates; $title = "Tool Index"; ?>
-<?php require("./header.inc.phtml"); ?>
+<?php /* vim: set colorcolumn=0: */
+namespace CarlBennett\Tools\Templates;
+use \CarlBennett\MVC\Libraries\Common;
+$title = 'Tool Overview';
+require("./header.inc.phtml"); ?>
 <div class="container">
-  <h1><?=$title;?></h1>
-  <div class="row">
-    <table class="table table-bordered table-hover table-sm" id="controllers">
-      <thead class="thead-light">
-        <tr><th scope="col">Pattern</th><th scope="col">Controller</th><th scope="col">View</th></tr>
-      </thead>
-      <tbody>
-<?php foreach ($this->getContext()->routes as $route => $args) {
-        $controller = $args[0];
-        $view = $args[1];
-?>
-        <tr><td><?=$route?></td><td><?=$controller?></td><td><?=$view?></td></tr>
-<?php } ?>
-      </tbody>
-    </table>
+  <h3>Select a Tool</h3>
+  <div class="card-columns">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title"><a title="Gandalf Sax Guy 10 Hours" href="<?=Common::relativeUrlToAbsolute('/gandalf')?>">Gandalf</a></h5>
+        <p class="card-text">Gandalf Sax Guy for 10 hours.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title"><a title="Pastebin" href="<?=Common::relativeUrlToAbsolute('/paste')?>">Pastebin</a></h5>
+        <p class="card-text">A quick place to paste stuff.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Plex</h5>
+        <p class="card-text">Access Plex-related stuff.</p>
+        <a class="btn btn-sm btn-primary mr-1" href="<?=Common::relativeUrlToAbsolute('/plex/requests')?>">Requests</a>
+        <a class="btn btn-sm btn-primary mr-3" href="<?=Common::relativeUrlToAbsolute('/plex/users')?>">Users</a>
+        <a class="btn btn-sm btn-primary" href="<?=Common::relativeUrlToAbsolute('/plex/welcome')?>">Welcome</a></span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title"><a title="Remote Address" href="<?=Common::relativeUrlToAbsolute('/remoteaddress')?>">Remote Address</a></h5>
+        <p class="card-text">Show your IP address info.</p>
+      </div>
+    </div>
   </div>
 </div>
 <?php require("./footer.inc.phtml"); ?>
