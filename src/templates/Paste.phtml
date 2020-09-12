@@ -1,7 +1,25 @@
-<?php namespace CarlBennett\Tools\Templates; $title = 'New Paste'; ?>
-<?php require("./header.inc.phtml"); ?>
+<?php
+namespace CarlBennett\Tools\Templates;
+use \DateTimeInterface;
+$title = 'Recent Pastes';
+require("./header.inc.phtml"); ?>
 <div class="container">
   <h1><?=$title?></h1>
-  <p>&ndash;</p>
+  <table class="table table-hover table-striped">
+    <thead><tr><th></th><th>Title</th><th>Created</th><th>Owner</th></tr></thead>
+    <tbody>
+<?php foreach ($this->getContext()->recent_public_pastes as $paste_object) { ?>
+      <tr>
+        <td>
+          <a class="text-info" title="View" href="<?=$paste_object->getURI()?>"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-file-text-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zM5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H5z"/></svg></a>
+          <a class="text-warning" title="Download" href="<?=$paste_object->getURI()?>?dl=1"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-file-zip-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4 0h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm2.5 8.5a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v.938l.4 1.599a1 1 0 0 1-.416 1.074l-.93.62a1 1 0 0 1-1.109 0l-.93-.62a1 1 0 0 1-.415-1.074l.4-1.599V8.5zm2 .938V8.5h-1v.938a1 1 0 0 1-.03.243l-.4 1.598.93.62.93-.62-.4-1.598a1 1 0 0 1-.03-.243zM7.5 3V2h-1V1H8v1h1v1H8v1h1v1H8v1h1v1H7.5V6h-1V5h1V4h-1V3h1z"/></svg></a>
+        </td>
+        <td><a href="<?=$paste_object->getURI()?>"><?=filter_var($paste_object->getTitle(), FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></a></td>
+        <td><?=$paste_object->getDateAdded()->format(DateTimeInterface::RFC7231)?></td>
+        <td>Anonymous</td>
+      </tr>
+<?php } ?>
+    </tbody>
+  </table>
 </div>
 <?php require("./footer.inc.phtml"); ?>
