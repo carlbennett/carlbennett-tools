@@ -1,5 +1,6 @@
 <?php
 namespace CarlBennett\Tools\Templates;
+use \DateTimeInterface;
 $paste_object = $this->getContext()->paste_object;
 $title = (!$paste_object ? 'Paste Not Found' : $paste_object->getTitle());
 require("./header.inc.phtml"); ?>
@@ -19,7 +20,8 @@ require("./header.inc.phtml"); ?>
   </div>
 <?php } else { ?>
   <h1><?=$title?></h1>
-  <p><strong>TODO:</strong> Load paste data.</p>
+  <p class="text-muted"><strong>Created:</strong> <?=$paste_object->getDateAdded()->format(DateTimeInterface::RFC7231)?></p>
+  <textarea class="form-control text-monospace" readonly rows=10><?=filter_var($paste_object->getContent(), FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></textarea>
 <?php } ?>
 </div>
 <?php require("./footer.inc.phtml"); ?>
