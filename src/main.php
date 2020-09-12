@@ -76,7 +76,7 @@ function main() {
         );
         // URL: /paste/:id
         $router->addRoute(
-            '#^/paste/([A-Za-z0-9]+)$#', 'Paste\\View', 'Paste\\ViewHtml'
+            '#^/paste/([A-Za-z0-9\-]+)$#', 'Paste\\View', 'Paste\\ViewHtml'
         );
         // URL: /plex/requests
         $router->addRoute(

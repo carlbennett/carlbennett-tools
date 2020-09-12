@@ -12,6 +12,13 @@ class View extends Controller {
   public function &run(Router &$router, BaseView &$view, array &$args) {
     $model = new PasteModel();
     $model->id = array_shift($args);
+
+    try {
+      $model->paste_object = new PasteObject($model->id);
+    } catch (UnexpectedValueException $e) {
+      $model->paste_object = null;
+    }
+
     $view->render($model);
     $model->_responseCode = 503;
     return $model;
