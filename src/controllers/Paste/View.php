@@ -2,6 +2,7 @@
 
 namespace CarlBennett\Tools\Controllers\Paste;
 
+use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\MVC\Libraries\Controller;
 use \CarlBennett\MVC\Libraries\Router;
 use \CarlBennett\MVC\Libraries\View as BaseView;
@@ -19,8 +20,27 @@ class View extends Controller {
       $model->paste_object = null;
     }
 
-    $view->render($model);
-    $model->_responseCode = 503;
+    $paste =& $model->paste_object;
+
+    $query = $router->getRequestQueryArray();
+    $dl ??= $query['dl'];
+
+    if ($paste && $dl) {
+      $dl_filename = Common::sanitizeForUrl($paste->getTitle());
+      $dl_filename .= '.txt';
+      $model->_responseHeaders['Content-Disposition'] = sprintf(
+        'attachment;filename="%s"', $dl_filename
+      );
+      $model->_responseHeaders['Content-Length'] = (string) strlen($paste->getContent());
+      $model->_responseHeaders['Content-Type'] = $paste->getMimetype();
+      echo $paste->getContent();
+    } else {
+      $view->render($model);
+    }
+
+    $model->_responseCode = (
+      $model->paste_object instanceof PasteObject ? 200 : 404
+    );
     return $model;
   }
 }
