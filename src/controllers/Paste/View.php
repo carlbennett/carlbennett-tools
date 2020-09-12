@@ -8,6 +8,7 @@ use \CarlBennett\MVC\Libraries\Router;
 use \CarlBennett\MVC\Libraries\View as BaseView;
 use \CarlBennett\Tools\Libraries\PasteObject;
 use \CarlBennett\Tools\Models\Paste as PasteModel;
+use \InvalidArgumentException;
 use \UnexpectedValueException;
 
 class View extends Controller {
@@ -17,7 +18,9 @@ class View extends Controller {
 
     try {
       $model->paste_object = new PasteObject($model->id);
-    } catch (UnexpectedValueException $e) {
+    } catch (InvalidArgumentException $e) { // Badly parsed id
+      $model->paste_object = null;
+    } catch (UnexpectedValueException $e) { // Id not found
       $model->paste_object = null;
     }
 
