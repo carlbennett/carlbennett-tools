@@ -23,7 +23,7 @@ class View extends Controller {
     $paste =& $model->paste_object;
 
     $query = $router->getRequestQueryArray();
-    $dl ??= $query['dl'];
+    $dl = (isset($query['dl']) ? $query['dl'] : null);
 
     if ($paste && $dl) {
       $dl_filename = Common::sanitizeForUrl($paste->getTitle());
