@@ -8,6 +8,7 @@ use \CarlBennett\MVC\Libraries\Router;
 use \CarlBennett\MVC\Libraries\View as BaseView;
 use \CarlBennett\Tools\Libraries\PasteObject;
 use \CarlBennett\Tools\Models\Paste as PasteModel;
+use \UnexpectedValueException;
 
 class View extends Controller {
   public function &run(Router &$router, BaseView &$view, array &$args) {
