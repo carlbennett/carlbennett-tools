@@ -2,42 +2,65 @@
 namespace CarlBennett\Tools\Templates;
 use \CarlBennett\Tools\Libraries\User;
 use \DateTimeInterface;
-$title = 'Recent Pastes';
+$title = 'Pastebin';
 require("./header.inc.phtml"); ?>
 <div class="container">
   <h1><?=$title?></h1>
-  <table class="table table-striped" id="recent_pastes">
-    <thead><tr><th>Title</th><th>Created</th><th>Creator</th></tr></thead>
-    <tbody>
+  <section class="m-2" id="recent_pastes">
+    <h3>Recent Pastes</h3>
+    <p class="text-muted">The following are the most recent pastes by date, title, and creator.</p>
+    <table class="table table-striped" id="recent_pastes_tbl">
+      <thead><tr><th>Title</th><th>Created</th><th>Creator</th></tr></thead>
+      <tbody>
 <?php foreach ($this->getContext()->recent_public_pastes as $paste_object) {
-        $paste_object_user = $paste_object->getUser();
-        $creator = (is_null($paste_object_user) ? 'Anonymous' : $paste_object_user->getName());
+          $paste_object_user = $paste_object->getUser();
+          $creator = (is_null($paste_object_user) ? 'Anonymous' : $paste_object_user->getName());
 ?>
-      <tr>
-        <td>
-          <a href="<?=$paste_object->getURI()?>"><?=filter_var($paste_object->getTitle(), FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></a>
-          <a class="ml-1" title="Open in new tab" href="<?=$paste_object->getURI()?>" target="_blank">
-            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-box-arrow-in-up-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd" d="M6.364 13.5a.5.5 0 0 0 .5.5H13.5a1.5 1.5 0 0 0 1.5-1.5v-10A1.5 1.5 0 0 0 13.5 1h-10A1.5 1.5 0 0 0 2 2.5v6.636a.5.5 0 1 0 1 0V2.5a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5H6.864a.5.5 0 0 0-.5.5z"/>
-              <path fill-rule="evenodd" d="M11 5.5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793l-8.147 8.146a.5.5 0 0 0 .708.708L10 6.707V10.5a.5.5 0 0 0 1 0v-5z"/>
-            </svg></a>
-          <a class="ml-1" title="Download" href="<?=$paste_object->getURI() . '?dl=1'?>">
-            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-download" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd" d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-              <path fill-rule="evenodd" d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
-            </svg></a>
-        </td>
-        <td><?=$paste_object->getDateAdded()->format(DateTimeInterface::RFC7231)?></td>
-        <td><?=$creator?></td>
-      </tr>
+        <tr>
+          <td>
+            <!-- Clickable title -->
+            <a href="<?=$paste_object->getURI()?>"><?=filter_var($paste_object->getTitle(), FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></a>
+
+            <!-- Open in new tab link -->
+            <a class="ml-1" title="Open in new tab" href="<?=$paste_object->getURI()?>" target="_blank">
+              <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-box-arrow-in-up-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M6.364 13.5a.5.5 0 0 0 .5.5H13.5a1.5 1.5 0 0 0 1.5-1.5v-10A1.5 1.5 0 0 0 13.5 1h-10A1.5 1.5 0 0 0 2 2.5v6.636a.5.5 0 1 0 1 0V2.5a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5H6.864a.5.5 0 0 0-.5.5z"/>
+                <path fill-rule="evenodd" d="M11 5.5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793l-8.147 8.146a.5.5 0 0 0 .708.708L10 6.707V10.5a.5.5 0 0 0 1 0v-5z"/>
+              </svg></a>
+
+            <!-- Download link -->
+            <a class="ml-1" title="Download" href="<?=$paste_object->getURI() . '?dl=1'?>">
+              <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-download" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                <path fill-rule="evenodd" d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+              </svg></a>
+          </td>
+          <td><time datetime="<?=$paste_object->getDateAdded()->format(DateTimeInterface::RFC3339_EXTENDED)?>"><?=$paste_object->getDateAdded()->format(DateTimeInterface::RFC7231)?></time></td>
+          <td><?=$creator?></td>
+        </tr>
 <?php } ?>
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+  </section>
+  <hr/>
+  <section class="m-2" id="new_paste">
+    <h3>New Paste</h3>
+    <p class="text-muted">Upload a file or paste from your clipboard below.</p>
+    <div class="border border-danger rounded text-danger p-2">
+      <strong>Error:</strong> Component not available. Try again later.
+    </div>
+  </section>
 </div>
 <?php ob_start(); ?>
   <script type="text/javascript">
     $(document).ready(function(){
-      $('#recent_pastes').DataTable();
+      $('#recent_pastes_tbl').DataTable({
+        info: false,
+        language: {"zeroRecords": "No matching pastes found"},
+        lengthChange: false,
+        order: [[1, 'asc'], [0, 'asc'], [2, 'asc']],
+        paging: false
+      });
     });
   </script>
 <?php $_footer_script = ob_get_clean(); ?>
