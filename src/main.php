@@ -7,6 +7,7 @@
  * @copyright 2016-2020 Carl Bennett
  * @license Proprietary
  */
+declare(strict_types=1);
 
 namespace CarlBennett\Tools;
 
