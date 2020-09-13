@@ -4,7 +4,7 @@ namespace CarlBennett\Tools\Libraries;
 
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\MVC\Libraries\DatabaseDriver;
-use \CarlBennett\MVC\Libraries\User;
+use \CarlBennett\Tools\Libraries\User;
 use \CarlBennett\Tools\Libraries\IDatabaseObject;
 
 use \DateTime;

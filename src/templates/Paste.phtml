@@ -1,5 +1,6 @@
 <?php
 namespace CarlBennett\Tools\Templates;
+use \CarlBennett\Tools\Libraries\User;
 use \DateTimeInterface;
 $title = 'Recent Pastes';
 require("./header.inc.phtml"); ?>
@@ -8,7 +9,10 @@ require("./header.inc.phtml"); ?>
   <table class="table table-hover table-striped">
     <thead><tr><th></th><th>Title</th><th>Created</th><th>Owner</th></tr></thead>
     <tbody>
-<?php foreach ($this->getContext()->recent_public_pastes as $paste_object) { ?>
+<?php foreach ($this->getContext()->recent_public_pastes as $paste_object) {
+        $paste_object_user = $paste_object->getUser();
+        $owner = (is_null($paste_object_user) ? 'Anonymous' : $paste_object_user->getName());
+?>
       <tr>
         <td>
           <a class="text-info" title="View" href="<?=$paste_object->getURI()?>"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-file-text-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zM5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H5z"/></svg></a>
@@ -16,7 +20,7 @@ require("./header.inc.phtml"); ?>
         </td>
         <td><a href="<?=$paste_object->getURI()?>"><?=filter_var($paste_object->getTitle(), FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></a></td>
         <td><?=$paste_object->getDateAdded()->format(DateTimeInterface::RFC7231)?></td>
-        <td>Anonymous</td>
+        <td><?=$owner?></td>
       </tr>
 <?php } ?>
     </tbody>
