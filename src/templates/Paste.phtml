@@ -6,7 +6,7 @@ $title = 'Recent Pastes';
 require("./header.inc.phtml"); ?>
 <div class="container">
   <h1><?=$title?></h1>
-  <table class="table table-striped">
+  <table class="table table-striped" id="recent_pastes">
     <thead><tr><th>Title</th><th>Created</th><th>Creator</th></tr></thead>
     <tbody>
 <?php foreach ($this->getContext()->recent_public_pastes as $paste_object) {
@@ -34,4 +34,11 @@ require("./header.inc.phtml"); ?>
     </tbody>
   </table>
 </div>
+<?php ob_start(); ?>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $('#recent_pastes').DataTable();
+    });
+  </script>
+<?php $_footer_script = ob_get_clean(); ?>
 <?php require("./footer.inc.phtml"); ?>
