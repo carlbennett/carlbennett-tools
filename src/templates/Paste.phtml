@@ -1,8 +1,11 @@
-<?php
+<?php /* vim: set colorcolumn=0: */
 namespace CarlBennett\Tools\Templates;
+use \CarlBennett\Tools\Libraries\Authentication;
 use \CarlBennett\Tools\Libraries\User;
+use \DateTime;
 use \DateTimeInterface;
 $title = 'Pastebin';
+$now = new DateTime('now');
 require("./header.inc.phtml"); ?>
 <div class="container">
   <h1><?=$title?></h1>
@@ -13,8 +16,25 @@ require("./header.inc.phtml"); ?>
       <thead><tr><th>Title</th><th>Created</th><th>Creator</th></tr></thead>
       <tbody>
 <?php foreach ($this->getContext()->recent_public_pastes as $paste_object) {
-          $paste_object_user = $paste_object->getUser();
-          $creator = (is_null($paste_object_user) ? 'Anonymous' : $paste_object_user->getName());
+        $paste_object_user = $paste_object->getUser();
+        $paste_object_added = $paste_object->getDateAdded();
+        $diff = $now->diff($paste_object_added);
+        if ($diff->days < 1 && $diff->h < 1 && $diff->i < 1) {
+          $created = $diff->format('%s seconds ago');
+        } else if ($diff->days < 1 && $diff->h < 1) {
+          $created = $diff->format('%i minutes ago');
+        } else if ($diff->days < 1) {
+          $created = $diff->format('%h hours ago');
+        } else if ($diff->days < 2) {
+          $created = 'yesterday';
+        } else {
+          $created = $paste_object_added->format('F j, Y');
+        }
+        if ($created == '1 seconds ago') $created = '1 second ago';
+        if ($created == '1 minutes ago') $created = '1 minute ago';
+        if ($created == '1 hours ago') $created = '1 hour ago';
+        $creator = (is_null($paste_object_user) ? 'Anonymous' : $paste_object_user->getName());
+        if ($paste_object_user == Authentication::$user) $creator .= ' (you)';
 ?>
         <tr>
           <td>
@@ -35,7 +55,7 @@ require("./header.inc.phtml"); ?>
                 <path fill-rule="evenodd" d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
               </svg></a>
           </td>
-          <td><time datetime="<?=$paste_object->getDateAdded()->format(DateTimeInterface::RFC3339_EXTENDED)?>"><?=$paste_object->getDateAdded()->format(DateTimeInterface::RFC7231)?></time></td>
+          <td><time datetime="<?=$paste_object->getDateAdded()->format(DateTimeInterface::RFC3339_EXTENDED)?>"><?=$created?></time></td>
           <td><?=$creator?></td>
         </tr>
 <?php } ?>
@@ -55,11 +75,16 @@ require("./header.inc.phtml"); ?>
   <script type="text/javascript">
     $(document).ready(function(){
       $('#recent_pastes_tbl').DataTable({
-        info: false,
-        language: {"zeroRecords": "No matching pastes found"},
-        lengthChange: false,
-        order: [[1, 'asc'], [0, 'asc'], [2, 'asc']],
-        paging: false
+        'columnDefs': [
+          {'responsivePriority': 1, 'targets': 0},
+          {'responsivePriority': 1, 'type': 'date', 'targets': 1},
+          {'responsivePriority': 1, 'targets': 2},
+        ],
+        'info': false,
+        'language': {'zeroRecords': 'No matching pastes found'},
+        'lengthChange': false,
+        'order': [[1, 'asc'], [0, 'asc'], [2, 'asc']],
+        'paging': false
       });
     });
   </script>
