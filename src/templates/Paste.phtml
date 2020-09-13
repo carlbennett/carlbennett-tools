@@ -7,11 +7,11 @@ require("./header.inc.phtml"); ?>
 <div class="container">
   <h1><?=$title?></h1>
   <table class="table table-hover table-striped">
-    <thead><tr><th></th><th>Title</th><th>Created</th><th>Owner</th></tr></thead>
+    <thead><tr><th></th><th>Title</th><th>Created</th><th>Creator</th></tr></thead>
     <tbody>
 <?php foreach ($this->getContext()->recent_public_pastes as $paste_object) {
         $paste_object_user = $paste_object->getUser();
-        $owner = (is_null($paste_object_user) ? 'Anonymous' : $paste_object_user->getName());
+        $creator = (is_null($paste_object_user) ? 'Anonymous' : $paste_object_user->getName());
 ?>
       <tr>
         <td>
@@ -20,7 +20,7 @@ require("./header.inc.phtml"); ?>
         </td>
         <td><a href="<?=$paste_object->getURI()?>"><?=filter_var($paste_object->getTitle(), FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></a></td>
         <td><?=$paste_object->getDateAdded()->format(DateTimeInterface::RFC7231)?></td>
-        <td><?=$owner?></td>
+        <td><?=$creator?></td>
       </tr>
 <?php } ?>
     </tbody>
