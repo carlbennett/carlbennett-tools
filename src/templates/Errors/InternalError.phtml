@@ -1,0 +1,9 @@
+<?php namespace CarlBennett\Tools\Templates\Errors; $title = 'Internal Error'; ?>
+<?php require('./header.inc.phtml'); ?>
+<div class="container">
+  <div class="alert alert-danger">
+    <h3><?=$this->getContext()->getTitle()?></h3>
+    <p class="mb-0"><?=$this->getContext()->getMessage()?></h3>
+  </div>
+</div>
+<?php require('./footer.inc.phtml'); ?>
