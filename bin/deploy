@@ -1,7 +1,0 @@
-#!/bin/bash
-
-pushd $(dirname $0)/..
-sudo rsync -av --delete-after --exclude-from=.gitignore LICENSE.txt src /var/www/tools.carlbennett.me/
-sudo rsync -av --delete-after etc/config.json /var/www/tools.carlbennett.me/etc/
-sudo rsync -av --delete-after lib /var/www/tools.carlbennett.me/
-popd
