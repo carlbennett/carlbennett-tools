@@ -6,13 +6,14 @@ use \DateTime;
 use \DateTimeInterface;
 $title = 'Pastebin';
 $now = new DateTime('now');
+$error = $this->getContext()->error;
 require("./header.inc.phtml"); ?>
-<div class="container">
+<div id="paste_page" class="container">
   <h1><?=$title?></h1>
   <section class="m-2" id="recent_pastes">
     <h3>Recent Pastes</h3>
     <p class="text-muted">The following are the most recent pastes by date, title, and creator.</p>
-    <table class="table table-striped" id="recent_pastes_tbl">
+    <table class="table table-sm table-striped" id="recent_pastes_tbl">
       <thead><tr><th>Title</th><th>Created</th><th>Creator</th></tr></thead>
       <tbody>
 <?php foreach ($this->getContext()->recent_public_pastes as $paste_object) {
@@ -34,7 +35,7 @@ require("./header.inc.phtml"); ?>
         if ($created == '1 minutes ago') $created = '1 minute ago';
         if ($created == '1 hours ago') $created = '1 hour ago';
         $creator = (is_null($paste_object_user) ? 'Anonymous' : $paste_object_user->getName());
-        if ($paste_object_user == Authentication::$user) $creator .= ' (you)';
+        if (Authentication::$user instanceof User && Authentication::$user == $paste_object_user) $creator .= ' (you)';
 ?>
         <tr>
           <td>
@@ -62,13 +63,145 @@ require("./header.inc.phtml"); ?>
       </tbody>
     </table>
   </section>
-  <hr/>
+  <hr class="border-primary"/>
   <section class="m-2" id="new_paste">
     <h3>New Paste</h3>
-    <p class="text-muted">Upload a file or paste from your clipboard below.</p>
-    <div class="border border-danger rounded text-danger p-2">
-      <strong>Error:</strong> Component not available. Try again later.
-    </div>
+    <form method="POST">
+      <div class="form-group">
+        <p class="text-muted">Upload a file by selecting below.</p>
+        <div class="form-row">
+          <div class="col input-group mb-2">
+            <div class="input-group-prepend">
+              <label class="bg-secondary border border-secondary input-group-text text-white" for="title_file">Title:</label>
+            </div>
+            <input class="bg-primary border border-secondary form-control text-white" type="text" name="title" id="title_file" placeholder="Enter a title" value=""/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="col input-group mt-2 mb-2">
+            <div class="custom-file">
+              <input type="file" class="custom-file-input" id="file" name="file"/>
+              <label class="bg-primary border border-secondary custom-file-label text-white" for="file">Choose file</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="col-lg-5 input-group mt-2 mb-2">
+            <div class="input-group-prepend">
+              <label class="bg-warning border border-warning input-group-text text-white" for="password_file">Password:</label>
+            </div>
+            <input class="bg-primary border border-warning form-control text-white" type="password" name="password" id="password_file" autocomplete="new-password" placeholder="Enter an optional password" value=""/>
+          </div>
+          <div class="col-lg-4 input-group mt-2 mb-2">
+            <div class="input-group-prepend">
+              <label class="bg-danger border border-danger input-group-text text-white" for="expire_file">Expiration:</label>
+            </div>
+            <select class="bg-primary border border-danger form-control text-white" id="expire_file" name="expire">
+              <option value="0">never</option>
+              <option value="60">1 minute</option>
+              <option value="300">5 minutes</option>
+              <option value="900">15 minutes</option>
+              <option value="1800">30 minutes</option>
+              <option value="3600">1 hour</option>
+              <option value="21600">6 hours</option>
+              <option value="43200">12 hours</option>
+              <option value="86400">1 day</option>
+              <option value="259200">3 days</option>
+              <option value="604800">1 week</option>
+              <option value="1209600">2 weeks</option>
+              <option value="2592000">1 month</option>
+              <option value="15552000">6 months</option>
+              <option value="31536000">1 year</option>
+            </select>
+          </div>
+          <div class="col-lg-3 mt-2 mb-2">
+            <input class="btn btn-success float-right" type="submit" value="Upload"/>
+<?php if (Authentication::$user instanceof User) { ?>
+            <div class="custom-control custom-switch">
+              <input type="checkbox" class="custom-control-input" id="anonymous_file" name="anonymous" value="1"/>
+              <label class="custom-control-label" for="anonymous_file">Anonymous</label>
+            </div>
+<?php } ?>
+            <div class="custom-control custom-switch">
+              <input type="checkbox" class="custom-control-input" id="unlisted_file" name="unlisted" value="1"/>
+              <label class="custom-control-label" for="unlisted_file">Unlisted</label>
+            </div>
+          </div>
+        </div>
+      </div>
+<?php if ($error && ($error['fields'] == 'file' || (is_array($error['fields']) && in_array($error['fields'], 'file')))) { ?>
+      <div class="alert alert-<?=$error['color']?>">
+        <p class="alert-text m-0"><?=$error['message']?></p>
+      </div>
+<?php } ?>
+    </form>
+    <hr class="border-primary"/>
+    <form method="POST">
+      <div class="form-group">
+        <p class="text-muted">Or paste text contents below.</p>
+        <div class="form-row">
+          <div class="col input-group mb-2">
+            <div class="input-group-prepend">
+              <label class="bg-secondary border border-secondary input-group-text text-white" for="title_text">Title:</label>
+            </div>
+            <input class="bg-primary border border-secondary form-control text-white" type="text" name="title" id="title_text" placeholder="Enter a title" value=""/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="col mt-2">
+            <textarea id="text" name="text" class="bg-primary border border-secondary mb-2 p-1 rounded text-monospace text-white w-100" style="min-height:300px;"></textarea>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="col-lg-5 input-group mt-2 mb-2">
+            <div class="input-group-prepend">
+              <label class="bg-warning border border-warning input-group-text text-white" for="password_text">Password:</label>
+            </div>
+            <input class="bg-primary border border-warning form-control text-white" type="password" name="password" id="password_text" autocomplete="new-password" placeholder="Enter an optional password" value=""/>
+          </div>
+          <div class="col-lg-4 input-group mt-2 mb-2">
+            <div class="input-group-prepend">
+              <label class="bg-danger border border-danger input-group-text text-white" for="expire_text">Expiration:</label>
+            </div>
+            <select class="bg-primary border border-danger form-control text-white" id="expire_text" name="expire">
+              <option value="0">never</option>
+              <option value="60">1 minute</option>
+              <option value="300">5 minutes</option>
+              <option value="900">15 minutes</option>
+              <option value="1800">30 minutes</option>
+              <option value="3600">1 hour</option>
+              <option value="21600">6 hours</option>
+              <option value="43200">12 hours</option>
+              <option value="86400">1 day</option>
+              <option value="259200">3 days</option>
+              <option value="604800">1 week</option>
+              <option value="1209600">2 weeks</option>
+              <option value="2592000">1 month</option>
+              <option value="15552000">6 months</option>
+              <option value="31536000">1 year</option>
+            </select>
+          </div>
+          <div class="col-lg-3 mt-2 mb-2">
+            <input class="btn btn-success float-right" type="submit" value="Upload"/>
+<?php if (Authentication::$user instanceof User) { ?>
+            <div class="custom-control custom-switch">
+              <input type="checkbox" class="custom-control-input" id="anonymous_text" name="anonymous" value="1"/>
+              <label class="custom-control-label" for="anonymous_text">Anonymous</label>
+            </div>
+<?php } ?>
+            <div class="custom-control custom-switch">
+              <input type="checkbox" class="custom-control-input" id="unlisted_text" name="unlisted" value="1"/>
+              <label class="custom-control-label" for="unlisted_text">Unlisted</label>
+            </div>
+          </div>
+        </div>
+      </div>
+<?php if ($error && ($error['fields'] == 'text' || (is_array($error['fields']) && in_array($error['fields'], 'text')))) { ?>
+      <div class="alert alert-<?=$error['color']?>">
+        <p class="alert-text m-0"><?=$error['message']?></p>
+      </div>
+<?php } ?>
+    </form>
   </section>
 </div>
 <?php ob_start(); ?>
@@ -86,6 +219,10 @@ require("./header.inc.phtml"); ?>
         'order': [[1, 'asc'], [0, 'asc'], [2, 'asc']],
         'paging': false
       });
+    });
+    $('.custom-file-input').on('change', function() {
+      var fileName = $(this).val().split("\\").pop();
+      $(this).siblings('.custom-file-label').addClass('selected').html(fileName);
     });
   </script>
 <?php $_footer_script = ob_get_clean(); ?>
