@@ -307,8 +307,24 @@ class User implements IDatabaseObject {
     return $this->getOption(self::OPTION_HIDDEN);
   }
 
+  public function isHighRisk() {
+    return $this->risk == self::RISK_HIGH;
+  }
+
   public function isHomeUser() {
     return $this->getOption(self::OPTION_HOMEUSER);
+  }
+
+  public function isMediumRisk() {
+    return $this->risk == self::RISK_MEDIUM;
+  }
+
+  public function isLowRisk() {
+    return $this->risk == self::RISK_LOW;
+  }
+
+  public function isUnassessedRisk() {
+    return $this->risk == self::RISK_UNASSESSED;
   }
 
   public function setDateAdded(DateTime $value) {
