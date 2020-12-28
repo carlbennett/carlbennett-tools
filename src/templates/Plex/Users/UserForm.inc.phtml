@@ -76,7 +76,7 @@ if (!empty($error)) { ?>
               <th scope="row" class="align-middle text-right"><label class="m-0" for="risk">Risk</label></th>
               <td>
                 <select class="form-control form-control-sm" id="risk" name="risk">
-                  <option value="<?=PlexUser::RISK_UNASSESSED?>"<?=($risk === PlexUser::RISK_UNASSESSED ? ' selected' : '')?> class="bg-danger text-dark">Unassessed</option>
+                  <option value="<?=PlexUser::RISK_UNASSESSED?>"<?=($risk === PlexUser::RISK_UNASSESSED ? ' selected' : '')?> class="bg-secondary text-dark">Unassessed</option>
                   <option value="<?=PlexUser::RISK_LOW?>"<?=($risk === PlexUser::RISK_LOW ? ' selected' : '')?> class="bg-success text-dark">Low</option>
                   <option value="<?=PlexUser::RISK_MEDIUM?>"<?=($risk === PlexUser::RISK_MEDIUM ? ' selected' : '')?> class="bg-warning text-dark">Medium</option>
                   <option value="<?=PlexUser::RISK_HIGH?>"<?=($risk === PlexUser::RISK_HIGH ? ' selected' : '')?> class="bg-danger text-dark">High</option>
