@@ -255,6 +255,16 @@ class User implements IDatabaseObject {
     return $this->notes;
   }
 
+  public function getOption(int $option) {
+    if (!is_int($option)) {
+      throw new InvalidArgumentException(
+        'option must be an int'
+      );
+    }
+
+    return ($this->options & $option) === $option;
+  }
+
   public function getOptions() {
     return $this->options;
   }
