@@ -60,7 +60,7 @@ require('./header.inc.phtml'); ?>
         $notes = filter_var($user->getNotes(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $plex_email = filter_var($user->getPlexEmail(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $plex_username = filter_var($user->getPlexUsername(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $disabled = (!is_null($user->getDateDisabled()) ? ' <span class="badge badge-danger">Disabled</span> ' : '');
+        $disabled = ($user->getOption(PlexUser::OPTION_DISABLED) ? ' <span class="badge badge-danger">Disabled</span> ' : '');
         $risk = $user->getRisk();
         if (empty($plex_username) && !empty($plex_email)) {
           $name = $plex_email;
