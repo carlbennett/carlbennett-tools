@@ -295,6 +295,22 @@ class User implements IDatabaseObject {
     return $this->user_id;
   }
 
+  public function isDisabled() {
+    return $this->getOption(self::OPTION_DISABLED);
+  }
+
+  public function isExpired() {
+    return !is_null($this->getDateExpired());
+  }
+
+  public function isHidden() {
+    return $this->getOption(self::OPTION_HIDDEN);
+  }
+
+  public function isHomeUser() {
+    return $this->getOption(self::OPTION_HOMEUSER);
+  }
+
   public function setDateAdded(DateTime $value) {
     if (!$value instanceof DateTime) {
       throw new InvalidArgumentException(
