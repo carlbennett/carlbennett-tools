@@ -1,8 +1,10 @@
 <?php
 namespace CarlBennett\Tools\Templates;
+use \CarlBennett\MVC\Libraries\Gravatar;
 use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
 use \CarlBennett\Tools\Models\Plex\Users\UserForm;
 
+$avatar = filter_var((new Gravatar($plex_user->getPlexEmail()))->getUrl(128, 'mp'), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $date_added = $plex_user->getDateAdded();
 $date_disabled = $plex_user->getDateDisabled();
 $date_expired = $plex_user->getDateExpired();
@@ -43,60 +45,95 @@ if (!empty($error)) { ?>
   <div class="alert alert-danger"><?=$error?></div>
 <?php } ?>
   <form method="POST">
-    <table class="table table-borderless table-hover">
-      <thead></thead><tbody>
-        <tr>
-          <th scope="row" class="align-middle text-right"><label class="m-0" for="plex_username">Username</label></th>
-          <td><input class="form-control form-control-sm" type="text" id="plex_username" name="plex_username" placeholder="Enter the Plex username here" value="<?=$plex_username?>"/></td>
-        </tr>
-        <tr>
-          <th scope="row" class="align-middle text-right"><label class="m-0" for="plex_email">Email address</label></th>
-          <td><input class="form-control form-control-sm" type="email" id="plex_email" name="plex_email" placeholder="Enter the Plex email address here" value="<?=$plex_email?>"/></td>
-        </tr>
-        <tr>
-          <th scope="row" class="align-middle text-right"><label class="m-0" for="user_id">Linked user</label></th>
-          <td><input class="form-control form-control-sm" type="text" id="user_id" _id="user_id" placeholder="Enter the user id to link to here" value="<?=$user_id?>"/></td>
-        </tr>
-        <tr>
-          <th scope="row" class="align-middle text-right"><label class="m-0" for="risk">Risk</label></th>
-          <td>
-            <select class="form-control form-control-sm" id="risk" name="risk">
-              <option value="<?=PlexUser::RISK_UNASSESSED?>"<?=($risk === PlexUser::RISK_UNASSESSED ? ' selected' : '')?> class="bg-danger text-dark">Unassessed</option>
-              <option value="<?=PlexUser::RISK_LOW?>"<?=($risk === PlexUser::RISK_LOW ? ' selected' : '')?> class="bg-success text-dark">Low</option>
-              <option value="<?=PlexUser::RISK_MEDIUM?>"<?=($risk === PlexUser::RISK_MEDIUM ? ' selected' : '')?> class="bg-warning text-dark">Medium</option>
-              <option value="<?=PlexUser::RISK_HIGH?>"<?=($risk === PlexUser::RISK_HIGH ? ' selected' : '')?> class="bg-danger text-dark">High</option>
-            </select>
-          </td>
-        </tr>
-        <tr>
-          <th scope="row" class="align-top text-right"><label class="m-0" for="notes">Notes</label></th>
-          <td><textarea class="form-control form-control-sm" style="min-height:90px;" id="notes" name="notes" placeholder="Enter notes here"><?=$notes?></textarea></td>
-        </tr>
-        <tr>
-          <th scope="row" class="align-middle text-right">Date added</th>
-          <td><?=$date_added_str?></td>
-        </tr>
-        <tr>
-          <th scope="row" class="align-middle text-right <?=$date_expired_class?>">Date expired</th>
-          <td class="<?=$date_expired_class?>"><?=$date_expired_str?></td>
-        </tr>
-        <tr>
-          <th scope="row" class="align-middle text-right <?=$date_disabled_class?>">Date disabled</th>
-          <td class="<?=$date_disabled_class?>"><?=$date_disabled_str?></td>
-        </tr>
-        <tr>
-          <th scope="row" class="align-middle text-right text-info">Record last updated</th>
-          <td class="text-info"><?=$record_updated_str?></td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="text-center">
-      <a class="btn btn-primary mr-2" href="javascript:history.go(-1);">Back</a>
+    <div class="row">
+      <div class="col-md-1">
+        <!-- Avatar -->
+
+        <div class="text-center">
+          <label class="font-weight-bold m-1">Gravatar</label>
+          <img class="border border-primary p-1 rounded-lg" style="max-width:128px;" src="<?=$avatar?>"/>
+        </div>
+
+      </div>
+      <div class="col-lg-6">
+        <!-- Username, Email address, Linked user, Risk -->
+
+        <table class="table table-borderless">
+          <thead></thead><tbody>
+            <tr>
+              <th scope="row" class="align-middle text-right"><label class="m-0" for="plex_username">Username</label></th>
+              <td><input class="form-control form-control-sm" type="text" id="plex_username" name="plex_username" placeholder="Enter the Plex username here" value="<?=$plex_username?>"/></td>
+            </tr>
+            <tr>
+              <th scope="row" class="align-middle text-right"><label class="m-0" for="plex_email">Email address</label></th>
+              <td><input class="form-control form-control-sm" type="email" id="plex_email" name="plex_email" placeholder="Enter the Plex email address here" value="<?=$plex_email?>"/></td>
+            </tr>
+            <tr>
+              <th scope="row" class="align-middle text-right"><label class="m-0" for="user_id">Linked user</label></th>
+              <td><input class="form-control form-control-sm" type="text" id="user_id" _id="user_id" placeholder="Enter the user id to link to here" value="<?=$user_id?>"/></td>
+            </tr>
+            <tr>
+              <th scope="row" class="align-middle text-right"><label class="m-0" for="risk">Risk</label></th>
+              <td>
+                <select class="form-control form-control-sm" id="risk" name="risk">
+                  <option value="<?=PlexUser::RISK_UNASSESSED?>"<?=($risk === PlexUser::RISK_UNASSESSED ? ' selected' : '')?> class="bg-danger text-dark">Unassessed</option>
+                  <option value="<?=PlexUser::RISK_LOW?>"<?=($risk === PlexUser::RISK_LOW ? ' selected' : '')?> class="bg-success text-dark">Low</option>
+                  <option value="<?=PlexUser::RISK_MEDIUM?>"<?=($risk === PlexUser::RISK_MEDIUM ? ' selected' : '')?> class="bg-warning text-dark">Medium</option>
+                  <option value="<?=PlexUser::RISK_HIGH?>"<?=($risk === PlexUser::RISK_HIGH ? ' selected' : '')?> class="bg-danger text-dark">High</option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+      <div class="col-lg-5">
+        <!-- Timestamps -->
+
+        <table class="table table-borderless">
+          <thead></thead><tbody>
+            <tr>
+              <th scope="row" class="align-middle text-right">Date added</th>
+              <td><?=$date_added_str?></td>
+            </tr>
+            <tr>
+              <th scope="row" class="align-middle text-right <?=$date_expired_class?>">Date expired</th>
+              <td class="<?=$date_expired_class?>"><?=$date_expired_str?></td>
+            </tr>
+            <tr>
+              <th scope="row" class="align-middle text-right <?=$date_disabled_class?>">Date disabled</th>
+              <td class="<?=$date_disabled_class?>"><?=$date_disabled_str?></td>
+            </tr>
+            <tr>
+              <th scope="row" class="align-middle text-right text-info">Record last updated</th>
+              <td class="text-info"><?=$record_updated_str?></td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <!-- Notes -->
+
+        <label class="font-weight-bold" for="notes">Notes</label><br/>
+        <textarea class="form-control form-control-sm" style="min-height:90px;" id="notes" name="notes" placeholder="Enter notes here"><?=$notes?></textarea>
+
+      </div>
+    </div>
+    <hr/>
+    <div class="row">
+      <div class="col">
+        <div class="text-center">
+          <a class="btn btn-primary mr-2" href="javascript:history.go(-1);">Back</a>
 <?php if (empty($id)) { ?>
-      <input class="btn btn-success" type="submit" name="action" value="Add"/>
+          <input class="btn btn-success" type="submit" name="action" value="Add"/>
 <?php } else { ?>
-      <input class="btn btn-danger" type="submit" name="action" value="Disable"/>
-      <input class="btn btn-success" type="submit" name="action" value="Save"/>
+          <input class="btn btn-danger" type="submit" name="action" value="Disable"/>
+          <input class="btn btn-success" type="submit" name="action" value="Save"/>
 <?php } ?>
+        </div>
+      </div>
     </div>
   </form>
