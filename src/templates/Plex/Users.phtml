@@ -61,7 +61,7 @@ require('./header.inc.phtml'); ?>
         $plex_email = filter_var($user->getPlexEmail(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $plex_username = filter_var($user->getPlexUsername(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $disabled = ($user->isDisabled() ? ' <span class="badge badge-danger">Disabled</span> ' : '');
-        $expired = ($user->isExpired() ? ' <span class="badge badge-danger">Expired</span> ' : '');
+        $expired = ($user->isExpired() ? ' <span class="badge badge-warning">Expired</span> ' : '');
         $risk = $user->getRisk();
         if (empty($plex_username) && !empty($plex_email)) {
           $name = $plex_email;
