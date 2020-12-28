@@ -96,16 +96,12 @@ class Edit extends Controller {
     $plex_user->setNotes($model->notes);
     $plex_user->setPlexEmail($model->plex_email);
     $plex_user->setPlexUsername($model->plex_username);
+    $plex_user->setRecordUpdated(new DateTime('now'));
     $plex_user->setRisk($model->risk);
     $plex_user->setUserId($model->user_id);
 
-    if ($model->action == 'Disable') {
-      $plex_user->setDateDisabled(
-        new DateTime('now', new DateTimeZone('Etc/UTC'))
-      );
-    } else {
-      $plex_user->setDateDisabled(null);
-    }
+    $date_disabled = ($model->action == 'Disable' ? new DateTime('now') : null);
+    $plex_user->setDateDisabled($date_disabled);
 
     if (!$plex_user->commit())
       return UserFormModel::ERROR_INTERNAL_ERROR;
