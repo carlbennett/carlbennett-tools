@@ -19,6 +19,7 @@ $user_id = $this->getContext()->user_id;
 $tz = $this->getContext()->active_user->getTimezoneObject();
 $fmt = 'D, M j, Y g:i A T';
 
+$id_str = (!is_null($id) ? $id : '<em>&ndash;</em>');
 $date_added_str = (!is_null($date_added) ? $date_added->format($fmt, $tz) : '<em>(not added)</em>');
 $date_disabled_str = (!is_null($date_disabled) ? $date_disabled->format($fmt, $tz) : '<em>(not disabled)</em>');
 $date_expired_str = (!is_null($date_expired) ? $date_expired->format($fmt, $tz) : '<em>(not expired)</em>');
@@ -88,10 +89,14 @@ if (!empty($error)) { ?>
 
       </div>
       <div class="col-lg-5">
-        <!-- Timestamps -->
+        <!-- Uuid, Timestamps -->
 
         <table class="table table-borderless">
           <thead></thead><tbody>
+            <tr>
+              <th scope="row" class="align-middle text-right">Uuid</th>
+              <td><code><?=$id_str?></code></td>
+            </tr>
             <tr>
               <th scope="row" class="align-middle text-right">Date added</th>
               <td><?=$date_added_str?></td>
