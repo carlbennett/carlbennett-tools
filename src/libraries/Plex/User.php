@@ -24,6 +24,11 @@ class User implements IDatabaseObject {
   const MAX_PLEX_EMAIL    = 191;
   const MAX_PLEX_USERNAME = 191;
 
+  const OPTION_DEFAULT  = 0x00000000;
+  const OPTION_DISABLED = 0x00000001;
+  const OPTION_HIDDEN   = 0x00000002;
+  const OPTION_HOMEUSER = 0x00000004;
+
   const RISK_UNASSESSED = 0;
   const RISK_LOW        = 1;
   const RISK_MEDIUM     = 2;
@@ -37,6 +42,7 @@ class User implements IDatabaseObject {
   protected $date_disabled;
   protected $id;
   protected $notes;
+  protected $options;
   protected $plex_email;
   protected $plex_username;
   protected $risk;
@@ -77,7 +83,7 @@ class User implements IDatabaseObject {
 
     $q = Common::$database->prepare('
       SELECT `date_added`, `date_disabled`, UuidFromBin(`id`) AS `id`, `notes`,
-             `plex_email`, `plex_username`, `risk`,
+             `options`, `plex_email`, `plex_username`, `risk`,
              UuidFromBin(`user_id`) AS `user_id`
       FROM `plex_users` WHERE `id` = UuidToBin(:id) LIMIT 1;
     ');
@@ -109,6 +115,7 @@ class User implements IDatabaseObject {
     );
     $this->setId($value->id);
     $this->setNotes($value->notes);
+    $this->setOptions($value->options);
     $this->setPlexEmail($value->plex_email);
     $this->setPlexUsername($value->plex_username);
     $this->setRisk($value->risk);
@@ -132,15 +139,16 @@ class User implements IDatabaseObject {
 
     $q = Common::$database->prepare('
       INSERT INTO `plex_users` (
-        `date_added`, `date_disabled`, `id`, `notes`, `plex_email`,
+        `date_added`, `date_disabled`, `id`, `notes`, `options`, `plex_email`,
         `plex_username`, `risk`, `user_id`
       ) VALUES (
-        :added, :disabled, UuidToBin(:id), :notes, :plex_email, :plex_username,
-        :risk, UuidToBin(:user_id)
+        :added, :disabled, UuidToBin(:id), :notes, :options, :plex_email,
+        :plex_username, :risk, UuidToBin(:user_id)
       ) ON DUPLICATE KEY UPDATE
         `date_added` = :added, `date_disabled` = :disabled, `notes` = :notes,
-        `plex_email` = :plex_email, `plex_username` = :plex_username,
-        `risk` = :risk, `user_id` = UuidToBin(:user_id)
+        `options` = :options, `plex_email` = :plex_email,
+        `plex_username` = :plex_username, `risk` = :risk,
+        `user_id` = UuidToBin(:user_id)
       ;
     ');
 
@@ -159,6 +167,7 @@ class User implements IDatabaseObject {
 
     $q->bindParam(':id', $this->id, PDO::PARAM_STR);
     $q->bindParam(':notes', $this->notes, PDO::PARAM_STR);
+    $q->bindParam(':options', $this->options, PDO::PARAM_INT);
 
     $q->bindParam(':plex_email', $this->plex_email, (
       is_null($this->plex_email) ? PDO::PARAM_NULL : PDO::PARAM_STR
@@ -188,7 +197,7 @@ class User implements IDatabaseObject {
 
     $q = Common::$database->prepare('
       SELECT `date_added`, `date_disabled`, UuidFromBin(`id`) AS `id`, `notes`,
-             `plex_email`, `plex_username`, `risk`,
+             `options`, `plex_email`, `plex_username`, `risk`,
              UuidFromBin(`user_id`) AS `user_id`
       FROM `plex_users` ORDER BY `date_added`, `plex_username`, `plex_email`;
     ');
@@ -219,6 +228,10 @@ class User implements IDatabaseObject {
 
   public function getNotes() {
     return $this->notes;
+  }
+
+  public function getOptions() {
+    return $this->options;
   }
 
   public function getPlexEmail() {
@@ -287,6 +300,36 @@ class User implements IDatabaseObject {
     }
 
     $this->notes = $value;
+  }
+
+  public function setOption(int $option, bool $value) {
+    if (!is_int($option)) {
+      throw new InvalidArgumentException(
+        'option must be an int'
+      );
+    }
+
+    if (!is_bool($value)) {
+      throw new InvalidArgumentException(
+        'value must be a bool'
+      );
+    }
+
+    if ($value) {
+      $this->options |= $option;
+    } else {
+      $this->options &= ~$option;
+    }
+  }
+
+  public function setOptions(int $value) {
+    if (!is_int($value)) {
+      throw new InvalidArgumentException(
+        'value must be an int'
+      );
+    }
+
+    $this->options = $value;
   }
 
   public function setPlexEmail($value, $auto_null = true) {
