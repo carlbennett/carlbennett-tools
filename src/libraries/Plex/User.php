@@ -40,11 +40,13 @@ class User implements IDatabaseObject {
 
   protected $date_added;
   protected $date_disabled;
+  protected $date_expired;
   protected $id;
   protected $notes;
   protected $options;
   protected $plex_email;
   protected $plex_username;
+  protected $record_updated;
   protected $risk;
   protected $user_id;
 
@@ -82,8 +84,9 @@ class User implements IDatabaseObject {
     }
 
     $q = Common::$database->prepare('
-      SELECT `date_added`, `date_disabled`, UuidFromBin(`id`) AS `id`, `notes`,
-             `options`, `plex_email`, `plex_username`, `risk`,
+      SELECT `date_added`, `date_disabled`, `date_expired`,
+             UuidFromBin(`id`) AS `id`, `notes`, `options`, `plex_email`,
+             `plex_username`, `record_updated`, `risk`,
              UuidFromBin(`user_id`) AS `user_id`
       FROM `plex_users` WHERE `id` = UuidToBin(:id) LIMIT 1;
     ');
@@ -113,11 +116,15 @@ class User implements IDatabaseObject {
     $this->setDateDisabled(
       $value->date_disabled ? new DateTime($value->date_disabled, $tz) : null
     );
+    $this->setDateExpired(
+      $value->date_expired ? new DateTime($value->date_expired, $tz) : null
+    );
     $this->setId($value->id);
     $this->setNotes($value->notes);
     $this->setOptions($value->options);
     $this->setPlexEmail($value->plex_email);
     $this->setPlexUsername($value->plex_username);
+    $this->setRecordUpdated(new DateTime($value->record_updated), $tz);
     $this->setRisk($value->risk);
     $this->setUserId($value->user_id);
   }
@@ -139,15 +146,16 @@ class User implements IDatabaseObject {
 
     $q = Common::$database->prepare('
       INSERT INTO `plex_users` (
-        `date_added`, `date_disabled`, `id`, `notes`, `options`, `plex_email`,
-        `plex_username`, `risk`, `user_id`
+        `date_added`, `date_disabled`, `date_expired`, `id`, `notes`, `options`,
+        `plex_email`, `plex_username`, `record_updated`, `risk`, `user_id`
       ) VALUES (
-        :added, :disabled, UuidToBin(:id), :notes, :options, :plex_email,
-        :plex_username, :risk, UuidToBin(:user_id)
+        :added, :disabled, :expired, UuidToBin(:id), :notes, :options,
+        :plex_email, :plex_username, :record_updated, :risk, UuidToBin(:user_id)
       ) ON DUPLICATE KEY UPDATE
-        `date_added` = :added, `date_disabled` = :disabled, `notes` = :notes,
-        `options` = :options, `plex_email` = :plex_email,
-        `plex_username` = :plex_username, `risk` = :risk,
+        `date_added` = :added, `date_disabled` = :disabled,
+        `date_expired` = :expired, `notes` = :notes, `options` = :options,
+        `plex_email` = :plex_email, `plex_username` = :plex_username,
+        `record_updated` = :record_updated, `risk` = :risk,
         `user_id` = UuidToBin(:user_id)
       ;
     ');
@@ -159,10 +167,21 @@ class User implements IDatabaseObject {
       null : $this->date_disabled->format(self::DATE_SQL)
     );
 
+    $date_expired = (
+      is_null($this->date_expired) ?
+      null : $this->date_expired->format(self::DATE_SQL)
+    );
+
+    $record_updated = $this->record_updated->format(self::DATE_SQL);
+
     $q->bindParam(':added', $date_added, PDO::PARAM_STR);
 
     $q->bindParam(':disabled', $date_disabled, (
       is_null($date_disabled) ? PDO::PARAM_NULL : PDO::PARAM_STR
+    ));
+
+    $q->bindParam(':expired', $date_expired, (
+      is_null($date_expired) ? PDO::PARAM_NULL : PDO::PARAM_STR
     ));
 
     $q->bindParam(':id', $this->id, PDO::PARAM_STR);
@@ -177,6 +196,7 @@ class User implements IDatabaseObject {
       is_null($this->plex_username) ? PDO::PARAM_NULL : PDO::PARAM_STR
     ));
 
+    $q->bindParam(':record_updated', $record_updated, PDO::PARAM_STR);
     $q->bindParam(':risk', $this->risk, PDO::PARAM_INT);
 
     $q->bindParam(':user_id', $this->user_id, (
@@ -196,8 +216,9 @@ class User implements IDatabaseObject {
     }
 
     $q = Common::$database->prepare('
-      SELECT `date_added`, `date_disabled`, UuidFromBin(`id`) AS `id`, `notes`,
-             `options`, `plex_email`, `plex_username`, `risk`,
+      SELECT `date_added`, `date_disabled`, `date_expired`,
+             UuidFromBin(`id`) AS `id`, `notes`, `options`, `plex_email`,
+             `plex_username`, `record_updated`, `risk`,
              UuidFromBin(`user_id`) AS `user_id`
       FROM `plex_users` ORDER BY `date_added`, `plex_username`, `plex_email`;
     ');
@@ -222,6 +243,10 @@ class User implements IDatabaseObject {
     return $this->date_disabled;
   }
 
+  public function getDateExpired() {
+    return $this->date_expired;
+  }
+
   public function getId() {
     return $this->id;
   }
@@ -240,6 +265,10 @@ class User implements IDatabaseObject {
 
   public function getPlexUsername() {
     return $this->plex_username;
+  }
+
+  public function getRecordUpdated() {
+    return $this->record_updated;
   }
 
   public function getRisk() {
@@ -274,6 +303,16 @@ class User implements IDatabaseObject {
     }
 
     $this->date_disabled = $value;
+  }
+
+  public function setDateExpired($value) {
+    if (!(is_null($value) || $value instanceof DateTime)) {
+      throw new InvalidArgumentException(
+        'value must be null or a DateTime object'
+      );
+    }
+
+    $this->date_expired = $value;
   }
 
   public function setId(string $value) {
@@ -368,6 +407,16 @@ class User implements IDatabaseObject {
     }
 
     $this->plex_username = $value;
+  }
+
+  public function setRecordUpdated(DateTime $value) {
+    if (!$value instanceof DateTime) {
+      throw new InvalidArgumentException(
+        'value must be a DateTime object'
+      );
+    }
+
+    $this->record_updated = $value;
   }
 
   public function setRisk(int $value) {
