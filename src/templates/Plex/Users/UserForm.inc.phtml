@@ -5,18 +5,25 @@ use \CarlBennett\Tools\Models\Plex\Users\UserForm;
 
 $date_added = $plex_user->getDateAdded();
 $date_disabled = $plex_user->getDateDisabled();
+$date_expired = $plex_user->getDateExpired();
 $id = $this->getContext()->id;
 $notes = filter_var($this->getContext()->notes, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $plex_email = filter_var($this->getContext()->plex_email, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $plex_username = filter_var($this->getContext()->plex_username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$record_updated = $plex_user->getRecordUpdated();
 $risk = $this->getContext()->risk;
 $user_id = $this->getContext()->user_id;
 
 $tz = $this->getContext()->active_user->getTimezoneObject();
 $fmt = 'D, M j, Y g:i A T';
 
-$date_added = (!is_null($date_added) ? $date_added->format($fmt, $tz) : '<em>(not added)</em>');
-$date_disabled = (!is_null($date_disabled) ? $date_disabled->format($fmt, $tz) : '<em>(not disabled)</em>');
+$date_added_str = (!is_null($date_added) ? $date_added->format($fmt, $tz) : '<em>(not added)</em>');
+$date_disabled_str = (!is_null($date_disabled) ? $date_disabled->format($fmt, $tz) : '<em>(not disabled)</em>');
+$date_expired_str = (!is_null($date_expired) ? $date_expired->format($fmt, $tz) : '<em>(not expired)</em>');
+$record_updated_str = (!is_null($record_updated) ? $record_updated->format($fmt, $tz) : '<em>&ndash;</em>');
+
+$date_disabled_class = (!is_null($date_disabled) ? 'text-danger' : 'text-secondary');
+$date_expired_class = (!is_null($date_expired) ? 'text-warning' : 'text-secondary');
 
 $error = $this->getContext()->error;
 switch ($error) {
@@ -66,12 +73,20 @@ if (!empty($error)) { ?>
           <td><textarea class="form-control form-control-sm" style="min-height:90px;" id="notes" name="notes" placeholder="Enter notes here"><?=$notes?></textarea></td>
         </tr>
         <tr>
-          <th scope="row" class="align-middle text-right">Date Added</th>
-          <td><?=$date_added?></td>
+          <th scope="row" class="align-middle text-right">Date added</th>
+          <td><?=$date_added_str?></td>
         </tr>
         <tr>
-          <th scope="row" class="align-middle text-right">Date Disabled</th>
-          <td><?=$date_disabled?></td>
+          <th scope="row" class="align-middle text-right <?=$date_expired_class?>">Date expired</th>
+          <td class="<?=$date_expired_class?>"><?=$date_expired_str?></td>
+        </tr>
+        <tr>
+          <th scope="row" class="align-middle text-right <?=$date_disabled_class?>">Date disabled</th>
+          <td class="<?=$date_disabled_class?>"><?=$date_disabled_str?></td>
+        </tr>
+        <tr>
+          <th scope="row" class="align-middle text-right text-info">Record last updated</th>
+          <td class="text-info"><?=$record_updated_str?></td>
         </tr>
       </tbody>
     </table>
