@@ -9,6 +9,10 @@ $date_added = $plex_user->getDateAdded();
 $date_disabled = $plex_user->getDateDisabled();
 $date_expired = $plex_user->getDateExpired();
 $id = $this->getContext()->id;
+$is_disabled = ($plex_user->isDisabled() ? ' checked' : '');
+$is_expired = ($plex_user->isExpired() ? ' checked' : '');
+$is_hidden = ($plex_user->isHidden() ? ' checked' : '');
+$is_homeuser = ($plex_user->isHomeUser() ? ' checked' : '');
 $notes = filter_var($this->getContext()->notes, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $plex_email = filter_var($this->getContext()->plex_email, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $plex_username = filter_var($this->getContext()->plex_username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -57,7 +61,7 @@ if (!empty($error)) { ?>
 
       </div>
       <div class="col-lg-6">
-        <!-- Username, Email address, Linked user, Risk -->
+        <!-- Username, Email address, Linked user, Risk, Options -->
 
         <table class="table table-borderless">
           <thead></thead><tbody>
@@ -82,6 +86,23 @@ if (!empty($error)) { ?>
                   <option value="<?=PlexUser::RISK_MEDIUM?>"<?=($risk === PlexUser::RISK_MEDIUM ? ' selected' : '')?> class="bg-warning text-dark">Medium</option>
                   <option value="<?=PlexUser::RISK_HIGH?>"<?=($risk === PlexUser::RISK_HIGH ? ' selected' : '')?> class="bg-danger text-dark">High</option>
                 </select>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row" class="align-middle text-right"><label class="m-0">Options</label></th>
+              <td>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="disabled" id="is_disabled" value="1"<?=$is_disabled?>> <label class="form-check-label" for="is_disabled">Disabled</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="expired" id="is_expired" value="1"<?=$is_expired?>> <label class="form-check-label" for="is_expired">Expired</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="hidden" id="is_hidden" value="1"<?=$is_hidden?>> <label class="form-check-label" for="is_hidden">Hidden</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="homeuser" id="is_homeuser" value="1"<?=$is_homeuser?>> <label class="form-check-label" for="is_homeuser">Home User</label>
+                </div>
               </td>
             </tr>
           </tbody>
