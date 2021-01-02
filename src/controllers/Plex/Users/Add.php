@@ -36,6 +36,10 @@ class Add extends Controller {
     $model->plex_user = new PlexUser(null);
     $form = new HTTPForm($form);
 
+    $model->disabled = $form->get('disabled', $model->plex_user->isDisabled());
+    $model->expired = $form->get('expired', $model->plex_user->isExpired());
+    $model->hidden = $form->get('hidden', $model->plex_user->isHidden());
+    $model->homeuser = $form->get('homeuser', $model->plex_user->isHomeUser());
     $model->notes = $form->get('notes', $model->plex_user->getNotes());
     $model->plex_email = $form->get(
       'plex_email', $model->plex_user->getPlexEmail()
@@ -74,12 +78,45 @@ class Add extends Controller {
     if ($model->risk < 0 || $model->risk > 3)
       return UserFormModel::ERROR_INVALID_RISK;
 
+    // Re-evaluate checkboxes not present in sent form
+    $model->disabled = $form->get('disabled', false);
+    $model->expired = $form->get('expired', false);
+    $model->hidden = $form->get('hidden', false);
+    $model->homeuser = $form->get('homeuser', false);
+
     $plex_user->setDateAdded(new DateTime('now', new DateTimeZone('Etc/UTC')));
     $plex_user->setNotes($model->notes);
     $plex_user->setPlexEmail($model->plex_email);
     $plex_user->setPlexUsername($model->plex_username);
+    $plex_user->setRecordUpdated(new DateTime('now'));
     $plex_user->setRisk($model->risk);
     $plex_user->setUserId($model->user_id);
+
+    if (!$plex_user->isDisabled() && $model->disabled) {
+      $plex_user->setOption(PlexUser::OPTION_DISABLED, true);
+      $plex_user->setDateDisabled(new DateTime('now'));
+    } else if ($plex_user->isDisabled() && !$model->disabled) {
+      $plex_user->setOption(PlexUser::OPTION_DISABLED, false);
+      $plex_user->setDateDisabled(null);
+    }
+
+    if (!$plex_user->isExpired() && $model->expired) {
+      $plex_user->setDateExpired(new DateTime('now'));
+    } else if ($plex_user->isExpired() && !$model->expired) {
+      $plex_user->setDateExpired(null);
+    }
+
+    if (!$plex_user->isHidden() && $model->hidden) {
+      $plex_user->setOption(PlexUser::OPTION_HIDDEN, true);
+    } else if ($plex_user->isHidden() && !$model->hidden) {
+      $plex_user->setOption(PlexUser::OPTION_HIDDEN, false);
+    }
+
+    if (!$plex_user->isHomeUser() && $model->homeuser) {
+      $plex_user->setOption(PlexUser::OPTION_HOMEUSER, true);
+    } else if ($plex_user->isHomeUser() && !$model->homeuser) {
+      $plex_user->setOption(PlexUser::OPTION_HOMEUSER, false);
+    }
 
     if (!$plex_user->commit())
       return UserFormModel::ERROR_INTERNAL_ERROR;
