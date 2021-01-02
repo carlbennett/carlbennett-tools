@@ -12,7 +12,6 @@ class UserForm extends Model {
   const ERROR_EMPTY_USERNAME_AND_EMAIL = 3;
   const ERROR_INVALID_RISK = 4;
 
-  public $action;
   public $active_user;
   public $disabled;
   public $error;
