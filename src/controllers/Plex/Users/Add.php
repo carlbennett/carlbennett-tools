@@ -118,8 +118,18 @@ class Add extends Controller {
       $plex_user->setOption(PlexUser::OPTION_HOMEUSER, false);
     }
 
-    if (!$plex_user->commit())
-      return UserFormModel::ERROR_INTERNAL_ERROR;
+    try {
+      if (!$plex_user->commit()) {
+        return UserFormModel::ERROR_INTERNAL_ERROR;
+      }
+    } catch (PDOException $e) {
+      if (strpos($e->getMessage(), 'Duplicate entry') !== false &&
+        strpos($e->getMessage(), 'for key \'idx_user_id\'') !== false) {
+        return UserFormModel::ERROR_LINKED_USER_ALREADY_ASSIGNED;
+      } else {
+        throw $e;
+      }
+    }
 
     $model->id = $plex_user->getId();
 

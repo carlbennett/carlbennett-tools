@@ -11,6 +11,7 @@ class UserForm extends Model {
   const ERROR_NULL_PLEX_USER = 2;
   const ERROR_EMPTY_USERNAME_AND_EMAIL = 3;
   const ERROR_INVALID_RISK = 4;
+  const ERROR_LINKED_USER_ALREADY_ASSIGNED = 5;
 
   public $active_user;
   public $disabled;

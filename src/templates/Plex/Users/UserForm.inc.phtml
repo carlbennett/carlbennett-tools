@@ -47,6 +47,8 @@ switch ($error) {
     $error = 'The <strong>username</strong> and <strong>email address</strong> cannot both be empty.'; break;
   case UserForm::ERROR_INVALID_RISK:
     $error = 'The selected risk option is invalid, choose a proper risk value.'; break;
+  case UserForm::ERROR_LINKED_USER_ALREADY_ASSIGNED:
+    $error = 'That linked user is already assigned to another plex user.'; break;
 }
 
 if (!empty($error)) { ?>
