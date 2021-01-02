@@ -9,10 +9,10 @@ $date_added = $plex_user->getDateAdded();
 $date_disabled = $plex_user->getDateDisabled();
 $date_expired = $plex_user->getDateExpired();
 $id = $this->getContext()->id;
-$is_disabled = ($plex_user->isDisabled() ? ' checked' : '');
-$is_expired = ($plex_user->isExpired() ? ' checked' : '');
-$is_hidden = ($plex_user->isHidden() ? ' checked' : '');
-$is_homeuser = ($plex_user->isHomeUser() ? ' checked' : '');
+$is_disabled = ($this->getContext()->disabled ? ' checked' : '');
+$is_expired = ($this->getContext()->expired ? ' checked' : '');
+$is_hidden = ($this->getContext()->hidden ? ' checked' : '');
+$is_homeuser = ($this->getContext()->homeuser ? ' checked' : '');
 $notes = filter_var($this->getContext()->notes, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $plex_email = filter_var($this->getContext()->plex_email, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $plex_username = filter_var($this->getContext()->plex_username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -91,16 +91,16 @@ if (!empty($error)) { ?>
             <tr>
               <th scope="row" class="align-middle text-right"><label class="m-0">Options</label></th>
               <td>
-                <div class="form-check">
+                <div class="form-check m-1">
                   <input class="form-check-input" type="checkbox" name="disabled" id="is_disabled" value="1"<?=$is_disabled?>> <label class="form-check-label" for="is_disabled">Disabled</label>
                 </div>
-                <div class="form-check">
+                <div class="form-check m-1">
                   <input class="form-check-input" type="checkbox" name="expired" id="is_expired" value="1"<?=$is_expired?>> <label class="form-check-label" for="is_expired">Expired</label>
                 </div>
-                <div class="form-check">
+                <div class="form-check m-1">
                   <input class="form-check-input" type="checkbox" name="hidden" id="is_hidden" value="1"<?=$is_hidden?>> <label class="form-check-label" for="is_hidden">Hidden</label>
                 </div>
-                <div class="form-check">
+                <div class="form-check m-1">
                   <input class="form-check-input" type="checkbox" name="homeuser" id="is_homeuser" value="1"<?=$is_homeuser?>> <label class="form-check-label" for="is_homeuser">Home User</label>
                 </div>
               </td>
@@ -154,10 +154,9 @@ if (!empty($error)) { ?>
         <div class="text-center">
           <a class="btn btn-primary mr-2" href="javascript:history.go(-1);">Back</a>
 <?php if (empty($id)) { ?>
-          <input class="btn btn-success" type="submit" name="action" value="Add"/>
+          <input class="btn btn-success" type="submit" value="Add"/>
 <?php } else { ?>
-          <input class="btn btn-danger" type="submit" name="action" value="Disable"/>
-          <input class="btn btn-success" type="submit" name="action" value="Save"/>
+          <input class="btn btn-success" type="submit" value="Save"/>
 <?php } ?>
         </div>
       </div>
