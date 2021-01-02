@@ -27,6 +27,7 @@ class Users extends Controller {
     $query = $router->getRequestQueryArray();
     $query = new HTTPForm($query);
 
+    $model->show_hidden = $query->get('sh');
     $model->id = $query->get('id');
     $model->hl = $query->get('hl');
 

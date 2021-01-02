@@ -4,6 +4,7 @@ use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\MVC\Libraries\Gravatar;
 use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
 use \DateTimeZone;
+$show_hidden = $this->getContext()->show_hidden;
 $highlight_id = $this->getContext()->id;
 $highlight_act = $this->getContext()->hl;
 if (!empty($highlight_id)) {
@@ -42,7 +43,16 @@ require('./header.inc.phtml'); ?>
     The Plex user <strong><?=$highlight_name?></strong> was <?=$highlight_act?>.
   </div>
 <?php } ?>
-  <div class="float-right"><a class="btn btn-lg btn-success" href="<?=Common::relativeUrlToAbsolute('/plex/users/add')?>">Add User</a></div>
+  <div class="float-right">
+    <span class="mr-2" style="font-size:smaller;">Hidden Users:
+<?php if (!$show_hidden) { ?>
+      <a class="btn btn-sm btn-secondary" href="?sh=1">Show</a>
+<?php } else { ?>
+      <a class="btn btn-sm btn-secondary" href="?sh=0">Re-Hide</a>
+<?php } ?>
+    </span>
+    <a class="btn btn-lg btn-success" href="<?=Common::relativeUrlToAbsolute('/plex/users/add')?>">Add User</a>
+  </div>
   <h1><?=$title;?></h1>
   <table id="plex_users" class="nowrap table table-hover table-striped w-100">
     <thead class="thead-dark"><tr>
@@ -54,6 +64,7 @@ require('./header.inc.phtml'); ?>
     </tr></thead>
     <tbody>
 <?php foreach ($this->getContext()->users as $user) {
+        if ($user->isHidden() && !$show_hidden) continue;
         $avatar = filter_var((new Gravatar($user->getPlexEmail()))->getUrl(32, 'mp'), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $date_added = array($user->getDateAdded()->format('D, M jS, Y', $tz), $user->getDateAdded()->format('g:i A T', $tz));
         $id = filter_var($user->getId(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
