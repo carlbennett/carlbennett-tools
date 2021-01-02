@@ -2,7 +2,10 @@
 namespace CarlBennett\Tools\Templates;
 use \CarlBennett\MVC\Libraries\Gravatar;
 use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
+use \CarlBennett\Tools\Libraries\User;
 use \CarlBennett\Tools\Models\Plex\Users\UserForm;
+
+$users = User::getAll();
 
 $avatar = filter_var((new Gravatar($plex_user->getPlexEmail()))->getUrl(128, 'mp'), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $date_added = $plex_user->getDateAdded();
@@ -75,7 +78,14 @@ if (!empty($error)) { ?>
             </tr>
             <tr>
               <th scope="row" class="align-middle text-right"><label class="m-0" for="user_id">Linked user</label></th>
-              <td><input class="form-control form-control-sm" type="text" id="user_id" _id="user_id" placeholder="Enter the user id to link to here" value="<?=$user_id?>"/></td>
+              <td>
+                <select class="form-control form-control-sm" id="user_id" name="user_id">
+                  <option value=""<?=(!$user_id ? ' selected' : '')?>>&ndash;</option>
+<?php foreach ($users as $user) { ?>
+                  <option value="<?=$user->getId()?>"<?=($user_id == $user->getId() ? ' selected' : '')?>><?=filter_var($user->getName(), FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></option>
+<?php } ?>
+                </select>
+              </td>
             </tr>
             <tr>
               <th scope="row" class="align-middle text-right"><label class="m-0" for="risk">Risk</label></th>
