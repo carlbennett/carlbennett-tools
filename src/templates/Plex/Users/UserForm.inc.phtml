@@ -81,7 +81,7 @@ if (!empty($error)) { ?>
             <tr>
               <th scope="row" class="align-middle text-right"><label class="m-0" for="user_id">Linked user</label></th>
               <td>
-                <select class="form-control form-control-sm" id="user_id" name="user_id">
+                <select class="custom-select custom-select-sm" id="user_id" name="user_id">
                   <option value=""<?=(!$user_id ? ' selected' : '')?>>&ndash;</option>
 <?php foreach ($users as $user) { ?>
                   <option value="<?=$user->getId()?>"<?=($user_id == $user->getId() ? ' selected' : '')?>><?=filter_var($user->getName(), FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></option>
@@ -92,7 +92,7 @@ if (!empty($error)) { ?>
             <tr>
               <th scope="row" class="align-middle text-right"><label class="m-0" for="risk">Risk</label></th>
               <td>
-                <select class="form-control form-control-sm" id="risk" name="risk">
+                <select class="custom-select custom-select-sm" id="risk" name="risk">
                   <option value="<?=PlexUser::RISK_UNASSESSED?>"<?=($risk === PlexUser::RISK_UNASSESSED ? ' selected' : '')?> class="bg-secondary text-dark">Unassessed</option>
                   <option value="<?=PlexUser::RISK_LOW?>"<?=($risk === PlexUser::RISK_LOW ? ' selected' : '')?> class="bg-success text-dark">Low</option>
                   <option value="<?=PlexUser::RISK_MEDIUM?>"<?=($risk === PlexUser::RISK_MEDIUM ? ' selected' : '')?> class="bg-warning text-dark">Medium</option>
