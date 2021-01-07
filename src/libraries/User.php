@@ -24,6 +24,7 @@ class User implements IDatabaseObject {
   const MAX_EMAIL        = 191;
 
   const OPTION_DISABLED          = 0x00000001;
+  const OPTION_BANNED            = 0x00000002;
   const OPTION_ACL_PLEX_REQUESTS = 0x00000010;
   const OPTION_ACL_PLEX_USERS    = 0x00000020;
 
@@ -35,6 +36,7 @@ class User implements IDatabaseObject {
   private $_id;
 
   protected $date_added;
+  protected $date_banned;
   protected $date_disabled;
   protected $display_name;
   protected $email;
@@ -77,7 +79,7 @@ class User implements IDatabaseObject {
 
     $q = Common::$database->prepare('
       SELECT
-        `date_added`, `date_disabled`, `display_name`, `email`,
+        `date_added`, `date_banned`, `date_disabled`, `display_name`, `email`,
         UuidFromBin(`id`) AS `id`, `options`, `password_hash`,
         `record_updated`, `timezone`
       FROM `users` WHERE id = UuidToBin(:id) LIMIT 1;
@@ -105,6 +107,9 @@ class User implements IDatabaseObject {
     $tz = new DateTimeZone('Etc/UTC');
 
     $this->setDateAdded(new DateTime($value->date_added, $tz));
+    $this->setDateBanned(
+      $value->date_banned ? new DateTime($value->date_banned, $tz) : null
+    );
     $this->setDateDisabled(
       $value->date_disabled ? new DateTime($value->date_disabled, $tz) : null
     );
@@ -150,20 +155,25 @@ class User implements IDatabaseObject {
 
     $q = Common::$database->prepare('
       INSERT INTO `users` (
-        `date_added`, `date_disabled`, `display_name`, `email`, `id`, `options`,
-        `password_hash`, `record_updated`, `timezone`
+        `date_added`, `date_banned`, `date_disabled`, `display_name`, `email`,
+        `id`, `options`, `password_hash`, `record_updated`, `timezone`
       ) VALUES (
-        :added, :disabled, :name, :email, UuidToBin(:id), :options,
-        :password_hash, :record_updated, :tz
+        :added, :banned, :disabled, :name, :email, UuidToBin(:id), :options,
+        :password, :record_updated, :tz
       ) ON DUPLICATE KEY UPDATE
-        `date_added` = :added, `date_disabled` = :disabled,
-        `display_name` = :name, `email` = :email, `options` = :options,
-        `password_hash` = :password_hash, `record_updated` = :record_updated,
-        `timezone` = :tz
+        `date_added` = :added, `date_banned` = :banned,
+        `date_disabled` = :disabled, `display_name` = :name, `email` = :email,
+        `options` = :options, `password_hash` = :password,
+        `record_updated` = :record_updated, `timezone` = :tz
       ;
     ');
 
     $date_added = $this->date_added->format(self::DATE_SQL);
+
+    $date_banned = (
+      is_null($this->date_banned) ?
+      null : $this->date_banned->format(self::DATE_SQL)
+    );
 
     $date_disabled = (
       is_null($this->date_disabled) ?
@@ -174,6 +184,10 @@ class User implements IDatabaseObject {
 
     $q->bindParam(':added', $date_added, PDO::PARAM_STR);
 
+    $q->bindParam(':banned', $date_banned, (
+      is_null($date_banned) ? PDO::PARAM_NULL : PDO::PARAM_STR
+    ));
+
     $q->bindParam(':disabled', $date_disabled, (
       is_null($date_disabled) ? PDO::PARAM_NULL : PDO::PARAM_STR
     ));
@@ -182,7 +196,7 @@ class User implements IDatabaseObject {
     $q->bindParam(':id', $this->id, PDO::PARAM_STR);
     $q->bindParam(':name', $this->display_name, PDO::PARAM_STR);
     $q->bindParam(':options', $this->options, PDO::PARAM_INT);
-    $q->bindParam(':password_hash', $this->password_hash, PDO::PARAM_STR);
+    $q->bindParam(':password', $this->password_hash, PDO::PARAM_STR);
     $q->bindParam(':record_updated', $record_updated, PDO::PARAM_STR);
     $q->bindParam(':tz', $this->timezone, PDO::PARAM_STR);
 
@@ -215,7 +229,7 @@ class User implements IDatabaseObject {
 
     $q = Common::$database->prepare('
       SELECT
-        `date_added`, `date_disabled`, `display_name`, `email`,
+        `date_added`, `date_banned`, `date_disabled`, `display_name`, `email`,
         UuidFromBin(`id`) AS `id`, `options`, `password_hash`,
         `record_updated`, `timezone`
       FROM `users`
@@ -241,8 +255,9 @@ class User implements IDatabaseObject {
 
     $q = Common::$database->prepare('
       SELECT
-        `date_added`, `display_name`, `email`, UuidFromBin(`id`) AS `id`,
-        `options`, `password_hash`, `timezone`
+        `date_added`, `date_banned`, `date_disabled`, `display_name`, `email`,
+        UuidFromBin(`id`) AS `id`, `options`, `password_hash`, `record_updated`,
+        `timezone`
       FROM `users` WHERE `email` = :email;
     ');
     $q->bindParam(':email', $value, PDO::PARAM_STR);
@@ -281,10 +296,10 @@ class User implements IDatabaseObject {
       throw new InvalidArgumentException('value must be an int');
     }
 
-    return ($this->options & $value);
+    return ($this->options & $option) === $option;
   }
 
-  public function getOptionsBitmask() {
+  public function getOptions() {
     return $this->options;
   }
 
@@ -300,6 +315,10 @@ class User implements IDatabaseObject {
     return new DateTimeZone($this->timezone);
   }
 
+  public function isBanned() {
+    return $this->getOption(self::OPTION_BANNED);
+  }
+
   public function isDisabled() {
     return $this->getOption(self::OPTION_DISABLED);
   }
@@ -312,6 +331,16 @@ class User implements IDatabaseObject {
     }
 
     $this->date_added = $value;
+  }
+
+  public function setDateBanned($value) {
+    if (!(is_null($value) || $value instanceof DateTime)) {
+      throw new InvalidArgumentException(
+        'value must be null or a DateTime object'
+      );
+    }
+
+    $this->date_banned = $value;
   }
 
   public function setDateDisabled($value) {
