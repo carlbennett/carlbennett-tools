@@ -1,0 +1,13 @@
+<?php namespace CarlBennett\Tools\Templates\User;
+use \CarlBennett\MVC\Libraries\Common;
+$title = 'Log out';
+$return = $this->getContext()->return;
+$feedback = $this->getContext()->feedback;
+require("./header.inc.phtml"); ?>
+<div class="container">
+  <p class="alert alert-success"><?=$feedback?></p>
+<?php if (isset($return)) { ?>
+  <p>Redirecting to <a href="<?=$return?>"><?=filter_var($return, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></a>...</p>
+<?php } ?>
+</div>
+<?php require("./footer.inc.phtml"); ?>
