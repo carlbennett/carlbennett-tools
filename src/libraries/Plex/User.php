@@ -112,7 +112,7 @@ class User implements IDatabaseObject {
   protected function allocateObject(StdClass $value) {
     $tz = new DateTimeZone('Etc/UTC');
 
-    $this->setDateAdded(new DateTime($value->date_added), $tz);
+    $this->setDateAdded(new DateTime($value->date_added, $tz));
     $this->setDateDisabled(
       $value->date_disabled ? new DateTime($value->date_disabled, $tz) : null
     );
@@ -124,7 +124,7 @@ class User implements IDatabaseObject {
     $this->setOptions($value->options);
     $this->setPlexEmail($value->plex_email);
     $this->setPlexUsername($value->plex_username);
-    $this->setRecordUpdated(new DateTime($value->record_updated), $tz);
+    $this->setRecordUpdated(new DateTime($value->record_updated, $tz));
     $this->setRisk($value->risk);
     $this->setUserId($value->user_id);
   }
@@ -385,15 +385,11 @@ class User implements IDatabaseObject {
 
   public function setOption(int $option, bool $value) {
     if (!is_int($option)) {
-      throw new InvalidArgumentException(
-        'option must be an int'
-      );
+      throw new InvalidArgumentException('option must be an int');
     }
 
     if (!is_bool($value)) {
-      throw new InvalidArgumentException(
-        'value must be a bool'
-      );
+      throw new InvalidArgumentException('value must be a bool');
     }
 
     if ($value) {
@@ -404,10 +400,8 @@ class User implements IDatabaseObject {
   }
 
   public function setOptions(int $value) {
-    if (!is_int($value)) {
-      throw new InvalidArgumentException(
-        'value must be an int'
-      );
+    if (!is_int($value) || $value < 0) {
+      throw new InvalidArgumentException('value must be a positive integer');
     }
 
     $this->options = $value;

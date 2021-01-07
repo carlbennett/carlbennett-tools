@@ -35,11 +35,13 @@ class User implements IDatabaseObject {
   private $_id;
 
   protected $date_added;
+  protected $date_disabled;
   protected $display_name;
   protected $email;
   protected $id;
-  protected $options_bitmask;
+  protected $options;
   protected $password_hash;
+  protected $record_updated;
   protected $timezone;
 
   public function __construct($value) {
@@ -65,9 +67,6 @@ class User implements IDatabaseObject {
       throw new InvalidArgumentException('value must be null or a string');
     }
 
-    $this->setDateAdded(new DateTime('now', new DateTimeZone('Etc/UTC')));
-    $this->setOptionsBitmask(self::DEFAULT_OPTION);
-
     if (empty($id)) return;
 
     $this->setId($id);
@@ -78,8 +77,9 @@ class User implements IDatabaseObject {
 
     $q = Common::$database->prepare('
       SELECT
-        `date_added`, `display_name`, `email`, UuidFromBin(`id`) AS `id`,
-        `options_bitmask`, `password_hash`, `timezone`
+        `date_added`, `date_disabled`, `display_name`, `email`,
+        UuidFromBin(`id`) AS `id`, `options`, `password_hash`,
+        `record_updated`, `timezone`
       FROM `users` WHERE id = UuidToBin(:id) LIMIT 1;
     ');
     $q->bindParam(':id', $id, PDO::PARAM_STR);
@@ -104,12 +104,16 @@ class User implements IDatabaseObject {
   protected function allocateObject(StdClass $value) {
     $tz = new DateTimeZone('Etc/UTC');
 
-    $this->setDateAdded(new DateTime($value->date_added), $tz);
+    $this->setDateAdded(new DateTime($value->date_added, $tz));
+    $this->setDateDisabled(
+      $value->date_disabled ? new DateTime($value->date_disabled, $tz) : null
+    );
     $this->setEmail($value->email);
     $this->setId($value->id);
     $this->setName($value->display_name);
-    $this->setOptionsBitmask($value->options_bitmask);
+    $this->setOptions($value->options);
     $this->setPasswordHash($value->password_hash);
+    $this->setRecordUpdated(new DateTime($value->record_updated, $tz));
     $this->setTimezone($value->timezone);
   }
 
@@ -131,7 +135,62 @@ class User implements IDatabaseObject {
 
   public function commit() {
     // from the IDatabaseObject interface
-    throw new \RuntimeException('TODO');
+
+    if (!isset(Common::$database)) {
+      Common::$database = DatabaseDriver::getDatabaseObject();
+    }
+
+    if (empty($this->id)) {
+      $q = Common::$database->query('SELECT UUID();');
+      if (!$q) return $q;
+
+      $this->id = $q->fetch(PDO::FETCH_NUM)[0];
+      $q->closeCursor();
+    }
+
+    $q = Common::$database->prepare('
+      INSERT INTO `users` (
+        `date_added`, `date_disabled`, `display_name`, `email`, `id`, `options`,
+        `password_hash`, `record_updated`, `timezone`
+      ) VALUES (
+        :added, :disabled, :name, :email, UuidToBin(:id), :options,
+        :password_hash, :record_updated, :tz
+      ) ON DUPLICATE KEY UPDATE
+        `date_added` = :added, `date_disabled` = :disabled,
+        `display_name` = :name, `email` = :email, `options` = :options,
+        `password_hash` = :password_hash, `record_updated` = :record_updated,
+        `timezone` = :tz
+      ;
+    ');
+
+    $date_added = $this->date_added->format(self::DATE_SQL);
+
+    $date_disabled = (
+      is_null($this->date_disabled) ?
+      null : $this->date_disabled->format(self::DATE_SQL)
+    );
+
+    $record_updated = $this->record_updated->format(self::DATE_SQL);
+
+    $q->bindParam(':added', $date_added, PDO::PARAM_STR);
+
+    $q->bindParam(':disabled', $date_disabled, (
+      is_null($date_disabled) ? PDO::PARAM_NULL : PDO::PARAM_STR
+    ));
+
+    $q->bindParam(':email', $this->email, PDO::PARAM_STR);
+    $q->bindParam(':id', $this->id, PDO::PARAM_STR);
+    $q->bindParam(':name', $this->display_name, PDO::PARAM_STR);
+    $q->bindParam(':options', $this->options, PDO::PARAM_INT);
+    $q->bindParam(':password_hash', $this->password_hash, PDO::PARAM_STR);
+    $q->bindParam(':record_updated', $record_updated, PDO::PARAM_STR);
+    $q->bindParam(':tz', $this->timezone, PDO::PARAM_STR);
+
+    $r = $q->execute();
+    if (!$r) return $r;
+
+    $q->closeCursor();
+    return $r;
   }
 
   public static function createPassword(string $password) {
@@ -156,8 +215,9 @@ class User implements IDatabaseObject {
 
     $q = Common::$database->prepare('
       SELECT
-        `date_added`, `display_name`, `email`, UuidFromBin(`id`) AS `id`,
-        `options_bitmask`, `password_hash`, `timezone`
+        `date_added`, `date_disabled`, `display_name`, `email`,
+        UuidFromBin(`id`) AS `id`, `options`, `password_hash`,
+        `record_updated`, `timezone`
       FROM `users`
       ORDER BY `date_added`, `display_name`, `email`;
     ');
@@ -182,7 +242,7 @@ class User implements IDatabaseObject {
     $q = Common::$database->prepare('
       SELECT
         `date_added`, `display_name`, `email`, UuidFromBin(`id`) AS `id`,
-        `options_bitmask`, `password_hash`, `timezone`
+        `options`, `password_hash`, `timezone`
       FROM `users` WHERE `email` = :email;
     ');
     $q->bindParam(':email', $value, PDO::PARAM_STR);
@@ -221,11 +281,11 @@ class User implements IDatabaseObject {
       throw new InvalidArgumentException('value must be an int');
     }
 
-    return ($this->options_bitmask & $value);
+    return ($this->options & $value);
   }
 
   public function getOptionsBitmask() {
-    return $this->options_bitmask;
+    return $this->options;
   }
 
   public function getPasswordHash() {
@@ -240,6 +300,10 @@ class User implements IDatabaseObject {
     return new DateTimeZone($this->timezone);
   }
 
+  public function isDisabled() {
+    return $this->getOption(self::OPTION_DISABLED);
+  }
+
   public function setDateAdded(DateTime $value) {
     if (!$value instanceof DateTime) {
       throw new InvalidArgumentException(
@@ -248,6 +312,16 @@ class User implements IDatabaseObject {
     }
 
     $this->date_added = $value;
+  }
+
+  public function setDateDisabled($value) {
+    if (!(is_null($value) || $value instanceof DateTime)) {
+      throw new InvalidArgumentException(
+        'value must be null or a DateTime object'
+      );
+    }
+
+    $this->date_disabled = $value;
   }
 
   public function setEmail($value) {
@@ -303,18 +377,18 @@ class User implements IDatabaseObject {
     }
 
     if ($value) {
-      $this->options_bitmask |= $option;
+      $this->options |= $option;
     } else {
-      $this->options_bitmask &= ~$option;
+      $this->options &= ~$option;
     }
   }
 
-  public function setOptionsBitmask(int $value) {
+  public function setOptions(int $value) {
     if (!is_int($value) || $value < 0) {
       throw new InvalidArgumentException('value must be a positive integer');
     }
 
-    $this->options_bitmask = $value;
+    $this->options = $value;
   }
 
   public function setPasswordHash(string $value) {
@@ -327,6 +401,16 @@ class User implements IDatabaseObject {
     }
 
     $this->password_hash = $value;
+  }
+
+  public function setRecordUpdated(DateTime $value) {
+    if (!$value instanceof DateTime) {
+      throw new InvalidArgumentException(
+        'value must be a DateTime object'
+      );
+    }
+
+    $this->record_updated = $value;
   }
 
   public function setTimezone(string $value) {
