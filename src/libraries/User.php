@@ -26,7 +26,6 @@ class User implements IDatabaseObject {
   const OPTION_DISABLED          = 0x00000001;
   const OPTION_ACL_PLEX_REQUESTS = 0x00000010;
   const OPTION_ACL_PLEX_USERS    = 0x00000020;
-  const OPTION_RESERVED          = 0xFFFFFFCE;
 
   const PASSWORD_CHECK_VERIFIED = 1;
   const PASSWORD_CHECK_EXPIRED  = 2;
