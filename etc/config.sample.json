@@ -1,23 +1,26 @@
 {
-    "maintenance": [
-        true,
-        "This website is currently undergoing routine maintenance and will be back in a little while. Stay tuned for updates."
+  "maintenance": [
+    true,
+    "This website is currently undergoing routine maintenance and will be back in a little while. Stay tuned for updates."
+  ],
+  "mysql": {
+    "character_set": "utf8mb4",
+    "database": "carlbennett_tools",
+    "password": "sample password",
+    "servers": [
+      {
+        "hostname": "localhost",
+        "port": 3306
+      }
     ],
-    "mysql": {
-        "character_set": "utf8mb4",
-        "database": "carlbennett_tools",
-        "password": "sample password",
-        "servers": [
-            {
-                "hostname": "localhost",
-                "port": 3306
-            }
-        ],
-        "timeout": 3,
-        "timezone": "+00:00",
-        "username": "carlbennett_tools"
-    },
-    "users": {
-        "bcrypt_cost": 10
-    }
+    "timeout": 3,
+    "timezone": "+00:00",
+    "username": "carlbennett_tools"
+  },
+  "pastes": {
+    "crypt_cost": 10
+  },
+  "users": {
+    "crypt_cost": 10
+  }
 }

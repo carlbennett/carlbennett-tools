@@ -115,10 +115,11 @@ class User implements IDatabaseObject {
   }
 
   public function checkPassword(string $password) {
+    $cost = Common::$config->users->crypt_cost;
     $hash = $this->getPasswordHash();
-    $rehash = password_needs_rehash($hash, PASSWORD_BCRYPT, array(
-      'cost' => Common::$config->users->bcrypt_cost,
-    ));
+    $rehash = password_needs_rehash(
+      $hash, PASSWORD_BCRYPT, array('cost' => $cost)
+    );
     $verified = password_verify($password, $hash);
 
     $r = 0;
@@ -143,9 +144,10 @@ class User implements IDatabaseObject {
       throw new LengthException('value must not be empty');
     }
 
-    return password_hash($password, PASSWORD_BCRYPT, array(
-      'cost' => Common::$config->users->bcrypt_cost,
-    ));
+    $cost = Common::$config->users->crypt_cost;
+    $digest = $password.$salt.$pepper;
+
+    return password_hash($digest, PASSWORD_BCRYPT, array('cost' => $cost));
   }
 
   public static function getAll() {
