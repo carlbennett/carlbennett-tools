@@ -25,9 +25,9 @@ class Add extends Controller {
     $form = $router->getRequestBodyArray();
     $query = $router->getRequestQueryArray();
 
-    if (!($model->active_user && (
-      $model->active_user->getOptionsBitmask() & User::OPTION_ACL_PLEX_USERS
-    ))) {
+    if (!($model->active_user &&
+      $model->active_user->getOption(User::OPTION_ACL_PLEX_USERS)
+    )) {
       $view->render($model);
       $model->_responseCode = 401;
       return $model;

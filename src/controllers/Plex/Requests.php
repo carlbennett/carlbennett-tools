@@ -15,9 +15,9 @@ class Requests extends Controller {
     $model = new PlexRequestsModel();
     $model->active_user = Authentication::$user;
 
-    if (!($model->active_user && (
-      $model->active_user->getOptionsBitmask() & User::OPTION_ACL_PLEX_REQUESTS
-    ))) {
+    if (!($model->active_user &&
+      $model->active_user->getOption(User::OPTION_ACL_PLEX_REQUESTS)
+    )) {
       $view->render($model);
       $model->_responseCode = 401;
       return $model;
