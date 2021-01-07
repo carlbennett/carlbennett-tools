@@ -291,8 +291,8 @@ class User implements IDatabaseObject {
     return $this->display_name;
   }
 
-  public function getOption(int $value) {
-    if (!is_int($value)) {
+  public function getOption(int $option) {
+    if (!is_int($option)) {
       throw new InvalidArgumentException('value must be an int');
     }
 
