@@ -7,11 +7,11 @@ use \CarlBennett\MVC\Libraries\Controller;
 use \CarlBennett\MVC\Libraries\Router;
 use \CarlBennett\MVC\Libraries\View;
 use \CarlBennett\Tools\Libraries\Authentication;
-use \CarlBennett\Tools\Models\User\Logout as LogoutModel;
+use \CarlBennett\Tools\Models\User\Authentication as AuthModel;
 
 class Logout extends Controller {
   public function &run(Router &$router, View &$view, array &$args) {
-    $model = new LogoutModel();
+    $model = new AuthModel();
     $model->feedback = array();
 
     $query = $router->getRequestQueryArray();
@@ -27,7 +27,7 @@ class Logout extends Controller {
     return $model;
   }
 
-  protected function processLogout(LogoutModel &$model) {
+  protected function processLogout(AuthModel &$model) {
     if (!Authentication::logout()) {
       $model->feedback = 'An error occurred while processing the logout.';
       return;

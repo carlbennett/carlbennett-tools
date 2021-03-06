@@ -6,7 +6,7 @@ use \CarlBennett\MVC\Libraries\Exceptions\IncorrectModelException;
 use \CarlBennett\MVC\Libraries\Model;
 use \CarlBennett\MVC\Libraries\Template;
 use \CarlBennett\MVC\Libraries\View;
-use \CarlBennett\Tools\Models\User\Login as LoginModel;
+use \CarlBennett\Tools\Models\User\Authentication as AuthModel;
 
 class LoginHtml extends View {
   public function getMimeType() {
@@ -14,7 +14,7 @@ class LoginHtml extends View {
   }
 
   public function render(Model &$model) {
-    if (!$model instanceof LoginModel) {
+    if (!$model instanceof AuthModel) {
       throw new IncorrectModelException();
     }
     (new Template($model, 'User/Login'))->render();

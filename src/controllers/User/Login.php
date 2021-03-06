@@ -8,11 +8,11 @@ use \CarlBennett\MVC\Libraries\Router;
 use \CarlBennett\MVC\Libraries\View;
 use \CarlBennett\Tools\Libraries\Authentication;
 use \CarlBennett\Tools\Libraries\User;
-use \CarlBennett\Tools\Models\User\Login as LoginModel;
+use \CarlBennett\Tools\Models\User\Authentication as AuthModel;
 
 class Login extends Controller {
   public function &run(Router &$router, View &$view, array &$args) {
-    $model = new LoginModel();
+    $model = new AuthModel();
     $model->feedback = array();
 
     $form = $router->getRequestBodyArray();
@@ -34,7 +34,7 @@ class Login extends Controller {
     return $model;
   }
 
-  protected function processLogin(LoginModel &$model) {
+  protected function processLogin(AuthModel &$model) {
     if (empty($model->email)) {
       $model->feedback['email'] = 'Email cannot be empty.';
       return;
