@@ -114,6 +114,10 @@ function main() {
         $router->addRoute(
             '#^/remoteaddress\.txt$#', 'RemoteAddress', 'RemoteAddressPlain'
         );
+        // URL: /user/invite
+        $router->addRoute(
+            '#^/user/invite$#', 'User\\Invite', 'User\\InviteHtml'
+        );
         // URL: /user/login
         $router->addRoute(
             '#^/user/login$#', 'User\\Login', 'User\\LoginHtml'
