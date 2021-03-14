@@ -140,7 +140,7 @@ class Invite
    */
   public function setId(string $value)
   {
-    if (!preg_match(self::UUID_REGEX, $value) !== 1) {
+    if (!preg_match(self::UUID_REGEX, $value) !== 1)
     {
       // InvalidArgumentException is in Logic
       throw new InvalidArgumentException(
