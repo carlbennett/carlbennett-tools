@@ -20,6 +20,7 @@ class User implements IDatabaseObject {
   const DEFAULT_OPTION   = 0x00000000;
   const DEFAULT_TIMEZONE = 'Etc/UTC';
 
+  # Maximum SQL field lengths, alter as appropriate.
   const MAX_DISPLAY_NAME = 191;
   const MAX_EMAIL        = 191;
 

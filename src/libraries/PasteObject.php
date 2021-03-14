@@ -20,6 +20,7 @@ class PasteObject implements IDatabaseObject {
 
   const DATE_SQL = 'Y-m-d H:i:s';
 
+  # Maximum SQL field lengths, alter as appropriate.
   const MAX_CONTENT = 4294967295; // 4 GiB
   const MAX_TITLE   = 191;
 

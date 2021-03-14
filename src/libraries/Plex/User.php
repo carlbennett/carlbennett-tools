@@ -20,6 +20,7 @@ class User implements IDatabaseObject {
 
   const DATE_SQL = 'Y-m-d H:i:s';
 
+  # Maximum SQL field lengths, alter as appropriate.
   const MAX_NOTES         = 65535;
   const MAX_PLEX_EMAIL    = 191;
   const MAX_PLEX_USERNAME = 191;
