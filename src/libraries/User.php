@@ -27,6 +27,7 @@ class User implements IDatabaseObject {
   const OPTION_BANNED            = 0x00000002;
   const OPTION_ACL_PLEX_REQUESTS = 0x00000010;
   const OPTION_ACL_PLEX_USERS    = 0x00000020;
+  const OPTION_ACL_INVITE_USERS  = 0x00000040;
 
   const PASSWORD_CHECK_VERIFIED = 1;
   const PASSWORD_CHECK_EXPIRED  = 2;
