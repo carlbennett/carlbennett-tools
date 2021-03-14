@@ -5,7 +5,7 @@ $return = $this->getContext()->return;
 $feedback = $this->getContext()->feedback;
 require("./header.inc.phtml"); ?>
 <div class="container">
-  <p class="alert alert-danger"><?=$feedback?></p>
+<?php require('./NYI.inc.phtml'); ?>
 <?php if (isset($return)) { ?>
   <p>Redirecting to <a href="<?=$return?>"><?=filter_var($return, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></a>...</p>
 <?php } ?>
