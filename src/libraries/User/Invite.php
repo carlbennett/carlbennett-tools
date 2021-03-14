@@ -131,6 +131,14 @@ class Invite
       throw new UnexpectedValueException('value is not a valid email address');
     }
 
+    if (strlen($value) > self::MAX_EMAIL)
+    {
+      // UnexpectedValueException is at Runtime
+      throw new UnexpectedValueException(sprintf(
+        'value string length must be less than or equal to %d', self::MAX_EMAIL
+      ));
+    }
+
     $this->email = $value;
   }
 
