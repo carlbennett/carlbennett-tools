@@ -6,6 +6,7 @@ use \CarlBennett\MVC\Libraries\Model;
 
 class Invite extends Model {
 
+  public $auth_user;
   public $date_accepted;
   public $date_invited;
   public $date_revoked;
@@ -14,6 +15,8 @@ class Invite extends Model {
   public $id;
   public $invited_by;
   public $invited_user;
+  public $invites_available;
+  public $invites_used;
   public $password_confirm;
   public $password_desired;
   public $record_updated;

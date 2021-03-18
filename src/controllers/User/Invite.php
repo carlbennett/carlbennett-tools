@@ -12,8 +12,14 @@ use \CarlBennett\Tools\Models\User\Invite as InviteModel;
 class Invite extends Controller {
   public function &run(Router &$router, View &$view, array &$args) {
     $model = new InviteModel();
+    $model->auth_user = Authentication::$user;
     $model->feedback = array(); // for bootstrap field/color
     $model->_responseCode = 200;
+
+    if ($model->auth_user) {
+      $model->invites_available = $model->auth_user->getInvitesAvailable();
+      $model->invites_used = $model->auth_user->getInvitesUsed();
+    }
 
     $query = $router->getRequestQueryArray();
     $model->id = $query['id'] ?? null;
