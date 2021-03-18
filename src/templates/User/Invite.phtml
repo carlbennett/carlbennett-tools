@@ -12,6 +12,7 @@ $invited_user = $this->getContext()->invited_user;
 $invites_available = $this->getContext()->invites_available;
 $invites_available_str = number_format($invites_available) . ' invite' . ($invites_available !== 1 ? 's' : '');
 $invites_used = $this->getContext()->invites_used;
+$invites_used_str = number_format($invites_used) . ' invite' . ($invites_used !== 1 ? 's' : '');
 $password_confirm = $this->getContext()->password_confirm;
 $password_desired = $this->getContext()->password_desired;
 $record_updated = $this->getContext()->record_updated;
@@ -25,7 +26,7 @@ require("./header.inc.phtml"); ?>
 <?php if ($id) { require('./NYI.inc.phtml'); require('./footer.inc.phtml'); return; } ?>
 <?php if (!$id && !$auth_user) { require('./LoginRequired.inc.phtml'); require('./footer.inc.phtml'); return; } ?>
 <?php if ($auth_user) { ?>
-  <div class="alert alert-info">You currently have <strong><?=$invites_available_str?></strong> available.</div>
+  <div class="alert alert-info">You currently have <strong><?=$invites_available_str?></strong> available. You have used <strong><?=$invites_used_str?></strong>.</div>
 <?php if ($invites_available > 0) { ?>
   <h2>Send Invitation</h2>
   <p>Use the form below to extend an email letter invitation to join this site to another user.</p>
