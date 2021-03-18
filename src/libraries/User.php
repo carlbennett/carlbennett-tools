@@ -119,6 +119,8 @@ class User implements IDatabaseObject {
     );
     $this->setEmail($value->email);
     $this->setId($value->id);
+    $this->setInvitesAvailable($value->invites_available);
+    $this->setInvitesUsed($value->invites_used);
     $this->setName($value->display_name);
     $this->setOptions($value->options);
     $this->setPasswordHash($value->password_hash);
