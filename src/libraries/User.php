@@ -21,8 +21,9 @@ class User implements IDatabaseObject {
   const DEFAULT_TIMEZONE = 'Etc/UTC';
 
   # Maximum SQL field lengths, alter as appropriate.
-  const MAX_DISPLAY_NAME = 191;
-  const MAX_EMAIL        = 191;
+  const MAX_DISPLAY_NAME      = 191;
+  const MAX_EMAIL             = 191;
+  const MAX_INVITES_AVAILABLE = 65535;
 
   const OPTION_DISABLED          = 0x00000001;
   const OPTION_BANNED            = 0x00000002;
@@ -44,7 +45,6 @@ class User implements IDatabaseObject {
   protected $email;
   protected $id;
   protected $invites_available;
-  protected $invites_used;
   protected $options;
   protected $password_hash;
   protected $record_updated;
@@ -84,8 +84,8 @@ class User implements IDatabaseObject {
     $q = Common::$database->prepare('
       SELECT
         `date_added`, `date_banned`, `date_disabled`, `display_name`, `email`,
-        UuidFromBin(`id`) AS `id`, `invites_available`, `invites_used`,
-        `options`, `password_hash`, `record_updated`, `timezone`
+        UuidFromBin(`id`) AS `id`, `invites_available`, `options`,
+        `password_hash`, `record_updated`, `timezone`
       FROM `users` WHERE id = UuidToBin(:id) LIMIT 1;
     ');
     $q->bindParam(':id', $id, PDO::PARAM_STR);
@@ -120,7 +120,6 @@ class User implements IDatabaseObject {
     $this->setEmail($value->email);
     $this->setId($value->id);
     $this->setInvitesAvailable($value->invites_available);
-    $this->setInvitesUsed($value->invites_used);
     $this->setName($value->display_name);
     $this->setOptions($value->options);
     $this->setPasswordHash($value->password_hash);
@@ -162,17 +161,17 @@ class User implements IDatabaseObject {
     $q = Common::$database->prepare('
       INSERT INTO `users` (
         `date_added`, `date_banned`, `date_disabled`, `display_name`, `email`,
-        `id`, `invites_available`, `invites_used`, `options`, `password_hash`,
-        `record_updated`, `timezone`
+        `id`, `invites_available`, `options`, `password_hash`, `record_updated`,
+        `timezone`
       ) VALUES (
         :added, :banned, :disabled, :name, :email, UuidToBin(:id), :invites_a,
-        :invites_u, :options, :password, :record_updated, :tz
+        :options, :password, :record_updated, :tz
       ) ON DUPLICATE KEY UPDATE
         `date_added` = :added, `date_banned` = :banned,
         `date_disabled` = :disabled, `display_name` = :name, `email` = :email,
-        `invites_available` = :invites_a, `invites_used` = :invites_u,
-        `options` = :options, `password_hash` = :password,
-        `record_updated` = :record_updated, `timezone` = :tz
+        `invites_available` = :invites_a, `options` = :options,
+        `password_hash` = :password, `record_updated` = :record_updated,
+        `timezone` = :tz
       ;
     ');
 
@@ -203,7 +202,6 @@ class User implements IDatabaseObject {
     $q->bindParam(':email', $this->email, PDO::PARAM_STR);
     $q->bindParam(':id', $this->id, PDO::PARAM_STR);
     $q->bindParam(':invites_a', $this->invites_available, PDO::PARAM_INT);
-    $q->bindParam(':invites_u', $this->invites_used, PDO::PARAM_INT);
     $q->bindParam(':name', $this->display_name, PDO::PARAM_STR);
     $q->bindParam(':options', $this->options, PDO::PARAM_INT);
     $q->bindParam(':password', $this->password_hash, PDO::PARAM_STR);
@@ -240,8 +238,8 @@ class User implements IDatabaseObject {
     $q = Common::$database->prepare('
       SELECT
         `date_added`, `date_banned`, `date_disabled`, `display_name`, `email`,
-        UuidFromBin(`id`) AS `id`, `options`, `password_hash`,
-        `record_updated`, `timezone`
+        UuidFromBin(`id`) AS `id`, `invites_available`, `options`,
+        `password_hash`, `record_updated`, `timezone`
       FROM `users`
       ORDER BY `date_added`, `display_name`, `email`;
     ');
@@ -266,8 +264,8 @@ class User implements IDatabaseObject {
     $q = Common::$database->prepare('
       SELECT
         `date_added`, `date_banned`, `date_disabled`, `display_name`, `email`,
-        UuidFromBin(`id`) AS `id`, `options`, `password_hash`, `record_updated`,
-        `timezone`
+        UuidFromBin(`id`) AS `id`, `invites_available`, `options`,
+        `password_hash`, `record_updated`, `timezone`
       FROM `users` WHERE `email` = :email;
     ');
     $q->bindParam(':email', $value, PDO::PARAM_STR);
@@ -302,7 +300,26 @@ class User implements IDatabaseObject {
   }
 
   public function getInvitesUsed() {
-    return $this->invites_used;
+    if (!isset($this->id) || empty($this->id)) {
+      throw new InvalidArgumentException('id must be set prior to call');
+    }
+
+    if (!isset(Common::$database)) {
+      Common::$database = DatabaseDriver::getDatabaseObject();
+    }
+
+    $q = Common::$database->prepare(
+      'SELECT COUNT(*) FROM `user_invites` WHERE `invited_by` = UuidToBin(:id);'
+    );
+    $q->bindParam(':id', $this->id, PDO::PARAM_STR);
+
+    $r = $q->execute();
+    if (!$r) return $r;
+
+    $r = $q->fetch(PDO::FETCH_NUM)[0];
+
+    $q->closeCursor();
+    return $r;
   }
 
   public function getName() {
@@ -398,23 +415,14 @@ class User implements IDatabaseObject {
   }
 
   public function setInvitesAvailable(int $value) {
-    if ($value < 0 || $value > 0xFFFF) {
-      throw new InvalidArgumentException(
-        'value must be an integer in the 0-65535 range'
-      );
+    if ($value < 0 || $value > self::MAX_INVITES_AVAILABLE) {
+      throw new InvalidArgumentException(sprintf(
+        'value must be an integer in the 0-%d range',
+        self::MAX_INVITES_AVAILABLE
+      ));
     }
 
     $this->invites_available = $value;
-  }
-
-  public function setInvitesUsed(int $value) {
-    if ($value < 0 || $value > 0xFFFF) {
-      throw new InvalidArgumentException(
-        'value must be an integer in the 0-65535 range'
-      );
-    }
-
-    $this->invites_used = $value;
   }
 
   public function setName(string $value) {
