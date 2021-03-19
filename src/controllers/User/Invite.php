@@ -22,35 +22,35 @@ class Invite extends Controller {
     }
 
     $query = $router->getRequestQueryArray();
-    $model->id = $query['id'] ?? null;
 
     $return = $query['return'] ?? null;
     if (!empty($return) && substr($return, 0, 1) != '/') $return = null;
     if (!empty($return)) $return = Common::relativeUrlToAbsolute($return);
     $model->return = $return;
 
+    $model->id = $query['id'] ?? null;
     if (!empty($model->id)) {
-      $this->lookupInvite($model);
+      $this->lookupInvite($router, $model);
     }
 
     if ($router->getRequestMethod() == 'POST') {
-      $this->processInvite($model);
+      $this->processInvite($router, $model);
+    }
+
+    if (!empty($model->return)) {
+      $model->_responseCode = 303;
+      header('Location: ' . $model->return);
     }
 
     $view->render($model);
     return $model;
   }
 
-  protected function lookupInvite(InviteModel &$model) {
+  protected function lookupInvite(Router &$router, InviteModel &$model) {
   }
 
-  protected function processInvite(InviteModel &$model) {
-    $model->feedback = 'An error occurred while processing the request.';
-    return;
-
-    if (!empty($model->return)) {
-      $model->_responseCode = 303;
-      header('Location: ' . $model->return);
-    }
+  protected function processInvite(Router &$router, InviteModel &$model) {
+    $data = $router->getRequestBodyArray();
+    $model->email = $data['email'] ?? null;
   }
 }
