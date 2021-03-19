@@ -52,5 +52,6 @@ class Invite extends Controller {
   protected function processInvite(Router &$router, InviteModel &$model) {
     $data = $router->getRequestBodyArray();
     $model->email = $data['email'] ?? null;
+    $model->feedback = array('email', 'Invalid email address.');
   }
 }

@@ -30,11 +30,17 @@ require("./header.inc.phtml"); ?>
 <?php if ($invites_available > 0) { ?>
   <h2>Send Invitation</h2>
   <p>Use the form below to extend an email letter invitation to join this site to another user.</p>
-  <form class="form-inline" method="POST">
-    <div class="form-group mx-sm-3 mb-2">
-      <input class="form-control form-control-sm" type="email" name="email" id="email" placeholder="Invite an email address" value="<?=filter_var($email, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>"/>
+  <form method="POST">
+    <div class="my-1 mx-3">
+      <label for="email" class="sr-only">Invite an email address:</label>
+      <input class="form-control form-control-sm" style="width:auto;" type="email" name="email" id="email" placeholder="Invite an email address" value="<?=filter_var($email, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>" required<?=(isset($feedback[0]) && $feedback[0] == 'email' ? ' autofocus' : '')?>/>
+<?php if (isset($feedback[0]) && $feedback[0] == 'email') { ?>
+      <div class="text-danger"><?=$feedback[1]?></div>
+<?php } ?>
     </div>
-    <input class="btn btn-sm btn-success mb-2" type="submit" value="Invite"/>
+    <div class="my-1 mx-3">
+      <input class="btn btn-sm btn-success" type="submit" value="Invite"/>
+    </div>
   </form>
 <?php } ?>
 <?php if ($invites_used > 0) { ?>
