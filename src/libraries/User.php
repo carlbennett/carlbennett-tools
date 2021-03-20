@@ -17,6 +17,8 @@ use \UnexpectedValueException;
 
 class User implements IDatabaseObject {
 
+  const DATE_SQL = 'Y-m-d H:i:s';
+
   const DEFAULT_OPTION   = 0x00000000;
   const DEFAULT_TIMEZONE = 'Etc/UTC';
 
