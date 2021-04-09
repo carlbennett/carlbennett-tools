@@ -51,12 +51,15 @@ class Invite extends Controller {
 
   protected function lookupInvite(Router &$router, InviteModel &$model) {
     try {
+      $model->error = InviteModel::ERROR_INTERNAL_ERROR;
       $invite = new Invitation($model->id);
     } catch (InvalidArgumentException $e) {
       // user inputted id value was malformed
+      $model->error = InviteModel::ERROR_ID_MALFORMED;
       $invite = null;
     } catch (UnexpectedValueException $e) {
       // user inputted id value was not found (so object cannot be created)
+      $model->error = InviteModel::ERROR_ID_NOT_FOUND;
       $invite = null;
     }
 
@@ -66,6 +69,7 @@ class Invite extends Controller {
     $model->date_invited = $invite->getDateInvited();
     $model->date_revoked = $invite->getDateRevoked();
     $model->email = $invite->getEmail();
+    $model->error = InviteModel::ERROR_SUCCESS;
     $model->id = $invite->getId();
     $model->invited_by = $invite->getInvitedBy();
     $model->invited_user = $invite->getInvitedUser();
@@ -75,6 +79,7 @@ class Invite extends Controller {
   protected function processInvite(Router &$router, InviteModel &$model) {
     $data = $router->getRequestBodyArray();
     $model->email = $data['email'] ?? null;
+    $model->error = InviteModel::ERROR_INTERNAL_ERROR;
     $model->feedback = array('email', 'Invalid email address.');
     // TODO
   }

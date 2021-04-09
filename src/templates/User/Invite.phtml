@@ -1,10 +1,12 @@
 <?php namespace CarlBennett\Tools\Templates\User;
 use \CarlBennett\MVC\Libraries\Common;
+use \CarlBennett\Tools\Models\User\Invite as InviteModel;
 $auth_user = $this->getContext()->auth_user;
 $date_accepted = $this->getContext()->date_accepted;
 $date_invited = $this->getContext()->date_invited;
 $date_revoked = $this->getContext()->date_revoked;
 $email = $this->getContext()->email;
+$error = $this->getContext()->error;
 $feedback = $this->getContext()->feedback;
 $id = $this->getContext()->id;
 $invited_by = $this->getContext()->invited_by;
@@ -18,10 +20,23 @@ $password_desired = $this->getContext()->password_desired;
 $record_updated = $this->getContext()->record_updated;
 $return = $this->getContext()->return;
 $title = 'User Invite';
-require("./header.inc.phtml"); ?>
+
+switch ($error) {
+  case null: $error_str = 'Null'; break;
+  case InviteModel::ERROR_SUCCESS: $error_str = 'Success'; break;
+  case InviteModel::ERROR_INTERNAL_ERROR: $error_str = 'Internal Error'; break;
+  case InviteModel::ERROR_ID_MALFORMED: $error_str = 'Id malformed'; break;
+  case InviteModel::ERROR_ID_NOT_FOUND: $error_str = 'Id not found'; break;
+  default: $error_str = sprintf('Unknown (%s)', $error);
+}
+
+require('./header.inc.phtml'); ?>
 <div class="container">
 <?php if (isset($return)) { ?>
   <p>Redirecting to <a href="<?=$return?>"><?=filter_var($return, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></a>...</p>
+<?php } ?>
+<?php if (!is_null($error)) { ?>
+  <div class="alert alert-<?=($error === InviteModel::ERROR_SUCCESS ? 'success' : 'danger')?>"><?=$error_str?></div>
 <?php } ?>
 <?php if ($id) { require('./NYI.inc.phtml'); require('./footer.inc.phtml'); return; } ?>
 <?php if (!$id && !$auth_user) { require('./LoginRequired.inc.phtml'); require('./footer.inc.phtml'); return; } ?>
