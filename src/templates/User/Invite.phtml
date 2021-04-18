@@ -22,6 +22,8 @@ $record_updated = $this->getContext()->record_updated;
 $return = $this->getContext()->return;
 $title = 'User Invite';
 
+$fmt = 'D, M j, Y g:i A T';
+
 switch ($error) {
   case null: $error_str = 'Null'; break;
   case InviteModel::ERROR_SUCCESS: $error_str = 'Success'; break;
@@ -73,9 +75,32 @@ require('./header.inc.phtml'); ?>
       </tr>
     </thead>
     <tbody>
-<?php foreach ($invites_sent as $invite) { ?>
-      <tr><td colspan="5"><?=$invite->getId()?></td></tr>
-<?php } ?>
+<?php foreach ($invites_sent as $inv) {
+        if (is_string($inv)) { ?>
+      <tr><td colspan="5"><?=$inv->getId()?></td></tr>
+<?php   } else {
+          $inv_date_accepted = $inv->getDateAccepted();
+          $inv_date_invited = $inv->getDateInvited();
+          $inv_date_revoked = $inv->getDateRevoked();
+
+          $inv_id_str = $inv->getId();
+          $inv_date_accepted_str = (!is_null($inv_date_accepted) ? $inv_date_accepted->format($fmt) : '<em>(not accepted)</em>');
+          $inv_date_invited_str = (!is_null($inv_date_invited) ? $inv_date_invited->format($fmt) : '<em>(not invited)</em>');
+          $inv_date_revoked_str = (!is_null($inv_date_revoked) ? $inv_date_revoked->format($fmt) : '<em>(not revoked)</em>');
+          $inv_email_str = $inv->getEmail();
+
+          $inv_date_accepted_class = (!is_null($inv_date_accepted) ? 'text-warning' : 'text-secondary');
+          $inv_date_revoked_class = (!is_null($inv_date_revoked) ? 'text-danger' : 'text-secondary');
+?>
+      <tr>
+        <td><?=$inv_date_invited_str?></td>
+        <td><?=$inv_date_revoked_str?></td>
+        <td><?=$inv_date_accepted_str?></td>
+        <td><?=$inv_email_str?></td>
+        <td><em>&ndash;</em></td>
+      </tr>
+<?php   }
+      } ?>
     </tbody>
   </table>
 <?php } ?>
