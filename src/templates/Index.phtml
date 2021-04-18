@@ -1,38 +1,55 @@
 <?php /* vim: set colorcolumn=0: */
 namespace CarlBennett\Tools\Templates;
 use \CarlBennett\MVC\Libraries\Common;
+use \CarlBennett\Tools\Libraries\User;
 $title = 'Tool Overview';
+$active_user = $this->getContext()->active_user;
 require("./header.inc.phtml"); ?>
 <div class="container">
   <h3>Select a Tool</h3>
-  <div class="card-columns">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title"><a title="Gandalf Sax Guy 10 Hours" href="<?=Common::relativeUrlToAbsolute('/gandalf')?>">Gandalf</a></h5>
-        <p class="card-text">Gandalf Sax Guy for 10 hours.</p>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title"><a title="Pastebin" href="<?=Common::relativeUrlToAbsolute('/paste')?>">Pastebin</a></h5>
-        <p class="card-text">A quick place to paste stuff.</p>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Plex</h5>
-        <p class="card-text">Access Plex-related stuff.</p>
-        <a class="btn btn-sm btn-primary mr-1" href="<?=Common::relativeUrlToAbsolute('/plex/requests')?>">Requests</a>
-        <a class="btn btn-sm btn-primary mr-3" href="<?=Common::relativeUrlToAbsolute('/plex/users')?>">Users</a>
-        <a class="btn btn-sm btn-primary" href="<?=Common::relativeUrlToAbsolute('/plex/welcome')?>">Welcome</a></span>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title"><a title="Remote Address" href="<?=Common::relativeUrlToAbsolute('/remoteaddress')?>">Remote Address</a></h5>
-        <p class="card-text">Show your IP address info.</p>
-      </div>
-    </div>
-  </div>
+  <p>The following are the set of tools available.</p>
+  <table class="table table-striped">
+    <thead><tr><th>Tool</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><a title="Gandalf Sax Guy for 10 hours" href="<?=Common::relativeUrlToAbsolute('/gandalf')?>">🎶 Gandalf </a></td>
+        <td>Gandalf Sax Guy for 10 hours.</td>
+      </tr>
+<?php if ($active_user && ($active_user->getOption(User::OPTION_ACL_INVITE_USERS) || $active_user->getInvitesAvailable() > 0)) { ?>
+      <tr>
+        <td><a title="Invite User" href="<?=Common::relativeUrlToAbsolute('/user/invite')?>">👤 Invite User</a></td>
+        <td>Invite user to Carl's Toolbox.</td>
+      </tr>
+<?php } ?>
+      <tr>
+        <td><a title="Pastebin" href="<?=Common::relativeUrlToAbsolute('/paste')?>">📝 Pastebin</a></td>
+        <td>A quick place to paste stuff.</td>
+      </tr>
+<?php if ($active_user && $active_user->getOption(User::OPTION_ACL_PLEX_REQUESTS)) { ?>
+      <tr>
+        <td><a title="Plex Requests" href="<?=Common::relativeUrlToAbsolute('/plex/requests')?>">📢 Plex Requests</a></td>
+        <td>Request content for Carl's Plex.</td>
+      </tr>
+<?php } ?>
+<?php if ($active_user && $active_user->getOption(User::OPTION_ACL_PLEX_USERS)) { ?>
+      <tr>
+        <td><a title="Plex Users" href="<?=Common::relativeUrlToAbsolute('/plex/users')?>">👥 Plex Users</a></td>
+        <td>Manage users for Carl's Plex.</td>
+      </tr>
+<?php } ?>
+      <tr>
+        <td><a title="Remote Address" href="<?=Common::relativeUrlToAbsolute('/remoteaddress')?>">🏠 Remote Address</a></td>
+        <td>Show your IP address info.</td>
+      </tr>
+    </tbody>
+  </table>
+<?php if (!$active_user) { ?>
+  <p>Additional tools are gated and require authentication, please <a title="Log in" href="<?=Common::relativeUrlToAbsolute('/user/login?return=/home')?>">Log in <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-box-arrow-in-up-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M6.364 13.5a.5.5 0 0 0 .5.5H13.5a1.5 1.5 0 0 0 1.5-1.5v-10A1.5 1.5 0 0 0 13.5 1h-10A1.5 1.5 0 0 0 2 2.5v6.636a.5.5 0 1 0 1 0V2.5a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5H6.864a.5.5 0 0 0-.5.5z"/>
+                <path fill-rule="evenodd" d="M11 5.5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793l-8.147 8.146a.5.5 0 0 0 .708.708L10 6.707V10.5a.5.5 0 0 0 1 0v-5z"/>
+              </svg></a> for more tools.</p>
+<?php } else { ?>
+  <p class="text-muted">&ndash;<br/>End of list.</p>
+<?php } ?>
 </div>
 <?php require("./footer.inc.phtml"); ?>
