@@ -3,6 +3,8 @@ use \CarlBennett\MVC\Libraries\Common;
 $title = 'Remote Address';
 $geoip = $this->getContext()->geoip_info;
 $ip = $this->getContext()->ip_address;
+$ua = $this->getContext()->user_agent;
+$ua_max = 100;
 require("./header.inc.phtml"); ?>
 <div class="container">
   <h1>Remote Address</h1>
@@ -26,6 +28,13 @@ require("./header.inc.phtml"); ?>
 <?php } ?>
 <?php } else { ?>
       <tr><th scope="row" class="text-right">GeoIP Info</th><td class="text-left"><em>not available</em></td></tr>
+<?php } ?>
+<?php if ($ua && strlen($ua) <= $ua_max) { ?>
+      <tr><th scope="row" class="text-right">User Agent</th><td class="text-left"><code><?=filter_var($ua, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></code></td></tr>
+<?php } else if ($ua && strlen($ua) > $ua_max) { ?>
+      <tr><th scope="row" class="text-right">User Agent</th><td class="text-left"><code><?=filter_var(substr($ua, 0, $ua_max), FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></code>&hellip;</td></tr>
+<?php } else { ?>
+      <tr><th scope="row" class="text-right">User Agent</th><td class="text-left"><em>not available</em></td></tr>
 <?php } ?>
     </tbody>
   </table>

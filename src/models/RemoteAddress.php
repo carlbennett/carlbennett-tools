@@ -8,5 +8,6 @@ class RemoteAddress extends Model {
 
   public $geoip_info;
   public $ip_address;
+  public $user_agent;
 
 }

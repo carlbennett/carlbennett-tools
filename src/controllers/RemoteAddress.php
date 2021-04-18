@@ -16,6 +16,7 @@ class RemoteAddress extends Controller {
     } else {
       $model->geoip_info = null;
     }
+    $model->user_agent = getenv('HTTP_USER_AGENT');
     $view->render($model);
     $model->_responseCode = 200;
     return $model;

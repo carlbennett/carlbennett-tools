@@ -20,6 +20,7 @@ class RemoteAddressJSON extends View {
     echo json_encode(array(
       'ip_address' => $model->ip_address,
       'geoip_info' => $model->geoip_info,
+      'user_agent' => $model->user_agent,
     ), Common::prettyJSONIfBrowser());
     $model->_responseHeaders['Content-Type'] = $this->getMimeType();
   }
