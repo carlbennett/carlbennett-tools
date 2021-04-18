@@ -21,6 +21,7 @@ class Invite extends Controller {
 
     if ($model->auth_user) {
       $model->invites_available = $model->auth_user->getInvitesAvailable();
+      $model->invites_sent = $model->auth_user->getInvitesSent();
       $model->invites_used = $model->auth_user->getInvitesUsed();
     }
 

@@ -22,6 +22,7 @@ class Invite extends Model {
   public $invited_by;
   public $invited_user;
   public $invites_available;
+  public $invites_sent;
   public $invites_used;
   public $password_confirm;
   public $password_desired;

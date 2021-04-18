@@ -301,6 +301,33 @@ class User implements IDatabaseObject {
     return $this->invites_available;
   }
 
+  public function getInvitesSent() {
+    if (!isset($this->id) || empty($this->id)) {
+      throw new InvalidArgumentException('id must be set prior to call');
+    }
+
+    if (!isset(Common::$database)) {
+      Common::$database = DatabaseDriver::getDatabaseObject();
+    }
+
+    $q = Common::$database->prepare(
+      'SELECT UuidFromBin(`id`) AS `id` FROM `user_invites`
+      WHERE `invited_by` = UuidToBin(:id);'
+    );
+    $q->bindParam(':id', $this->id, PDO::PARAM_STR);
+
+    $r = $q->execute();
+    if (!$r) return $r;
+
+    $ids = array();
+    while ($row = $q->fetch(PDO::FETCH_NUM)) {
+      $ids[] = $row[0];
+    };
+
+    $q->closeCursor();
+    return $ids;
+  }
+
   public function getInvitesUsed() {
     if (!isset($this->id) || empty($this->id)) {
       throw new InvalidArgumentException('id must be set prior to call');

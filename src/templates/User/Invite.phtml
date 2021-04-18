@@ -13,6 +13,7 @@ $invited_by = $this->getContext()->invited_by;
 $invited_user = $this->getContext()->invited_user;
 $invites_available = $this->getContext()->invites_available;
 $invites_available_str = number_format($invites_available) . ' invite' . ($invites_available !== 1 ? 's' : '');
+$invites_sent = $this->getContext()->invites_sent;
 $invites_used = $this->getContext()->invites_used;
 $invites_used_str = number_format($invites_used) . ' invite' . ($invites_used !== 1 ? 's' : '');
 $password_confirm = $this->getContext()->password_confirm;
@@ -72,6 +73,9 @@ require('./header.inc.phtml'); ?>
       </tr>
     </thead>
     <tbody>
+<?php foreach ($invites_sent as $id) { ?>
+      <tr><td colspan="5"><?=$id?></td></tr>
+<?php } ?>
     </tbody>
   </table>
 <?php } ?>
