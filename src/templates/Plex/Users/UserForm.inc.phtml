@@ -23,14 +23,13 @@ $record_updated = $plex_user->getRecordUpdated();
 $risk = $this->getContext()->risk;
 $user_id = $this->getContext()->user_id;
 
-$tz = $this->getContext()->active_user->getTimezoneObject();
 $fmt = 'D, M j, Y g:i A T';
 
 $id_str = (!is_null($id) ? $id : '<em>&ndash;</em>');
-$date_added_str = (!is_null($date_added) ? $date_added->format($fmt, $tz) : '<em>(not added)</em>');
-$date_disabled_str = (!is_null($date_disabled) ? $date_disabled->format($fmt, $tz) : '<em>(not disabled)</em>');
-$date_expired_str = (!is_null($date_expired) ? $date_expired->format($fmt, $tz) : '<em>(not expired)</em>');
-$record_updated_str = (!is_null($record_updated) ? $record_updated->format($fmt, $tz) : '<em>&ndash;</em>');
+$date_added_str = (!is_null($date_added) ? $date_added->format($fmt) : '<em>(not added)</em>');
+$date_disabled_str = (!is_null($date_disabled) ? $date_disabled->format($fmt) : '<em>(not disabled)</em>');
+$date_expired_str = (!is_null($date_expired) ? $date_expired->format($fmt) : '<em>(not expired)</em>');
+$record_updated_str = (!is_null($record_updated) ? $record_updated->format($fmt) : '<em>&ndash;</em>');
 
 $date_disabled_class = (!is_null($date_disabled) ? 'text-danger' : 'text-secondary');
 $date_expired_class = (!is_null($date_expired) ? 'text-warning' : 'text-secondary');
