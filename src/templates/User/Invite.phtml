@@ -73,8 +73,8 @@ require('./header.inc.phtml'); ?>
       </tr>
     </thead>
     <tbody>
-<?php foreach ($invites_sent as $id) { ?>
-      <tr><td colspan="5"><?=$id?></td></tr>
+<?php foreach ($invites_sent as $invite) { ?>
+      <tr><td colspan="5"><?=$invite->getId()?></td></tr>
 <?php } ?>
     </tbody>
   </table>

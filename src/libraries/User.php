@@ -5,6 +5,7 @@ namespace CarlBennett\Tools\Libraries;
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\MVC\Libraries\DatabaseDriver;
 use \CarlBennett\Tools\Libraries\IDatabaseObject;
+use \CarlBennett\Tools\Libraries\User\Invite as Invitation;
 
 use \DateTime;
 use \DateTimeZone;
@@ -319,13 +320,13 @@ class User implements IDatabaseObject {
     $r = $q->execute();
     if (!$r) return $r;
 
-    $ids = array();
+    $invites = array();
     while ($row = $q->fetch(PDO::FETCH_NUM)) {
-      $ids[] = $row[0];
+      $invites[] = new Invitation($row[0]);
     };
 
     $q->closeCursor();
-    return $ids;
+    return $invites;
   }
 
   public function getInvitesUsed() {

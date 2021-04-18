@@ -88,8 +88,8 @@ class Invite implements IDatabaseObject
     $q = Common::$database->prepare(
       'SELECT
         `date_accepted`, `date_invited`, `date_revoked`, `email`,
-        UuidFromBin(`id`) AS `id`, `invited_by`, `invited_user`,
-        `record_updated`
+        UuidFromBin(`id`) AS `id`, UuidFromBin(`invited_by`) AS `invited_by`,
+        UuidFromBin(`invited_user`) AS `invited_user`, `record_updated`
       FROM `user_invites` WHERE id = UuidToBin(:id) LIMIT 1;'
     );
     $q->bindParam(':id', $id, PDO::PARAM_STR);
