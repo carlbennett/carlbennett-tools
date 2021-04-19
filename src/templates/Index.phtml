@@ -41,6 +41,10 @@ require("./header.inc.phtml"); ?>
         <td><a title="Remote Address" href="<?=Common::relativeUrlToAbsolute('/remoteaddress')?>">🏠 Remote Address</a></td>
         <td>Show your IP address info.</td>
       </tr>
+      <tr>
+        <td><a title="Url Encode &amp; Decode" href="<?=Common::relativeUrlToAbsolute('/urlencodedecode')?>">⚙ Url Encode &amp; Decode</a></td>
+        <td>Encode and decode url strings.</td>
+      </tr>
     </tbody>
   </table>
 <?php if (!$active_user) { ?>

@@ -1,0 +1,41 @@
+<?php namespace CarlBennett\Tools\Templates;
+$title = 'Url Encode & Decode';
+$decode_in = $this->getContext()->decode_in;
+$decode_out = $this->getContext()->decode_out;
+$encode_in = $this->getContext()->encode_in;
+$encode_out = $this->getContext()->encode_out;
+require('./header.inc.phtml'); ?>
+<div class="container">
+  <form method="POST">
+    <div class="row">
+      <div class="col-6">
+        <h2>Decode In</h2>
+        <textarea name="decode_in" id="decode_in" class="form-control m-3 bg-dark text-light"><?=filter_var($decode_in, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></textarea>
+      </div>
+      <div class="col-6">
+        <h2<?=(!empty($decode_out) ? ' class="text-success"' : '')?>>Decode Out</h2>
+        <div class="<?=(!empty($decode_out) ? 'border border-success ' : '')?>m-3 p-2">
+          <code><?=filter_var($decode_out, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></code>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-6">
+        <h2>Encode In</h2>
+        <textarea name="encode_in" id="encode_in" class="form-control m-3 bg-dark text-light"><?=filter_var($encode_in, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></textarea>
+      </div>
+      <div class="col-6">
+        <h2<?=(!empty($encode_out) ? ' class="text-success"' : '')?>>Encode Out</h2>
+        <div class="<?=(!empty($encode_out) ? 'border border-success ' : '')?>m-3 p-2">
+          <code><?=filter_var($encode_out, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></code>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <input type="submit" class="btn btn-success" value="Submit"/>
+      </div>
+    </div>
+  </form>
+</div>
+<?php require('./footer.inc.phtml'); ?>
