@@ -10,11 +10,13 @@ require('./header.inc.phtml'); ?>
   <p>This tool is a user interface to the PHP <code><a href="https://www.php.net/manual/function.rawurlencode.php">rawurlencode()</a></code> and <code><a href="https://www.php.net/manual/function.rawurldecode.php">rawurldecode()</a></code> functions.</p>
   <form method="POST">
     <div class="row">
-      <div class="col-6">
+      <div class="col-md-6">
         <h2>Decode In</h2>
-        <textarea name="decode_in" id="decode_in" class="form-control m-3 bg-dark text-light"><?=filter_var($decode_in, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></textarea>
+        <div class="m-3">
+          <textarea name="decode_in" id="decode_in" class="form-control bg-dark text-light"><?=filter_var($decode_in, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></textarea>
+        </div>
       </div>
-      <div class="col-6">
+      <div class="col-md-6">
         <h2<?=(!empty($decode_out) ? ' class="text-success"' : '')?>>Decode Out</h2>
         <div class="<?=(!empty($decode_out) ? 'border border-success ' : '')?>m-3 p-2">
           <code><?=filter_var($decode_out, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></code>
@@ -22,11 +24,13 @@ require('./header.inc.phtml'); ?>
       </div>
     </div>
     <div class="row">
-      <div class="col-6">
+      <div class="col-md-6">
         <h2>Encode In</h2>
-        <textarea name="encode_in" id="encode_in" class="form-control m-3 bg-dark text-light"><?=filter_var($encode_in, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></textarea>
+        <div class="m-3">
+          <textarea name="encode_in" id="encode_in" class="form-control bg-dark text-light"><?=filter_var($encode_in, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></textarea>
+        </div>
       </div>
-      <div class="col-6">
+      <div class="col-md-6">
         <h2<?=(!empty($encode_out) ? ' class="text-success"' : '')?>>Encode Out</h2>
         <div class="<?=(!empty($encode_out) ? 'border border-success ' : '')?>m-3 p-2">
           <code><?=filter_var($encode_out, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></code>
@@ -34,7 +38,7 @@ require('./header.inc.phtml'); ?>
       </div>
     </div>
     <div class="row">
-      <div class="col-12">
+      <div class="col-md-12">
         <input type="submit" class="btn btn-success" value="Submit"/>
       </div>
     </div>
