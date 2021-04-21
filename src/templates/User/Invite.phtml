@@ -49,16 +49,14 @@ require('./header.inc.phtml'); ?>
 <?php if ($invites_available > 0) { ?>
   <h2>Send Invitation</h2>
   <p>Use the form below to extend an email letter invitation to join this site to another user.</p>
-  <form method="POST">
-    <div class="my-1 mx-3">
+  <form method="POST" class="my-1 mx-3">
+    <div class="form-row">
       <label for="email" class="sr-only">Invite an email address:</label>
-      <input class="form-control form-control-sm" style="width:auto;" type="email" name="email" id="email" placeholder="Invite an email address" value="<?=filter_var($email, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>" required<?=(isset($feedback[0]) && $feedback[0] == 'email' ? ' autofocus' : '')?>/>
+      <input class="form-control form-control-sm m-1 bg-dark text-light border-success" style="width:auto;" type="email" name="email" id="email" placeholder="Invite an email address" value="<?=filter_var($email, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>" required<?=(isset($feedback[0]) && $feedback[0] == 'email' ? ' autofocus' : '')?>/>
 <?php if (isset($feedback[0]) && $feedback[0] == 'email') { ?>
       <div class="text-danger"><?=$feedback[1]?></div>
 <?php } ?>
-    </div>
-    <div class="my-1 mx-3">
-      <input class="btn btn-sm btn-success" type="submit" value="Invite"/>
+      <input class="btn btn-sm btn-success m-1" type="submit" value="Invite"/>
     </div>
   </form>
 <?php } ?>
@@ -111,4 +109,4 @@ require('./header.inc.phtml'); ?>
 <?php } ?>
 <?php } ?>
 </div>
-<?php require("./footer.inc.phtml"); ?>
+<?php require('./footer.inc.phtml'); ?>
