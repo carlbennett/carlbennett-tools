@@ -48,7 +48,7 @@ require('./header.inc.phtml'); ?>
   <div class="alert alert-info">You currently have <strong><?=$invites_available_str?></strong> available. You have used <strong><?=$invites_used_str?></strong>.</div>
 <?php if ($invites_available > 0) { ?>
   <h2>Send Invitation</h2>
-  <p>Use the form below to extend an email letter invitation to join this site to another user.</p>
+  <p>Use the form below to extend an email letter invitation to join this site.</p>
   <form method="POST" class="my-1 mx-3">
     <div class="form-row">
       <label for="email" class="sr-only">Invite an email address:</label>
@@ -59,6 +59,27 @@ require('./header.inc.phtml'); ?>
       <input class="btn btn-sm btn-success m-1" type="submit" value="Invite"/>
     </div>
   </form>
+  <div class="card card-info my-3">
+    <div class="card-header"><strong>Terms and Conditions:</strong></div>
+    <div class="card-body">
+      <p class="card-text">By inviting a User to this site, you agree to the following terms and conditions:</p>
+      <p class="card-text"><strong>Terms:</strong></p>
+      <p class="card-text"><ul>
+        <li><strong>Invited User</strong> &ndash; the User that will be extended an email invitation letter, and thus gains the privilege of creating a User.</li>
+        <li><strong>the Site</strong> &ndash; the Internet website at the Url: &lt;<a href="<?=Common::relativeUrlToAbsolute('/')?>"><?=Common::relativeUrlToAbsolute('/')?></a>&gt;.</li>
+        <li><strong>User</strong> &ndash; the account that a person controls from their web browser, tied to a unique email address, used to authenticate on the Site.</li>
+      </ul></p>
+      <p class="card-text"><strong>Conditions:</strong></p>
+      <p class="card-text"><ol>
+        <li>The email address must be unique to a single User; multiple Users with the same email address are not allowed.</li>
+        <li>The Invited User must not already have a User on the Site.</li>
+        <li>The Invited User will not cause harm to the Site.</li>
+        <li>The Invited User has reasonable interest in use of the Site.</li>
+        <li>You have explained to the person that you are using their email address to invite them to the Site, and they have given you authorization to do so.</li>
+      </ol></p>
+      <p class="card-text">If you disagree with any of the above, then you are not authorized to extend an invite. Do not continue.</p>
+    </div>
+  </div>
 <?php } ?>
 <?php if ($invites_used > 0) { ?>
   <h2 class="mt-2">Sent Invites</h2>
