@@ -1,0 +1,85 @@
+<?php /* vim: set colorcolumn=0: */
+namespace CarlBennett\Tools\Templates;
+use \CarlBennett\MVC\Libraries\Common;
+use \CarlBennett\Tools\Libraries\User;
+$title = 'Privacy Notice';
+$active_user = $this->getContext()->active_user;
+$data_location = $this->getContext()->data_location;
+$email_domain = $this->getContext()->email_domain;
+require('./header.inc.phtml'); ?>
+<div class="container">
+  <div class="card">
+    <h4 class="card-header">Privacy Notice:</h4>
+    <div class="card-body">
+      <p class="card-text">Carl's Toolbox is committed to privacy and security for all of its Users. This privacy notice will explain how Carl's Toolbox uses the personal data collected from you when you use the site.</p>
+      <p class="card-text"><strong>Topics:</strong><ul>
+        <li><a href="#what-data-is-collected">What data is collected?</a></li>
+        <li><a href="#how-is-your-data-collected">How is your data collected?</a></li>
+        <li><a href="#how-will-your-data-be-used">How will your data be used?</a></li>
+        <li><a href="#how-is-your-data-stored">How is your data stored?</a></li>
+        <li><a href="#what-are-your-data-protection-rights">What are your data protection rights?</a></li>
+        <li><a href="#what-are-cookies">What are cookies?</a></li>
+        <li><a href="#how-are-cookies-used">How are cookies used?</a></li>
+        <li><a href="#what-types-of-cookies-are-used">What types of cookies are used?</a></li>
+        <li><a href="#how-to-manage-your-cookies">How to manage your cookies</a></li>
+        <li><a href="#privacy-policies-of-other-websites">Privacy policies of other websites</a></li>
+        <li><a href="#changes-to-the-privacy-notice">Changes to the privacy notice</a></li>
+        <li><a href="#how-to-contact">How to contact</a></li>
+      </ul></p>
+
+      <h5 class="card-text"><a id="what-data-is-collected"><strong>What data is collected?</strong></a></h5>
+      <p class="card-text">The following private data is collected:<ul>
+        <li>The IP address, user agent, and requested Url of all clients accessing the site, used for logging and tracking of actions on the site.</li>
+        <li>A person's email address, used for User account identification on the site and for authentication.</li>
+        <li>A User account password, used for authentication.</li>
+      </ul></p>
+
+      <h5 class="card-text"><a id="how-is-your-data-collected"><strong>How is your data collected?</strong></a></h5>
+      <p class="card-text">You directly provide Carl's Toolbox with most of the data that is collected. Carl's Toolbox collects data and processes data when you:</p>
+      <p class="card-text"><ul>
+        <li>Create a User account on the site, or modify your User profile on the site.</li>
+        <li>Submit or post content to the site, or upload images to the site.</li>
+      </ul></p>
+
+      <h5 class="card-text"><a id="how-will-your-data-be-used"><strong>How will your data be used?</strong></a></h5>
+      <p class="card-text">Carl's Toolbox collects your data for the following purposes:</p>
+      <p class="card-text"><ul>
+        <li>To process your requests in tools on the site.</li>
+        <li>To track actions taken on the site by a User.</li>
+      </ul></p>
+
+      <h5 class="card-text"><a id="how-is-your-data-stored"><strong>How is your data stored?</strong></a></h5>
+      <p class="card-text">Carl's Toolbox uses a relational database schema hosted at <?=filter_var($data_location, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>. The data is stored redundantly in case of hardware failure, and the data is not accessible without authentication. A firewall exists between the database and the rest of the Internet, including a NAT layer on IPv4 addressing, and virtual LANs (vLANs), which by its nature prevents any unknown traffic from reaching the data. Database backups are created at regular intervals via cronjob or similar automated processes, and the backups are stored in a nearby redundant location.</p>
+
+      <h5 class="card-text"><a id="what-are-your-data-protection-rights"><strong>What are your data protection rights?</strong></a></h5>
+      <p class="card-text"><span class="text-danger font-weight-bold">TODO:</span> access, rectification, erasure, restrict processing, object to processing, data portability</p>
+
+      <h5 class="card-text"><a id="what-are-cookies"><strong>What are cookies?</strong></a></h5>
+      <p class="card-text">Cookies are text files placed on your computer to collect standard Internet log information and visitor behavior information. When you visit the site, some information from you may be collected automatically through cookies or similar technology.</p>
+      <p class="card-text">For further information, visit <a href="https://allaboutcookies.org/">allaboutcookies.org</a>.</p>
+
+      <h5 class="card-text"><a id="how-are-cookies-used"><strong>How are cookies used?</strong></a></h5>
+      <p class="card-text">Carl's Toolbox uses cookies for the following purposes:</p>
+      <p class="card-text"><ul>
+        <li>To record cookie preferences for the site.</li>
+        <li>To keep you logged in as a returning User of the site.</li>
+      </ul></p>
+
+      <h5 class="card-text"><a id="what-types-of-cookies-are-used"><strong>What types of cookies are used?</strong></a></h5>
+      <p class="card-text">Carl's Toolbox uses functional cookies so that the site will recognize you and remember your previously selected preferences. All cookies are first-party cookies, no third-party cookies are used.</p>
+
+      <h5 class="card-text"><a id="how-to-manage-your-cookies"><strong>How to manage your cookies</strong></a></h5>
+      <p class="card-text">You can set your browser not to accept cookies, and the website <a href="https://allaboutcookies.org/">allaboutcookies.org</a> tells you how to remove cookies from your browser. However, some of the site features may not function as a result.</p>
+
+      <h5 class="card-text"><a id="privacy-policies-of-other-websites"><strong>Privacy policies of other websites</strong></a></h5>
+      <p class="card-text">The website may contain links to other websites. This privacy notice applies only to this site, so if you click on a link to another website, you should read their privacy policy or notice.</p>
+
+      <h5 class="card-text"><a id="changes-to-the-privacy-notice"><strong>Changes to the privacy notice</strong></a></h5>
+      <p class="card-text">If you have any questions about this privacy notice, the data held on you, or you would like to exercise one of your data protection rights, please do not hesitate to get in contact.</p>
+
+      <h5 class="card-text"><a id="how-to-contact"><strong>How to contact</strong></a></h5>
+      <p class="card-text">You may send an email message to the site owner. Please write to any mailbox @<?=filter_var($email_domain, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>, it will reach the appropriate person.</p>
+    </div>
+  </div>
+</div>
+<?php require('./footer.inc.phtml'); ?>

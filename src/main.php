@@ -101,6 +101,10 @@ function main() {
         $router->addRoute(
             '#^/plex/welcome$#', 'Plex\\Welcome', 'Plex\\WelcomeHtml'
         );
+        // URL: /privacy
+        $router->addRoute(
+            '#^/privacy$#', 'PrivacyNotice', 'PrivacyNoticeHtml'
+        );
         // URL: /remoteaddress /remoteaddress.html
         $router->addRoute(
             '#^/remoteaddress(?:\.html?)?$#',

@@ -20,6 +20,12 @@
   "pastes": {
     "crypt_cost": 10
   },
+  "privacy": {
+    "contact": {
+      "email_domain": "example.com"
+    },
+    "data_location": "Hello World"
+  },
   "users": {
     "crypt_cost": 10
   }
