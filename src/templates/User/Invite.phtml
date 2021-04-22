@@ -22,8 +22,8 @@ $record_updated = $this->getContext()->record_updated;
 $return = $this->getContext()->return;
 $title = 'User Invite';
 
-$tz = ($auth_user ? $auth_user->getTimezoneObject() : null);
 $fmt = 'D, M j, Y g:i A T';
+$tz = ($auth_user ? $auth_user->getTimezoneObject() : 'Etc/UTC');
 
 switch ($error) {
   case null: $error_str = 'Null'; break;
