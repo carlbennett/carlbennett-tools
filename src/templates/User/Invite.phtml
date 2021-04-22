@@ -60,7 +60,7 @@ require('./header.inc.phtml'); ?>
     </div>
   </form>
   <div class="card card-info my-3">
-    <div class="card-header"><strong>Terms and Conditions:</strong></div>
+    <div class="card-header"><strong>Terms and Conditions</strong></div>
     <div class="card-body">
       <p class="card-text">By inviting a User to this site, you agree to the following terms and conditions:</p>
       <p class="card-text"><strong>Terms:</strong></p>
@@ -84,13 +84,12 @@ require('./header.inc.phtml'); ?>
 <?php if ($invites_used > 0) { ?>
   <h2 class="mt-2">Sent Invites</h2>
   <p>Below are the invites you have sent that count as your used invites.</p>
-  <table class="table">
+  <table class="table table-striped" id="sent_invites_tbl">
     <thead>
       <tr>
         <th>Date Invited</th>
-        <th>Date Revoked</th>
         <th>Date Accepted</th>
-        <th>Email Address</th>
+        <th>Date Revoked</th>
         <th>Invited User</th>
       </tr>
     </thead>
@@ -113,20 +112,35 @@ require('./header.inc.phtml'); ?>
           $inv_date_revoked_str = (!is_null($inv_date_revoked) ? $inv_date_revoked->format($fmt) : '<em>(not revoked)</em>');
           $inv_email_str = $inv->getEmail();
 
-          $inv_date_accepted_class = (!is_null($inv_date_accepted) ? 'text-warning' : 'text-secondary');
+          $inv_date_accepted_class = (!is_null($inv_date_accepted) ? 'text-success' : 'text-secondary');
           $inv_date_revoked_class = (!is_null($inv_date_revoked) ? 'text-danger' : 'text-secondary');
 ?>
       <tr>
         <td><?=$inv_date_invited_str?></td>
-        <td><?=$inv_date_revoked_str?></td>
-        <td><?=$inv_date_accepted_str?></td>
+        <td class="<?=$inv_date_accepted_class?>"><?=$inv_date_accepted_str?></td>
+        <td class="<?=$inv_date_revoked_class?>"><?=$inv_date_revoked_str?></td>
         <td><?=$inv_email_str?></td>
-        <td><em>&ndash;</em></td>
       </tr>
 <?php   }
       } ?>
     </tbody>
   </table>
+<?php ob_start(); ?>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $('#sent_invites_tbl').DataTable({
+        "columnDefs": [
+          { responsivePriority: 2, type: "date", targets: 0 },
+          { responsivePriority: 3, type: "date", targets: 1 },
+          { responsivePriority: 3, type: "date", targets: 2 },
+          { responsivePriority: 4, type: "html", targets: 3 },
+          { responsivePriority: 1, type: "html", targets: 4 }
+        ],
+        "responsive": true
+      });
+    });
+  </script>
+<?php $_footer_script = ob_get_clean(); ?>
 <?php } ?>
 <?php } ?>
 </div>
