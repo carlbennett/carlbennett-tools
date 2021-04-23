@@ -25,6 +25,12 @@ require("./header.inc.phtml"); ?>
         <td><a title="Pastebin" href="<?=Common::relativeUrlToAbsolute('/paste')?>">📝 Pastebin</a></td>
         <td>A quick place to paste stuff.</td>
       </tr>
+<?php if ($active_user && $active_user->getOption(User::OPTION_ACL_PHPINFO)) { ?>
+      <tr>
+        <td><a title="Php Info" href="<?=Common::relativeUrlToAbsolute('/phpinfo')?>">ℹ Php Info</a></td>
+        <td>Prints PHP runtime information.</td>
+      </tr>
+<?php } ?>
 <?php if ($active_user && $active_user->getOption(User::OPTION_ACL_PLEX_REQUESTS)) { ?>
       <tr>
         <td><a title="Plex Requests" href="<?=Common::relativeUrlToAbsolute('/plex/requests')?>">📢 Plex Requests</a></td>
@@ -35,12 +41,6 @@ require("./header.inc.phtml"); ?>
       <tr>
         <td><a title="Plex Users" href="<?=Common::relativeUrlToAbsolute('/plex/users')?>">👥 Plex Users</a></td>
         <td>Manage users for Carl's Plex.</td>
-      </tr>
-<?php } ?>
-<?php if ($active_user && $active_user->getOption(User::OPTION_ACL_PHPINFO)) { ?>
-      <tr>
-        <td><a title="Php Info" href="<?=Common::relativeUrlToAbsolute('/phpinfo')?>">ℹ Php Info</a></td>
-        <td>Prints PHP runtime information.</td>
       </tr>
 <?php } ?>
       <tr>
