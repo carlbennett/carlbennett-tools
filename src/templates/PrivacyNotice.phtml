@@ -6,12 +6,13 @@ $title = 'Privacy Notice';
 $active_user = $this->getContext()->active_user;
 $data_location = $this->getContext()->data_location;
 $email_domain = $this->getContext()->email_domain;
+$org = 'Carl\'s Toolbox';
 require('./header.inc.phtml'); ?>
 <div class="container">
   <div class="card">
     <h4 class="card-header"><?=$title?></h4>
     <div class="card-body">
-      <p class="card-text">Carl's Toolbox is committed to privacy and security for all of its Users. This privacy notice will explain how Carl's Toolbox uses the personal data collected from you when you use the site.</p>
+      <p class="card-text"><?=$org?> is committed to privacy and security for all of its Users. This privacy notice will explain how <?=$org?> uses the personal data collected from you when you use the site.</p>
       <p class="card-text"><strong>Topics:</strong><ul>
         <li><a href="#what-data-is-collected">What data is collected?</a></li>
         <li><a href="#how-is-your-data-collected">How is your data collected?</a></li>
@@ -35,38 +36,47 @@ require('./header.inc.phtml'); ?>
       </ul></p>
 
       <h5 class="card-text"><a id="how-is-your-data-collected"><strong>How is your data collected?</strong></a></h5>
-      <p class="card-text">You directly provide Carl's Toolbox with most of the data that is collected. Carl's Toolbox collects data and processes data when you:</p>
+      <p class="card-text">You directly provide <?=$org?> with most of the data that is collected. <?=$org?> collects data and processes data when you:</p>
       <p class="card-text"><ul>
         <li>Create a User account on the site, or modify your User profile on the site.</li>
         <li>Submit or post content to the site, or upload images to the site.</li>
       </ul></p>
 
       <h5 class="card-text"><a id="how-will-your-data-be-used"><strong>How will your data be used?</strong></a></h5>
-      <p class="card-text">Carl's Toolbox collects your data for the following purposes:</p>
+      <p class="card-text"><?=$org?> collects your data for the following purposes:</p>
       <p class="card-text"><ul>
         <li>To process your requests in tools on the site.</li>
         <li>To track actions taken on the site by a User.</li>
       </ul></p>
 
       <h5 class="card-text"><a id="how-is-your-data-stored"><strong>How is your data stored?</strong></a></h5>
-      <p class="card-text">Carl's Toolbox uses a relational database schema hosted at <?=filter_var($data_location, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>. The data is stored redundantly in case of hardware failure, and the data is not accessible without authentication. A firewall exists between the database and the rest of the Internet, including a NAT layer on IPv4 addressing, and virtual LANs (vLANs), which by its nature prevents any unknown traffic from reaching the data. Database backups are created at regular intervals via cronjob or similar automated processes, and the backups are stored in a nearby redundant location.</p>
+      <p class="card-text"><?=$org?> uses a relational database schema hosted at <?=filter_var($data_location, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>. The data is stored redundantly in case of hardware failure, and the data is not accessible without authentication. A firewall exists between the database and the rest of the Internet, including a NAT layer on IPv4 addressing, and virtual LANs (vLANs), which by its nature prevents any unknown traffic from reaching the data. Database backups are created at regular intervals via cronjob or similar automated processes, and the backups are stored in a nearby redundant location.</p>
 
       <h5 class="card-text"><a id="what-are-your-data-protection-rights"><strong>What are your data protection rights?</strong></a></h5>
-      <p class="card-text"><span class="text-danger font-weight-bold">TODO:</span> access, rectification, erasure, restrict processing, object to processing, data portability</p>
+      <p class="card-text"><?=$org?> would like to make sure you are fully aware of all of your data protection rights. Every user is entitled to the following:</p>
+      <p class="card-text"><ul>
+        <li>The right to access – You have the right to request <?=$org?> for copies of your personal data.</li>
+        <li>The right to rectification – You have the right to request that <?=$org?> correct any information you believe is inaccurate. You also have the right to request <?=$org?> to complete the information you believe is incomplete.</li>
+        <li>The right to erasure – You have the right to request that <?=$org?> erase your personal data, under certain conditions.</li>
+        <li>The right to restrict processing – You have the right to request that <?=$org?> restrict the processing of your personal data, under certain conditions.</li>
+        <li>The right to object to processing – You have the right to object to <?=$org?>'s processing of your personal data, under certain conditions.</li>
+        <li>The right to data portability – You have the right to request that <?=$org?> transfer the data that we have collected to another organization, or directly to you, under certain conditions.</li>
+      </ul></p>
+      <p class="card-text">If you make a request, we have one month to respond to you. If you would like to exercise any of these rights, please <a href="#how-to-contact">make contact</a> using the information below.</p>
 
       <h5 class="card-text"><a id="what-are-cookies"><strong>What are cookies?</strong></a></h5>
       <p class="card-text">Cookies are text files placed on your computer to collect standard Internet log information and visitor behavior information. When you visit the site, some information from you may be collected automatically through cookies or similar technology.</p>
       <p class="card-text">For further information, visit <a href="https://allaboutcookies.org/">allaboutcookies.org</a>.</p>
 
       <h5 class="card-text"><a id="how-are-cookies-used"><strong>How are cookies used?</strong></a></h5>
-      <p class="card-text">Carl's Toolbox uses cookies for the following purposes:</p>
+      <p class="card-text"><?=$org?> uses cookies for the following purposes:</p>
       <p class="card-text"><ul>
         <li>To record cookie preferences for the site.</li>
         <li>To keep you logged in as a returning User of the site.</li>
       </ul></p>
 
       <h5 class="card-text"><a id="what-types-of-cookies-are-used"><strong>What types of cookies are used?</strong></a></h5>
-      <p class="card-text">Carl's Toolbox uses functional cookies so that the site will recognize you and remember your previously selected preferences. All cookies are first-party cookies, no third-party cookies are used.</p>
+      <p class="card-text"><?=$org?> uses functional cookies so that the site will recognize you and remember your previously selected preferences. All cookies are first-party cookies, no third-party cookies are used.</p>
 
       <h5 class="card-text"><a id="how-to-manage-your-cookies"><strong>How to manage your cookies</strong></a></h5>
       <p class="card-text">You can set your browser not to accept cookies, and the website <a href="https://allaboutcookies.org/">allaboutcookies.org</a> tells you how to remove cookies from your browser. However, some of the site features may not function as a result.</p>
