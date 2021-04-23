@@ -79,6 +79,10 @@ function main() {
         $router->addRoute(
             '#^/paste/([A-Za-z0-9\-]+)$#', 'Paste\\View', 'Paste\\ViewHtml'
         );
+        // URL: /phpinfo
+        $router->addRoute(
+            '#^/phpinfo$#', 'PhpInfo', 'PhpInfoHtml'
+        );
         // URL: /plex/requests
         $router->addRoute(
             '#^/plex/requests$#', 'Plex\\Requests', 'Plex\\RequestsHtml'

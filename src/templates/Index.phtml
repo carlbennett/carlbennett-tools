@@ -37,6 +37,12 @@ require("./header.inc.phtml"); ?>
         <td>Manage users for Carl's Plex.</td>
       </tr>
 <?php } ?>
+<?php if ($active_user && $active_user->getOption(User::OPTION_ACL_PHPINFO)) { ?>
+      <tr>
+        <td><a title="Php Info" href="<?=Common::relativeUrlToAbsolute('/phpinfo')?>">ℹ Php Info</a></td>
+        <td>Prints PHP runtime information.</td>
+      </tr>
+<?php } ?>
       <tr>
         <td><a title="Privacy Notice" href="<?=Common::relativeUrlToAbsolute('/privacy')?>">🔏 Privacy Notice</a></td>
         <td>The site's privacy notice and your rights.</td>
