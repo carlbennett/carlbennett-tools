@@ -20,7 +20,18 @@ class Paste extends Controller {
     $model = new PasteModel();
 
     $model->_responseCode = 200;
-    $model->recent_public_pastes = PasteObject::getRecentPublicPastes();
+    $model->active_user = Authentication::$user;
+    $model->pastebin_admin = (
+      $model->active_user &&
+      $model->active_user->getOption(User::OPTION_ACL_PASTEBIN_ADMIN)
+    );
+
+    $limit = 10;
+    $bitmask = ($model->pastebin_admin ? 0 : null);
+    $passworded = $model->pastebin_admin;
+    $model->recent_pastes = PasteObject::getRecentPastes(
+      $limit, $bitmask, $passworded
+    );
 
     if ($router->getRequestMethod() == 'POST') {
       $this->handlePost($router, $model);
@@ -42,7 +53,7 @@ class Paste extends Controller {
     $title = self::_arg($data, 'title', null);
     $unlisted = self::_arg($data, 'unlisted', null);
 
-    if (!is_null($text) && !is_null($file)) {
+    if (!empty($text) && !empty($file)) {
       $model->_responseCode = 400;
       $model->error = array(
         'fields' => array('file', 'text'),
@@ -56,11 +67,17 @@ class Paste extends Controller {
       return false;
     }
 
-    if (empty($mimetype)) { $mimetype = 'application/octet-stream'; }
+    if (empty($mimetype)) {
+      if (!empty($text) && empty($file)) {
+        $mimetype = 'text/plain';
+      } else {
+        $mimetype = 'application/octet-stream';
+      }
+    }
+
     if (empty($title)) { $title = 'Untitled'; }
 
-    $tz = new DateTimeZone('Etc/UTC');
-    $expire_dt = (is_null($expire) ? null : ((new DateTime('now', $tz))->add(
+    $expire_dt = (is_null($expire) ? null : ((new DateTime('now'))->add(
       new DateInterval(sprintf('PT%dS', (int) $expire))
     )));
 

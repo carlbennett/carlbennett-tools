@@ -240,17 +240,20 @@ class PasteObject implements IDatabaseObject {
     return $this->password_hash;
   }
 
-  public static function getRecentPublicPastes($limit = 10) {
+  public static function getRecentPastes($limit = 10, $bitmask = null, $passworded = false) {
     if (!isset(Common::$database)) {
       Common::$database = DatabaseDriver::getDatabaseObject();
     }
 
-    $bitmask = (self::OPTION_QUARANTINE | self::OPTION_UNLISTED);
+    if (is_null($bitmask) || !is_numeric($bitmask)) {
+      $bitmask = (self::OPTION_QUARANTINE | self::OPTION_UNLISTED);
+    }
+
     $q = Common::$database->prepare(sprintf('
       SELECT UuidFromBin(`id`) AS `id` FROM `pastebin`
-      WHERE `password_hash` IS NULL AND NOT (`options_bitmask` & %d)
+      WHERE %s NOT (`options_bitmask` & %d)
       ORDER BY `date_added` DESC LIMIT %d;
-    ', $bitmask, $limit));
+    ', (!$passworded ? '`password_hash` IS NULL AND' : ''), $bitmask, $limit));
 
     $r = $q->execute();
     if (!$r) {
