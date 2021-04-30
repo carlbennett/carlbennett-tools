@@ -2,11 +2,10 @@
 
 namespace CarlBennett\Tools\Models;
 
-use \CarlBennett\MVC\Libraries\Model;
+use \CarlBennett\Tools\Models\ActiveUser as ActiveUserModel;
 
-class PhpInfo extends Model {
+class PhpInfo extends ActiveUserModel {
 
-  public $active_user;
   public $phpinfo;
 
 }

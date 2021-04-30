@@ -2,11 +2,10 @@
 
 namespace CarlBennett\Tools\Models\Plex;
 
-use \CarlBennett\MVC\Libraries\Model;
+use \CarlBennett\Tools\Models\ActiveUser as ActiveUserModel;
 
-class Users extends Model {
+class Users extends ActiveUserModel {
 
-  public $active_user;
   public $hl; // highlight
   public $id;
   public $show_hidden;

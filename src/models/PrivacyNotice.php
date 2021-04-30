@@ -2,11 +2,10 @@
 
 namespace CarlBennett\Tools\Models;
 
-use \CarlBennett\MVC\Libraries\Model;
+use \CarlBennett\Tools\Models\ActiveUser as ActiveUserModel;
 
-class PrivacyNotice extends Model {
+class PrivacyNotice extends ActiveUserModel {
 
-  public $active_user;
   public $data_location;
   public $email_domain;
 

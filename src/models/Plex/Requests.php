@@ -2,10 +2,7 @@
 
 namespace CarlBennett\Tools\Models\Plex;
 
-use \CarlBennett\MVC\Libraries\Model;
+use \CarlBennett\Tools\Models\ActiveUser as ActiveUserModel;
 
-class Requests extends Model {
-
-  public $active_user;
-
+class Requests extends ActiveUserModel {
 }

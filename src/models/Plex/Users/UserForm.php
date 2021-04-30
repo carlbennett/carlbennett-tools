@@ -2,9 +2,9 @@
 
 namespace CarlBennett\Tools\Models\Plex\Users;
 
-use \CarlBennett\MVC\Libraries\Model;
+use \CarlBennett\Tools\Models\ActiveUser as ActiveUserModel;
 
-class UserForm extends Model {
+class UserForm extends ActiveUserModel {
 
   const ERROR_SUCCESS = 0;
   const ERROR_INTERNAL_ERROR = 1;
@@ -13,7 +13,6 @@ class UserForm extends Model {
   const ERROR_INVALID_RISK = 4;
   const ERROR_LINKED_USER_ALREADY_ASSIGNED = 5;
 
-  public $active_user;
   public $disabled;
   public $error;
   public $expired;

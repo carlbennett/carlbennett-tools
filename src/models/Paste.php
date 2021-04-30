@@ -2,11 +2,10 @@
 
 namespace CarlBennett\Tools\Models;
 
-use \CarlBennett\MVC\Libraries\Model;
+use \CarlBennett\Tools\Models\ActiveUser as ActiveUserModel;
 
-class Paste extends Model {
+class Paste extends ActiveUserModel {
 
-  public $active_user;
   public $error;
   public $id;
   public $paste_object;
