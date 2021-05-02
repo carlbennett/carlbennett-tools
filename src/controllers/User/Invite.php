@@ -122,7 +122,13 @@ class Invite extends Controller {
 
       // create invite
       $invite = new Invitation(null);
+    }
+
+    if (is_null($invite->getDateInvited())) {
       $invite->setDateInvited($now);
+    }
+
+    if (is_null($invite->getInvitedBy())) {
       $invite->setInvitedBy($model->active_user);
     }
 
