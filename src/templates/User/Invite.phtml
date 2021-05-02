@@ -33,6 +33,7 @@ switch ($error) {
   case InviteModel::ERROR_ID_NOT_FOUND: $error_str = 'Id not found'; break;
   case InviteModel::ERROR_EMAIL_INVALID: $error_str = 'Invalid email address'; break;
   case InviteModel::ERROR_EMAIL_ALREADY_INVITED: $error_str = 'That email is already invited.'; break;
+  case InviteModel::ERROR_INVITES_AVAILABLE_ZERO: $error_str = 'You do not have any invites available.'; break;
   default: $error_str = sprintf('Unknown (%s)', $error);
 }
 

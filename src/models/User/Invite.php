@@ -12,6 +12,7 @@ class Invite extends ActiveUserModel {
   const ERROR_ID_NOT_FOUND = 3;
   const ERROR_EMAIL_INVALID = 4;
   const ERROR_EMAIL_ALREADY_INVITED = 5;
+  const ERROR_INVITES_AVAILABLE_ZERO = 6;
 
   public $date_accepted;
   public $date_invited;

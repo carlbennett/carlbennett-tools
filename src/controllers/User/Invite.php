@@ -7,6 +7,7 @@ use \CarlBennett\MVC\Libraries\Controller;
 use \CarlBennett\MVC\Libraries\Router;
 use \CarlBennett\MVC\Libraries\View;
 use \CarlBennett\Tools\Libraries\Authentication;
+use \CarlBennett\Tools\Libraries\User;
 use \CarlBennett\Tools\Libraries\User\Invite as Invitation;
 use \CarlBennett\Tools\Models\User\Invite as InviteModel;
 use \DateTime;
@@ -107,6 +108,14 @@ class Invite extends Controller {
       // check for invites available
       if ($invites_available < 1) {
         $model->error = InviteModel::ERROR_INVITES_AVAILABLE_ZERO;
+        return;
+      }
+
+      // check if account already exists
+      $user = User::getByEmail($model->email);
+      if ($user instanceof User) {
+        $model->error = InviteModel::ERROR_EMAIL_ALREADY_INVITED;
+        $model->feedback = array('email', 'danger');
         return;
       }
 
