@@ -229,6 +229,35 @@ class Invite implements IDatabaseObject
   }
 
   /**
+   * @param string $value The email address to lookup the invite for.
+   * @return ?Invite The invite object or null if not found.
+   * @throws PDOException if a database error occurs.
+   */
+  public static function getByEmail(string $value)
+  {
+    if (!isset(Common::$database))
+    {
+      Common::$database = DatabaseDriver::getDatabaseObject();
+    }
+
+    $q = Common::$database->prepare(
+      'SELECT UuidFromBin(`id`) AS `id` FROM `user_invites`
+      WHERE `email` = :email LIMIT 1;'
+    );
+
+    $q->bindParam(':email', $value, PDO::PARAM_STR);
+
+    $r = $q->execute();
+    if (!$r) return null;
+    if ($q->rowCount() === 0) return null;
+
+    $id = $q->fetch(PDO::FETCH_NUM)[0];
+    $q->closeCursor();
+
+    return new self($id);
+  }
+
+  /**
    * @return ?DateTime The DateTime object or null value.
    */
   public function getDateAccepted()

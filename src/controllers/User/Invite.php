@@ -81,29 +81,61 @@ class Invite extends Controller {
 
   protected function processInvite(Router &$router, InviteModel &$model) {
     $data = $router->getRequestBodyArray();
+    $now = new DateTime('now');
     $model->email = $data['email'] ?? null;
 
+    // user input must be valid email address
     if (!filter_var($model->email, FILTER_VALIDATE_EMAIL)) {
       $model->error = InviteModel::ERROR_EMAIL_INVALID;
-      $model->feedback = array('email', 'Invalid email address.');
+      $model->feedback = array('email', 'danger');
       return;
     }
 
-    $now = new DateTime('now');
-    $invite = new Invitation(null);
+    // find current invite
+    $invite = Invitation::getByEmail($model->email);
+    if (!is_null($invite) && !is_null($invite->getInvitedBy())
+      && $invite->getInvitedBy()->getId() !== $model->active_user->getId()) {
+      $model->error = InviteModel::ERROR_EMAIL_ALREADY_INVITED;
+      $model->feedback = array('email', 'danger');
+      return;
+    }
 
-    $invite->setDateInvited($now);
-    $invite->setEmail($model->email);
-    $invite->setInvitedBy($model->active_user);
+    // no current invite, create one?
+    if (is_null($invite)) {
+      $invites_available = $model->active_user->getInvitesAvailable();
+
+      // check for invites available
+      if ($invites_available < 1) {
+        $model->error = InviteModel::ERROR_INVITES_AVAILABLE_ZERO;
+        return;
+      }
+
+      // remove one available invite
+      $model->active_user->setInvitesAvailable($invites_available - 1);
+      try {
+        $model->active_user->commit();
+      } catch (Exception $e) {
+        $model->error = InviteModel::ERROR_INTERNAL_ERROR;
+        $model->feedback = array('email', 'danger');
+        return;
+      }
+
+      // create invite
+      $invite = new Invitation(null);
+      $invite->setDateInvited($now);
+      $invite->setInvitedBy($model->active_user);
+    }
+
+    $invite->setEmail($model->email); // update for any case corrections
     $invite->setRecordUpdated($now);
 
     try {
       $invite->commit();
       $model->error = InviteModel::ERROR_SUCCESS;
-      $model->feedback = array('email', 'Invited.');
+      $model->feedback = array('email', 'success');
     } catch (Exception $e) {
       $model->error = InviteModel::ERROR_INTERNAL_ERROR;
-      $model->feedback = array('email', 'Internal error.');
+      $model->feedback = array('email', 'danger');
     }
   }
 }

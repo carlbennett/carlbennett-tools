@@ -26,11 +26,13 @@ $fmt = 'D, M j, Y g:i A T';
 $tz = ($active_user ? $active_user->getTimezoneObject() : 'Etc/UTC');
 
 switch ($error) {
-  case null: $error_str = 'Null'; break;
-  case InviteModel::ERROR_SUCCESS: $error_str = 'Success'; break;
+  case null:
+  case InviteModel::ERROR_SUCCESS: $error_str = (is_null($error) && $error !== 0 ? 'Null' : 'Success'); break;
   case InviteModel::ERROR_INTERNAL_ERROR: $error_str = 'Internal Error'; break;
   case InviteModel::ERROR_ID_MALFORMED: $error_str = 'Id malformed'; break;
   case InviteModel::ERROR_ID_NOT_FOUND: $error_str = 'Id not found'; break;
+  case InviteModel::ERROR_EMAIL_INVALID: $error_str = 'Invalid email address'; break;
+  case InviteModel::ERROR_EMAIL_ALREADY_INVITED: $error_str = 'That email is already invited.'; break;
   default: $error_str = sprintf('Unknown (%s)', $error);
 }
 
@@ -52,10 +54,7 @@ require('./header.inc.phtml'); ?>
   <form method="POST" class="my-1 mx-3">
     <div class="form-row">
       <label for="email" class="sr-only">Invite an email address:</label>
-      <input class="form-control form-control-sm m-1 bg-dark text-light border-success" style="width:auto;" type="email" name="email" id="email" placeholder="Invite an email address" value="<?=filter_var($email, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>" required<?=(isset($feedback[0]) && $feedback[0] == 'email' ? ' autofocus' : '')?>/>
-<?php if (isset($feedback[0]) && $feedback[0] == 'email') { ?>
-      <div class="text-danger"><?=$feedback[1]?></div>
-<?php } ?>
+      <input class="form-control form-control-sm m-1 bg-dark text-light border-<?=(isset($feedback[0]) && $feedback[0] == 'email' ? $feedback[1] : '')?>" style="width:auto;" type="email" name="email" id="email" placeholder="Invite an email address" value="<?=filter_var($email, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>" required<?=(isset($feedback[0]) && $feedback[0] == 'email' ? ' autofocus' : '')?>/>
       <input class="btn btn-sm btn-success m-1" type="submit" value="Invite"/>
     </div>
   </form>
