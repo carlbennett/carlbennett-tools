@@ -9,6 +9,8 @@ use \CarlBennett\MVC\Libraries\View;
 use \CarlBennett\Tools\Libraries\Authentication;
 use \CarlBennett\Tools\Libraries\User\Invite as Invitation;
 use \CarlBennett\Tools\Models\User\Invite as InviteModel;
+use \DateTime;
+use \Exception;
 use \InvalidArgumentException;
 use \UnexpectedValueException;
 
@@ -80,8 +82,28 @@ class Invite extends Controller {
   protected function processInvite(Router &$router, InviteModel &$model) {
     $data = $router->getRequestBodyArray();
     $model->email = $data['email'] ?? null;
-    $model->error = InviteModel::ERROR_INTERNAL_ERROR;
-    $model->feedback = array('email', 'Invalid email address.');
-    // TODO
+
+    if (!filter_var($model->email, FILTER_VALIDATE_EMAIL)) {
+      $model->error = InviteModel::ERROR_EMAIL_INVALID;
+      $model->feedback = array('email', 'Invalid email address.');
+      return;
+    }
+
+    $now = new DateTime('now');
+    $invite = new Invitation(null);
+
+    $invite->setDateInvited($now);
+    $invite->setEmail($model->email);
+    $invite->setInvitedBy($model->active_user);
+    $invite->setRecordUpdated($now);
+
+    try {
+      $invite->commit();
+      $model->error = InviteModel::ERROR_SUCCESS;
+      $model->feedback = array('email', 'Invited.');
+    } catch (Exception $e) {
+      $model->error = InviteModel::ERROR_INTERNAL_ERROR;
+      $model->feedback = array('email', 'Internal error.');
+    }
   }
 }
