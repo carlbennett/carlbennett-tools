@@ -86,10 +86,11 @@ require('./header.inc.phtml'); ?>
   <table class="table table-striped" id="sent_invites_tbl">
     <thead>
       <tr>
+        <th>Invited User</th>
         <th>Date Invited</th>
         <th>Date Accepted</th>
         <th>Date Revoked</th>
-        <th>Invited User</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
@@ -109,16 +110,19 @@ require('./header.inc.phtml'); ?>
           $inv_date_accepted_str = (!is_null($inv_date_accepted) ? $inv_date_accepted->format($fmt) : '<em>(not accepted)</em>');
           $inv_date_invited_str = (!is_null($inv_date_invited) ? $inv_date_invited->format($fmt) : '<em>(not invited)</em>');
           $inv_date_revoked_str = (!is_null($inv_date_revoked) ? $inv_date_revoked->format($fmt) : '<em>(not revoked)</em>');
-          $inv_email_str = $inv->getEmail();
+          $inv_email_str = filter_var($inv->getEmail(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
           $inv_date_accepted_class = (!is_null($inv_date_accepted) ? 'text-success' : 'text-secondary');
           $inv_date_revoked_class = (!is_null($inv_date_revoked) ? 'text-danger' : 'text-secondary');
 ?>
       <tr>
+        <td><?=$inv_email_str?></td>
         <td><?=$inv_date_invited_str?></td>
         <td class="<?=$inv_date_accepted_class?>"><?=$inv_date_accepted_str?></td>
         <td class="<?=$inv_date_revoked_class?>"><?=$inv_date_revoked_str?></td>
-        <td><?=$inv_email_str?></td>
+        <td>
+          <a title="Revoke" href="<?=Common::relativeUrlToAbsolute('/user/invite/revoke?id=' . rawurlencode($inv->getId()))?>">❌</a>
+        </td>
       </tr>
 <?php   }
       } ?>
@@ -129,11 +133,11 @@ require('./header.inc.phtml'); ?>
     $(document).ready(function(){
       $('#sent_invites_tbl').DataTable({
         "columnDefs": [
-          { responsivePriority: 2, type: "date", targets: 0 },
-          { responsivePriority: 3, type: "date", targets: 1 },
+          { responsivePriority: 1, type: "html", targets: 0 },
+          { responsivePriority: 2, type: "date", targets: 1 },
           { responsivePriority: 3, type: "date", targets: 2 },
-          { responsivePriority: 4, type: "html", targets: 3 },
-          { responsivePriority: 1, type: "html", targets: 4 }
+          { responsivePriority: 3, type: "date", targets: 3 },
+          { responsivePriority: 1, type: "html", sortable: false, targets: 4 }
         ],
         "responsive": true
       });
