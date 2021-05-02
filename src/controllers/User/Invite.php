@@ -19,12 +19,6 @@ class Invite extends Controller {
     $model->feedback = array(); // for bootstrap field/color
     $model->_responseCode = 200;
 
-    if ($model->active_user) {
-      $model->invites_available = $model->active_user->getInvitesAvailable();
-      $model->invites_sent = $model->active_user->getInvitesSent();
-      $model->invites_used = $model->active_user->getInvitesUsed();
-    }
-
     $query = $router->getRequestQueryArray();
 
     $return = $query['return'] ?? null;
@@ -39,6 +33,12 @@ class Invite extends Controller {
 
     if ($router->getRequestMethod() == 'POST') {
       $this->processInvite($router, $model);
+    }
+
+    if ($model->active_user) {
+      $model->invites_available = $model->active_user->getInvitesAvailable();
+      $model->invites_sent = $model->active_user->getInvitesSent();
+      $model->invites_used = $model->active_user->getInvitesUsed();
     }
 
     if (!empty($model->return)) {
