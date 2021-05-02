@@ -22,6 +22,15 @@ require("./header.inc.phtml"); ?>
       </tr>
 <?php } ?>
       <tr>
+<?php if ($active_user) { ?>
+        <td><a title="Log out" href="<?=Common::relativeUrlToAbsolute('/user/logout?return=/home')?>">🔑 Log Out</a></td>
+        <td>Log out from your account.</td>
+<?php } else { ?>
+        <td><a title="Log in" href="<?=Common::relativeUrlToAbsolute('/user/login?return=/home')?>">🔑 Log In</a></td>
+        <td>Log in to your account.</td>
+<?php } ?>
+      </tr>
+      <tr>
         <td><a title="Pastebin" href="<?=Common::relativeUrlToAbsolute('/paste')?>">📝 Pastebin</a></td>
         <td>A quick place to paste stuff.</td>
       </tr>
