@@ -6,11 +6,11 @@ use \CarlBennett\MVC\Libraries\Controller;
 use \CarlBennett\MVC\Libraries\Router;
 use \CarlBennett\MVC\Libraries\View;
 use \CarlBennett\Tools\Libraries\Authentication;
-use \CarlBennett\Tools\Models\Index as IndexModel;
+use \CarlBennett\Tools\Models\Tools as ToolsModel;
 
-class Index extends Controller {
+class Tools extends Controller {
   public function &run(Router &$router, View &$view, array &$args) {
-    $model = new IndexModel();
+    $model = new ToolsModel();
     $model->active_user = Authentication::$user;
     $model->routes = $router->getRoutes();
     $view->render($model);

@@ -61,15 +61,11 @@ function main() {
 
         // URL: /
         $router->addRoute(
-            '#^/$#', 'RedirectSoft', 'RedirectSoftHtml', '/home'
+            '#^/$#', 'RedirectSoft', 'RedirectSoftHtml', '/tools'
         );
         // URL: /gandalf
         $router->addRoute(
             '#^/gandalf$#', 'Gandalf', 'GandalfHtml'
-        );
-        // URL: /home
-        $router->addRoute(
-            '#^/home$#', 'Index', 'IndexHtml'
         );
         // URL: /paste
         $router->addRoute(
@@ -121,6 +117,10 @@ function main() {
         // URL: /remoteaddress.txt
         $router->addRoute(
             '#^/remoteaddress\.txt$#', 'RemoteAddress', 'RemoteAddressPlain'
+        );
+        // URL: /tools
+        $router->addRoute(
+            '#^/tools$#', 'Tools', 'ToolsHtml'
         );
         // URL: /urlencodedecode
         $router->addRoute(

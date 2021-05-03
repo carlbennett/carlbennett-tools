@@ -46,11 +46,8 @@ function _header_active($url, $sr) {
   </button>
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item<?=_header_active('/home', false)?>">
-        <a class="nav-link" href="<?=Common::relativeUrlToAbsolute('/home')?>">Home<?=_header_active('/home', true)?></a>
-      </li>
-      <li class="nav-item<?=_header_active('/paste', false)?>">
-        <a class="nav-link" href="<?=Common::relativeUrlToAbsolute('/paste')?>">Pastebin<?=_header_active('/paste', true)?></a>
+      <li class="nav-item<?=_header_active('/tools', false)?>">
+        <a class="nav-link" href="<?=Common::relativeUrlToAbsolute('/tools')?>">Tools<?=_header_active('/tools', true)?></a>
       </li>
       <li class="nav-item dropdown<?=_header_active('/plex/', false)?>">
         <a class="nav-link dropdown-toggle" href="#" id="navbarPlexDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -76,7 +73,7 @@ function _header_active($url, $sr) {
       </li>
     </ul>
 <?php if (!$_header_user) { ?>
-    <a class="btn btn-sm btn-outline-success my-2 my-sm-0" tabindex="-1" href="<?=Common::relativeUrlToAbsolute('/user/login?return=' . rawurlencode((getenv('REQUEST_URI') == '/user/logout' ? '/home' : getenv('REQUEST_URI'))))?>">Log in</a>
+    <a class="btn btn-sm btn-outline-success my-2 my-sm-0" tabindex="-1" href="<?=Common::relativeUrlToAbsolute('/user/login?return=' . rawurlencode((getenv('REQUEST_URI') == '/user/logout' ? '/tools' : getenv('REQUEST_URI'))))?>">Log in</a>
 <?php } else { ?>
 <span class="nav-item navbar-text mx-3"><?=$_header_user->getName()?><?=($_header_user->isBanned() ? ' <span class="font-weight-bold text-danger">(Banned)</span>' : '')?><?=($_header_user->isDisabled() ? ' <span class="font-weight-bold text-danger">(Disabled)</span>' : '')?></span>
     <a class="btn btn-sm btn-outline my-2 my-sm-0" tabindex="-1" href="<?=Common::relativeUrlToAbsolute('/user/logout')?>">Log out</a>
