@@ -305,6 +305,14 @@ class User implements IDatabaseObject {
     return $this->date_added;
   }
 
+  public function getDateBanned() {
+    return $this->date_banned;
+  }
+
+  public function getDateDisabled() {
+    return $this->date_disabled;
+  }
+
   public function getEmail() {
     return $this->email;
   }
@@ -385,6 +393,10 @@ class User implements IDatabaseObject {
 
   public function getPasswordHash() {
     return $this->password_hash;
+  }
+
+  public function getRecordUpdated() {
+    return $this->record_updated;
   }
 
   public function getTimezone() {

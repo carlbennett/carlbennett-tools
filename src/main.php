@@ -138,6 +138,10 @@ function main() {
         $router->addRoute(
             '#^/user/logout$#', 'User\\Logout', 'User\\LogoutHtml'
         );
+        // URL: /user/profile
+        $router->addRoute(
+            '#^/user/profile$#', 'User\\Profile', 'User\\ProfileHtml'
+        );
         // URL: *
         $router->addRoute(
             '#.*#', 'PageNotFound', 'PageNotFoundHtml'

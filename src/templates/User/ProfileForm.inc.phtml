@@ -1,0 +1,171 @@
+<?php namespace CarlBennett\Tools\Templates\User;
+use \CarlBennett\MVC\Libraries\Common;
+use \CarlBennett\MVC\Libraries\Gravatar;
+use \CarlBennett\Tools\Libraries\User;
+use \DateTimeZone;
+
+$acl_invite_users = ($active_user->getOption(User::OPTION_ACL_INVITE_USERS) ? ' checked' : '');
+$acl_pastebin_admin = ($active_user->getOption(User::OPTION_ACL_PASTEBIN_ADMIN) ? ' checked' : '');
+$acl_phpinfo = ($active_user->getOption(User::OPTION_ACL_PHPINFO) ? ' checked' : '');
+$acl_plex_requests = ($active_user->getOption(User::OPTION_ACL_PLEX_REQUESTS) ? ' checked' : '');
+$acl_plex_users = ($active_user->getOption(User::OPTION_ACL_PLEX_USERS) ? ' checked' : '');
+$avatar = filter_var((new Gravatar($active_user->getEmail()))->getUrl(128, 'mp'), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$banned_reason = filter_var($active_user->getBannedReason(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$date_added = $active_user->getDateAdded();
+$date_banned = $active_user->getDateBanned();
+$date_disabled = $active_user->getDateDisabled();
+$display_name = filter_var($active_user->getName(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$email = filter_var($active_user->getEmail(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$is_banned = ($active_user->isBanned() ? ' checked' : '');
+$is_disabled = ($active_user->isDisabled() ? ' checked' : '');
+$record_updated = $active_user->getRecordUpdated();
+
+$fmt = 'D, M j, Y g:i A T';
+$tz = ($active_user ? $active_user->getTimezoneObject() : new DateTimeZone('Etc/UTC'));
+$tzs = DateTimeZone::listIdentifiers();
+
+if ($date_added) $date_added->setTimezone($tz);
+if ($date_banned) $date_banned->setTimezone($tz);
+if ($date_disabled) $date_disabled->setTimezone($tz);
+if ($record_updated) $record_updated->setTimezone($tz);
+
+$id_str = (!is_null($active_user) ? $active_user->getId() : '<em>&ndash;</em>');
+$date_added_str = (!is_null($date_added) ? $date_added->format($fmt) : '<em>(not added)</em>');
+$date_banned_str = (!is_null($date_banned) ? $date_banned->format($fmt) : '<em>(not banned)</em>');
+$date_disabled_str = (!is_null($date_disabled) ? $date_disabled->format($fmt) : '<em>(not disabled)</em>');
+$record_updated_str = (!is_null($record_updated) ? $record_updated->format($fmt) : '<em>&ndash;</em>');
+
+$date_banned_class = (!is_null($date_banned) ? 'text-warning' : 'text-secondary');
+$date_disabled_class = (!is_null($date_disabled) ? 'text-danger' : 'text-secondary');
+
+?>
+<div class="container">
+  <form method="POST">
+    <div class="row">
+      <div class="col-md-1">
+        <!-- Avatar -->
+
+        <div class="text-center">
+          <label class="font-weight-bold m-1">Gravatar</label>
+          <img class="border border-primary p-1 rounded-lg" style="max-width:128px;" src="<?=$avatar?>"/>
+        </div>
+
+      </div>
+      <div class="col-lg-6">
+        <!-- Display name, Email address, Timezone, Options, Access Control -->
+
+        <table class="table table-borderless">
+          <thead></thead><tbody>
+            <tr>
+              <th scope="row" class="align-middle text-right"><label class="m-0" for="display_name">Display name</label></th>
+              <td><input class="form-control form-control-sm" type="text" id="display_name" name="display_name" placeholder="Enter the display name here" value="<?=$display_name?>"/></td>
+            </tr>
+            <tr>
+              <th scope="row" class="align-middle text-right"><label class="m-0" for="email">Email address</label></th>
+              <td><input class="form-control form-control-sm" type="email" id="email" name="email" placeholder="Enter the email address here" value="<?=$email?>"/></td>
+            </tr>
+            <tr>
+              <th scope="row" class="align-middle text-right"><label class="m-0" for="timezone">Timezone</label></th>
+              <td>
+                <select class="custom-select custom-select-sm" id="timezone" name="timezone">
+                  <option value=""<?=(!$tz ? ' selected' : '')?>>&ndash;</option>
+<?php foreach ($tzs as $tzstr) { $tzstrf = filter_var($tzstr, FILTER_SANITIZE_FULL_SPECIAL_CHARS); ?>
+                  <option value="<?=$tzstrf?>"<?=($tzstr == $tz->getName() ? ' selected' : '')?>><?=$tzstrf?></option>
+<?php } ?>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row" class="align-middle text-right"><label class="m-0">Options</label></th>
+              <td>
+                <div class="custom-control custom-switch m-2">
+                  <input class="custom-control-input" type="checkbox" name="banned" id="is_banned" value="1"<?=$is_banned?>> <label class="custom-control-label" for="is_banned">Banned</label>
+                </div>
+                <div class="custom-control custom-switch m-2">
+                  <input class="custom-control-input" type="checkbox" name="disabled" id="is_disabled" value="1"<?=$is_disabled?>> <label class="custom-control-label" for="is_disabled">Disabled</label>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row" class="align-middle text-right"><label class="m-0">Access Control</label></th>
+              <td>
+                <div class="custom-control custom-switch m-2">
+                  <input class="custom-control-input" type="checkbox" name="acl_invite_users" id="acl_invite_users" value="1"<?=$acl_invite_users?>> <label class="custom-control-label" for="acl_invite_users">Invite Users<br/>
+                  <span style="font-size:smaller;" class="text-muted">Able to invite users to the site</span></label>
+                </div>
+                <div class="custom-control custom-switch m-2">
+                  <input class="custom-control-input" type="checkbox" name="acl_pastebin_admin" id="acl_pastebin_admin" value="1"<?=$acl_pastebin_admin?>> <label class="custom-control-label" for="acl_pastebin_admin">Pastebin Admin<br/>
+                  <span style="font-size:smaller;" class="text-muted">Manage pastebin data</span></label>
+                </div>
+                <div class="custom-control custom-switch m-2">
+                  <input class="custom-control-input" type="checkbox" name="acl_phpinfo" id="acl_phpinfo" value="1"<?=$acl_phpinfo?>> <label class="custom-control-label" for="acl_phpinfo">Php Info<br/>
+                  <span style="font-size:smaller;" class="text-muted">Able to view <code>phpinfo()</code></span></label>
+                </div>
+                <div class="custom-control custom-switch m-2">
+                  <input class="custom-control-input" type="checkbox" name="acl_plex_requests" id="acl_plex_requests" value="1"<?=$acl_plex_requests?>> <label class="custom-control-label" for="acl_plex_requests">Plex Requests<br/>
+                  <span style="font-size:smaller;" class="text-muted">Manage Plex media requests</span></label>
+                </div>
+                <div class="custom-control custom-switch m-2">
+                  <input class="custom-control-input" type="checkbox" name="acl_plex_users" id="acl_plex_users" value="1"<?=$acl_plex_users?>> <label class="custom-control-label" for="acl_plex_users">Plex Users<br/>
+                  <span style="font-size:smaller;" class="text-muted">Manage Plex user data</span></label>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+      <div class="col-lg-5">
+        <!-- Uuid, Timestamps -->
+
+        <table class="table table-borderless">
+          <thead></thead><tbody>
+            <tr>
+              <th scope="row" class="align-middle text-right">Uuid</th>
+              <td><code><?=$id_str?></code></td>
+            </tr>
+            <tr>
+              <th scope="row" class="align-middle text-right text-success">Date added</th>
+              <td class="text-success"><?=$date_added_str?></td>
+            </tr>
+            <tr>
+              <th scope="row" class="align-middle text-right <?=$date_banned_class?>">Date banned</th>
+              <td class="<?=$date_banned_class?>"><?=$date_banned_str?></td>
+            </tr>
+            <tr>
+              <th scope="row" class="align-middle text-right <?=$date_disabled_class?>">Date disabled</th>
+              <td class="<?=$date_disabled_class?>"><?=$date_disabled_str?></td>
+            </tr>
+            <tr>
+              <th scope="row" class="align-middle text-right text-info">Record last updated</th>
+              <td class="text-info"><?=$record_updated_str?></td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <!-- Banned reason -->
+
+        <label class="font-weight-bold" for="banned_reason">Banned reason</label><br/>
+        <textarea class="form-control form-control-sm" style="min-height:90px;" id="banned_reason" name="banned_reason" placeholder="Enter banned reason here"><?=$banned_reason?></textarea>
+
+      </div>
+    </div>
+    <hr/>
+    <div class="row">
+      <div class="col">
+        <div class="text-center">
+          <a class="btn btn-primary mr-2" href="javascript:history.go(-1);">Back</a>
+<?php if (empty($id)) { ?>
+          <input class="btn btn-success" type="submit" value="Add"/>
+<?php } else { ?>
+          <input class="btn btn-success" type="submit" value="Save"/>
+<?php } ?>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

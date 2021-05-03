@@ -1,0 +1,17 @@
+<?php namespace CarlBennett\Tools\Templates\User;
+use \CarlBennett\MVC\Libraries\Common;
+$active_user = $this->getContext()->active_user;
+$feedback = $this->getContext()->feedback;
+$return = $this->getContext()->return;
+$title = 'Edit Profile';
+
+require('./header.inc.phtml');
+if (!$active_user) {
+  echo '<div class="container">';
+  require('./LoginRequired.inc.phtml');
+  require('./footer.inc.phtml');
+  echo '</div>';
+  return;
+}
+require('./User/ProfileForm.inc.phtml');
+require('./footer.inc.phtml');

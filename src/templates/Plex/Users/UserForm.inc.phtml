@@ -4,6 +4,7 @@ use \CarlBennett\MVC\Libraries\Gravatar;
 use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
 use \CarlBennett\Tools\Libraries\User;
 use \CarlBennett\Tools\Models\Plex\Users\UserForm;
+use \DateTimeZone;
 
 $users = User::getAll();
 
@@ -24,7 +25,7 @@ $risk = $this->getContext()->risk;
 $user_id = $this->getContext()->user_id;
 
 $fmt = 'D, M j, Y g:i A T';
-$tz = ($active_user ? $active_user->getTimezoneObject() : 'Etc/UTC');
+$tz = ($active_user ? $active_user->getTimezoneObject() : new DateTimeZone('Etc/UTC'));
 
 if ($date_added) $date_added->setTimezone($tz);
 if ($date_disabled) $date_disabled->setTimezone($tz);

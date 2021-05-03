@@ -1,6 +1,7 @@
 <?php namespace CarlBennett\Tools\Templates\User;
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\Tools\Models\User\Invite as InviteModel;
+use \DateTimeZone;
 $active_user = $this->getContext()->active_user;
 $date_accepted = $this->getContext()->date_accepted;
 $date_invited = $this->getContext()->date_invited;
@@ -23,7 +24,7 @@ $return = $this->getContext()->return;
 $title = 'User Invite';
 
 $fmt = 'D, M j, Y g:i A T';
-$tz = ($active_user ? $active_user->getTimezoneObject() : 'Etc/UTC');
+$tz = ($active_user ? $active_user->getTimezoneObject() : new DateTimeZone('Etc/UTC'));
 
 switch ($error) {
   case null:
