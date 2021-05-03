@@ -24,6 +24,7 @@ class User implements IDatabaseObject {
   const DEFAULT_TIMEZONE = 'Etc/UTC';
 
   # Maximum SQL field lengths, alter as appropriate.
+  const MAX_BANNED_REASON     = 65535;
   const MAX_DISPLAY_NAME      = 191;
   const MAX_EMAIL             = 191;
   const MAX_INVITES_AVAILABLE = 65535;
