@@ -83,11 +83,17 @@ $date_disabled_class = (!is_null($date_disabled) ? 'text-warning' : 'text-second
               <td>
 <?php if ($manage) { ?>
                 <div class="custom-control custom-switch m-2">
-                  <input class="custom-control-input" type="checkbox" name="banned" id="is_banned" value="1"<?=$is_banned?>> <label class="custom-control-label" for="is_banned">Banned <span class="text-muted">by administrator</span></label>
+                  <input class="custom-control-input" type="checkbox" name="banned" id="is_banned" value="1"<?=$is_banned?>>
+                  <label class="custom-control-label text-danger" for="is_banned">
+                    Banned<br/><span style="font-size:smaller;" class="text-muted">Suspends the account permanently; user cannot resume account</span>
+                  </label>
                 </div>
 <?php } ?>
                 <div class="custom-control custom-switch m-2">
-                  <input class="custom-control-input" type="checkbox" name="disabled" id="is_disabled" value="1"<?=$is_disabled?>> <label class="custom-control-label" for="is_disabled">Disabled <span class="text-muted">by user</span></label>
+                  <input class="custom-control-input" type="checkbox" name="disabled" id="is_disabled" value="1"<?=$is_disabled?>>
+                  <label class="custom-control-label text-warning" for="is_disabled">
+                    Disabled<br/><span style="font-size:smaller;" class="text-muted">Suspends the account temporarily<?=($manage ? '; user may resume account' : '')?></span>
+                  </label>
                 </div>
               </td>
             </tr>
