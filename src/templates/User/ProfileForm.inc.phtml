@@ -20,6 +20,7 @@ $email = filter_var($model->email, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $internal_notes = filter_var($model->internal_notes, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $is_banned = ($model->is_banned ? ' checked' : '');
 $is_disabled = ($model->is_disabled ? ' checked' : '');
+$manage = $model->manage;
 $record_updated = $model->record_updated;
 
 $fmt = 'D, M j, Y g:i A T';
@@ -80,14 +81,17 @@ $date_disabled_class = (!is_null($date_disabled) ? 'text-warning' : 'text-second
             <tr>
               <th scope="row" class="align-middle text-right"><label class="m-0">Options</label></th>
               <td>
+<?php if ($manage) { ?>
                 <div class="custom-control custom-switch m-2">
                   <input class="custom-control-input" type="checkbox" name="banned" id="is_banned" value="1"<?=$is_banned?>> <label class="custom-control-label" for="is_banned">Banned <span class="text-muted">by administrator</span></label>
                 </div>
+<?php } ?>
                 <div class="custom-control custom-switch m-2">
                   <input class="custom-control-input" type="checkbox" name="disabled" id="is_disabled" value="1"<?=$is_disabled?>> <label class="custom-control-label" for="is_disabled">Disabled <span class="text-muted">by user</span></label>
                 </div>
               </td>
             </tr>
+<?php if ($manage) { ?>
             <tr>
               <th scope="row" class="align-middle text-right"><label class="m-0">Access Control</label></th>
               <td>
@@ -117,6 +121,7 @@ $date_disabled_class = (!is_null($date_disabled) ? 'text-warning' : 'text-second
                 </div>
               </td>
             </tr>
+<?php } ?>
           </tbody>
         </table>
 
@@ -151,6 +156,7 @@ $date_disabled_class = (!is_null($date_disabled) ? 'text-warning' : 'text-second
 
       </div>
     </div>
+<?php if ($manage) { ?>
     <div class="row">
       <div class="col">
         <!-- Internal notes -->
@@ -160,6 +166,7 @@ $date_disabled_class = (!is_null($date_disabled) ? 'text-warning' : 'text-second
 
       </div>
     </div>
+<?php } ?>
     <hr/>
     <div class="row">
       <div class="col">

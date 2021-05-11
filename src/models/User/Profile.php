@@ -36,6 +36,7 @@ class Profile extends ActiveUserModel {
   public $invites_used;
   public $is_banned;
   public $is_disabled;
+  public $manage;
   public $password_confirm;
   public $password_desired;
   public $record_updated;
