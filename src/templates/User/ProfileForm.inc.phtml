@@ -36,8 +36,8 @@ $date_banned_str = (!is_null($date_banned) ? $date_banned->format($fmt) : '<em>(
 $date_disabled_str = (!is_null($date_disabled) ? $date_disabled->format($fmt) : '<em>(not disabled)</em>');
 $record_updated_str = (!is_null($record_updated) ? $record_updated->format($fmt) : '<em>&ndash;</em>');
 
-$date_banned_class = (!is_null($date_banned) ? 'text-warning' : 'text-secondary');
-$date_disabled_class = (!is_null($date_disabled) ? 'text-danger' : 'text-secondary');
+$date_banned_class = (!is_null($date_banned) ? 'text-danger' : 'text-secondary');
+$date_disabled_class = (!is_null($date_disabled) ? 'text-warning' : 'text-secondary');
 
 ?>
 <div class="container">
