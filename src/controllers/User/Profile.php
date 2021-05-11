@@ -54,6 +54,7 @@ class Profile extends Controller {
     $user = $model->active_user;
 
     $model->acl_invite_users = ($user ? $user->getOption(User::OPTION_ACL_INVITE_USERS) : null);
+    $model->acl_manage_users = ($user ? $user->getOption(User::OPTION_ACL_MANAGE_USERS) : null);
     $model->acl_pastebin_admin = ($user ? $user->getOption(User::OPTION_ACL_PASTEBIN_ADMIN) : null);
     $model->acl_phpinfo = ($user ? $user->getOption(User::OPTION_ACL_PHPINFO) : null);
     $model->acl_plex_requests = ($user ? $user->getOption(User::OPTION_ACL_PLEX_REQUESTS) : null);
@@ -76,6 +77,7 @@ class Profile extends Controller {
     $user = $model->active_user;
 
     $model->acl_invite_users = $data['acl_invite_users'] ?? null;
+    $model->acl_manage_users = $data['acl_manage_users'] ?? null;
     $model->acl_pastebin_admin = $data['acl_pastebin_admin'] ?? null;
     $model->acl_phpinfo = $data['acl_phpinfo'] ?? null;
     $model->acl_plex_requests = $data['acl_plex_requests'] ?? null;
@@ -142,6 +144,10 @@ class Profile extends Controller {
 
     $user->setOption(User::OPTION_ACL_INVITE_USERS,
       ($model->acl_invite_users ? true : false)
+    );
+
+    $user->setOption(User::OPTION_ACL_MANAGE_USERS,
+      ($model->acl_manage_users ? true : false)
     );
 
     $user->setOption(User::OPTION_ACL_PASTEBIN_ADMIN,

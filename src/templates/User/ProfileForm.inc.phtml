@@ -6,6 +6,7 @@ use \DateTimeZone;
 $model = $this->getContext();
 
 $acl_invite_users = ($model->acl_invite_users ? ' checked' : '');
+$acl_manage_users = ($model->acl_manage_users ? ' checked' : '');
 $acl_pastebin_admin = ($model->acl_pastebin_admin ? ' checked' : '');
 $acl_phpinfo = ($model->acl_phpinfo ? ' checked' : '');
 $acl_plex_requests = ($model->acl_plex_requests ? ' checked' : '');
@@ -93,6 +94,10 @@ $date_disabled_class = (!is_null($date_disabled) ? 'text-warning' : 'text-second
                 <div class="custom-control custom-switch m-2">
                   <input class="custom-control-input" type="checkbox" name="acl_invite_users" id="acl_invite_users" value="1"<?=$acl_invite_users?>> <label class="custom-control-label" for="acl_invite_users">Invite Users<br/>
                   <span style="font-size:smaller;" class="text-muted">Able to invite users to the site</span></label>
+                </div>
+                <div class="custom-control custom-switch m-2">
+                  <input class="custom-control-input" type="checkbox" name="acl_manage_users" id="acl_manage_users" value="1"<?=$acl_manage_users?>> <label class="custom-control-label" for="acl_manage_users">Manage Users<br/>
+                  <span style="font-size:smaller;" class="text-muted">Manage site users</span></label>
                 </div>
                 <div class="custom-control custom-switch m-2">
                   <input class="custom-control-input" type="checkbox" name="acl_pastebin_admin" id="acl_pastebin_admin" value="1"<?=$acl_pastebin_admin?>> <label class="custom-control-label" for="acl_pastebin_admin">Pastebin Admin<br/>

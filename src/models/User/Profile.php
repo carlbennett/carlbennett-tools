@@ -16,6 +16,7 @@ class Profile extends ActiveUserModel {
   const ERROR_TIMEZONE_LENGTH = 7;
 
   public $acl_invite_users;
+  public $acl_manage_users;
   public $acl_pastebin_admin;
   public $acl_phpinfo;
   public $acl_plex_requests;
