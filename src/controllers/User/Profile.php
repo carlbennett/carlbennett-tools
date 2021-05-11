@@ -66,7 +66,7 @@ class Profile extends Controller
     $model->acl_phpinfo = ($user ? $user->getOption(User::OPTION_ACL_PHPINFO) : null);
     $model->acl_plex_requests = ($user ? $user->getOption(User::OPTION_ACL_PLEX_REQUESTS) : null);
     $model->acl_plex_users = ($user ? $user->getOption(User::OPTION_ACL_PLEX_USERS) : null);
-    $model->avatar = filter_var((new Gravatar($user ? $user->getEmail() : ''))->getUrl(128, 'mp'), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $model->avatar = filter_var((new Gravatar($user ? $user->getEmail() : ''))->getUrl(96, 'mp'), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $model->date_added = ($user ? $user->getDateAdded() : null);
     $model->date_banned = ($user ? $user->getDateBanned() : null);
     $model->date_disabled = ($user ? $user->getDateDisabled() : null);
@@ -118,7 +118,7 @@ class Profile extends Controller
     }
     finally // -- Update avatar with new email --
     {
-      $model->avatar = (new Gravatar($user ? $user->getEmail() : ''))->getUrl(128, 'mp');
+      $model->avatar = (new Gravatar($user ? $user->getEmail() : ''))->getUrl(96, 'mp');
     }
 
     try // -- Set name --
