@@ -163,6 +163,7 @@ class Profile extends Controller
     {
       $user->setDateDisabled($now);
       $user->setOption(User::OPTION_DISABLED, true);
+      // TODO: End active login sessions
     }
     else if (!$model->is_disabled && $user->isDisabled())
     {
@@ -178,6 +179,7 @@ class Profile extends Controller
       {
         $user->setDateBanned($now);
         $user->setOption(User::OPTION_BANNED, true);
+        // TODO: End active login sessions
       }
       else if (!$model->is_banned && $user->isBanned())
       {

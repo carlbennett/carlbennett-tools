@@ -95,6 +95,8 @@ $date_disabled_class = (!is_null($date_disabled) ? 'text-warning' : 'text-second
                     Disabled<br/><span style="font-size:smaller;" class="text-muted">Suspends the account temporarily<?=($manage ? '; user may resume account' : '')?></span>
                   </label>
                 </div>
+
+                <p class="alert alert-primary text-muted text-center" style="font-size:smaller;">Active login sessions will end if banned or disabled.</p>
               </td>
             </tr>
 <?php if ($manage) { ?>
