@@ -1,25 +1,25 @@
 <?php namespace CarlBennett\Tools\Templates\User;
 use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\MVC\Libraries\Gravatar;
 use \CarlBennett\Tools\Libraries\User;
 use \DateTimeZone;
 
-$acl_invite_users = ($active_user->getOption(User::OPTION_ACL_INVITE_USERS) ? ' checked' : '');
-$acl_pastebin_admin = ($active_user->getOption(User::OPTION_ACL_PASTEBIN_ADMIN) ? ' checked' : '');
-$acl_phpinfo = ($active_user->getOption(User::OPTION_ACL_PHPINFO) ? ' checked' : '');
-$acl_plex_requests = ($active_user->getOption(User::OPTION_ACL_PLEX_REQUESTS) ? ' checked' : '');
-$acl_plex_users = ($active_user->getOption(User::OPTION_ACL_PLEX_USERS) ? ' checked' : '');
-$avatar = filter_var((new Gravatar($active_user->getEmail()))->getUrl(128, 'mp'), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-$date_added = $active_user->getDateAdded();
-$date_banned = $active_user->getDateBanned();
-$date_disabled = $active_user->getDateDisabled();
-$display_name = filter_var($active_user->getName(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-$email = filter_var($active_user->getEmail(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-$internal_notes = filter_var($active_user->getInternalNotes(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-$internal_notes_null = (is_null($active_user->getInternalNotes()) ? ' checked' : '');
-$is_banned = ($active_user->isBanned() ? ' checked' : '');
-$is_disabled = ($active_user->isDisabled() ? ' checked' : '');
-$record_updated = $active_user->getRecordUpdated();
+$model = $this->getContext();
+
+$acl_invite_users = ($model->acl_invite_users ? ' checked' : '');
+$acl_pastebin_admin = ($model->acl_pastebin_admin ? ' checked' : '');
+$acl_phpinfo = ($model->acl_phpinfo ? ' checked' : '');
+$acl_plex_requests = ($model->acl_plex_requests ? ' checked' : '');
+$acl_plex_users = ($model->acl_plex_users ? ' checked' : '');
+$avatar = filter_var($model->avatar, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$date_added = $model->date_added;
+$date_banned = $model->date_banned;
+$date_disabled = $model->date_disabled;
+$display_name = filter_var($model->display_name, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$email = filter_var($model->email, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$internal_notes = filter_var($model->internal_notes, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$is_banned = ($model->is_banned ? ' checked' : '');
+$is_disabled = ($model->is_disabled ? ' checked' : '');
+$record_updated = $model->record_updated;
 
 $fmt = 'D, M j, Y g:i A T';
 $tz = ($active_user ? $active_user->getTimezoneObject() : new DateTimeZone('Etc/UTC'));

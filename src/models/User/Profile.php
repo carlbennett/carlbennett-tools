@@ -6,18 +6,35 @@ use \CarlBennett\Tools\Models\ActiveUser as ActiveUserModel;
 
 class Profile extends ActiveUserModel {
 
-  public $date_accepted;
-  public $date_invited;
-  public $date_revoked;
+  const ERROR_NONE = 0;
+  const ERROR_INTERNAL = 1;
+  const ERROR_EMAIL_INVALID = 2;
+  const ERROR_EMAIL_LENGTH = 3;
+  const ERROR_DISPLAY_NAME_LENGTH = 4;
+  const ERROR_INTERNAL_NOTES_LENGTH = 5;
+  const ERROR_TIMEZONE_INVALID = 6;
+  const ERROR_TIMEZONE_LENGTH = 7;
+
+  public $acl_invite_users;
+  public $acl_pastebin_admin;
+  public $acl_phpinfo;
+  public $acl_plex_requests;
+  public $acl_plex_users;
+  public $avatar;
+  public $date_added;
+  public $date_banned;
+  public $date_disabled;
+  public $display_name;
   public $email;
   public $error;
   public $feedback;
   public $id;
+  public $internal_notes;
   public $invited_by;
-  public $invited_user;
   public $invites_available;
-  public $invites_sent;
   public $invites_used;
+  public $is_banned;
+  public $is_disabled;
   public $password_confirm;
   public $password_desired;
   public $record_updated;

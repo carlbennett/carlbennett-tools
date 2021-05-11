@@ -28,6 +28,7 @@ class User implements IDatabaseObject {
   const MAX_EMAIL             = 191;
   const MAX_INTERNAL_NOTES    = 65535;
   const MAX_INVITES_AVAILABLE = 65535;
+  const MAX_TIMEZONE          = 191;
 
   const OPTION_DISABLED           = 0x00000001;
   const OPTION_BANNED             = 0x00000002;
@@ -448,6 +449,12 @@ class User implements IDatabaseObject {
       );
     }
 
+    if (is_string($value) && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
+      throw new UnexpectedValueException(
+        'value must be a valid email address'
+      );
+    }
+
     if (is_string($value) && strlen($value) > self::MAX_EMAIL) {
       throw new LengthException(sprintf(
         'email must be less than or equal to %d characters', self::MAX_EMAIL
@@ -561,8 +568,19 @@ class User implements IDatabaseObject {
       throw new InvalidArgumentException('value must be a string');
     }
 
-    if (empty($value)) {
-      throw new LengthException('value must be non-empty');
+    if (is_string($value)
+      && (empty($value) || strlen($value) > self::MAX_TIMEZONE)) {
+      throw new LengthException(sprintf(
+        'value must be between 1 and %d characters', self::MAX_TIMEZONE
+      ));
+    }
+
+    try {
+      $tz = new DateTimeZone($value);
+      if (!$tz) throw new RuntimeException();
+      unset($tz);
+    } catch (Exception $e) {
+      throw new UnexpectedValueException('value must be a valid timezone');
     }
 
     $this->timezone = $value;
