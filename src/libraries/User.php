@@ -210,11 +210,7 @@ class User implements IDatabaseObject {
 
     $q->bindParam(':email', $this->email, PDO::PARAM_STR);
     $q->bindParam(':id', $this->id, PDO::PARAM_STR);
-
-    $q->bindParam(':int_notes', $this->internal_notes, (
-      is_null($this->internal_notes) ? PDO::PARAM_NULL : PDO::PARAM_STR
-    ));
-
+    $q->bindParam(':int_notes', $this->internal_notes, PDO::PARAM_STR);
     $q->bindParam(':invites_a', $this->invites_available, PDO::PARAM_INT);
     $q->bindParam(':name', $this->display_name, PDO::PARAM_STR);
     $q->bindParam(':options', $this->options, PDO::PARAM_INT);
@@ -471,14 +467,12 @@ class User implements IDatabaseObject {
     $this->id = $value;
   }
 
-  public function setInternalNotes(?string $value) {
-    if (!(is_null($value) || is_string($value))) {
-      throw new InvalidArgumentException(
-        'value must be null or a string'
-      );
+  public function setInternalNotes(string $value) {
+    if (!is_string($value)) {
+      throw new InvalidArgumentException('value must be a string');
     }
 
-    if (is_string($value) && strlen($value) > self::MAX_INTERNAL_NOTES) {
+    if (strlen($value) > self::MAX_INTERNAL_NOTES) {
       throw new LengthException(sprintf(
         'value must be less than or equal to %d characters',
         self::MAX_INTERNAL_NOTES
