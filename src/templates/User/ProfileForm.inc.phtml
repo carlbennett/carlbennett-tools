@@ -16,6 +16,7 @@ $date_banned = $active_user->getDateBanned();
 $date_disabled = $active_user->getDateDisabled();
 $display_name = filter_var($active_user->getName(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $email = filter_var($active_user->getEmail(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$internal_notes = filter_var($active_user->getInternalNotes(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $is_banned = ($active_user->isBanned() ? ' checked' : '');
 $is_disabled = ($active_user->isDisabled() ? ' checked' : '');
 $record_updated = $active_user->getRecordUpdated();
@@ -146,7 +147,14 @@ $date_disabled_class = (!is_null($date_disabled) ? 'text-danger' : 'text-seconda
       </div>
     </div>
     <div class="row">
-      <div class="col">
+      <div class="col-md-6">
+        <!-- Internal notes -->
+
+        <label class="font-weight-bold" for="internal_notes">Internal notes</label><br/>
+        <textarea class="form-control form-control-sm" style="min-height:90px;" id="internal_notes" name="internal_notes" placeholder="Enter internal notes here"><?=$internal_notes?></textarea>
+
+      </div>
+      <div class="col-md-6">
         <!-- Banned reason -->
 
         <label class="font-weight-bold" for="banned_reason">Banned reason</label><br/>
