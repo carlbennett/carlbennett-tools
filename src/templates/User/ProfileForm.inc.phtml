@@ -16,6 +16,7 @@ $date_disabled = $active_user->getDateDisabled();
 $display_name = filter_var($active_user->getName(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $email = filter_var($active_user->getEmail(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $internal_notes = filter_var($active_user->getInternalNotes(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$internal_notes_null = (is_null($active_user->getInternalNotes()) ? ' checked' : '');
 $is_banned = ($active_user->isBanned() ? ' checked' : '');
 $is_disabled = ($active_user->isDisabled() ? ' checked' : '');
 $record_updated = $active_user->getRecordUpdated();
@@ -79,10 +80,10 @@ $date_disabled_class = (!is_null($date_disabled) ? 'text-danger' : 'text-seconda
               <th scope="row" class="align-middle text-right"><label class="m-0">Options</label></th>
               <td>
                 <div class="custom-control custom-switch m-2">
-                  <input class="custom-control-input" type="checkbox" name="banned" id="is_banned" value="1"<?=$is_banned?>> <label class="custom-control-label" for="is_banned">Banned</label>
+                  <input class="custom-control-input" type="checkbox" name="banned" id="is_banned" value="1"<?=$is_banned?>> <label class="custom-control-label" for="is_banned">Banned <span class="text-muted">by administrator</span></label>
                 </div>
                 <div class="custom-control custom-switch m-2">
-                  <input class="custom-control-input" type="checkbox" name="disabled" id="is_disabled" value="1"<?=$is_disabled?>> <label class="custom-control-label" for="is_disabled">Disabled</label>
+                  <input class="custom-control-input" type="checkbox" name="disabled" id="is_disabled" value="1"<?=$is_disabled?>> <label class="custom-control-label" for="is_disabled">Disabled <span class="text-muted">by user</span></label>
                 </div>
               </td>
             </tr>
