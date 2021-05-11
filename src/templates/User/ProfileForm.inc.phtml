@@ -10,7 +10,6 @@ $acl_phpinfo = ($active_user->getOption(User::OPTION_ACL_PHPINFO) ? ' checked' :
 $acl_plex_requests = ($active_user->getOption(User::OPTION_ACL_PLEX_REQUESTS) ? ' checked' : '');
 $acl_plex_users = ($active_user->getOption(User::OPTION_ACL_PLEX_USERS) ? ' checked' : '');
 $avatar = filter_var((new Gravatar($active_user->getEmail()))->getUrl(128, 'mp'), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-$banned_reason = filter_var($active_user->getBannedReason(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $date_added = $active_user->getDateAdded();
 $date_banned = $active_user->getDateBanned();
 $date_disabled = $active_user->getDateDisabled();
@@ -147,18 +146,11 @@ $date_disabled_class = (!is_null($date_disabled) ? 'text-danger' : 'text-seconda
       </div>
     </div>
     <div class="row">
-      <div class="col-md-6">
+      <div class="col">
         <!-- Internal notes -->
 
         <label class="font-weight-bold" for="internal_notes">Internal notes</label><br/>
         <textarea class="form-control form-control-sm" style="min-height:90px;" id="internal_notes" name="internal_notes" placeholder="Enter internal notes here"><?=$internal_notes?></textarea>
-
-      </div>
-      <div class="col-md-6">
-        <!-- Banned reason -->
-
-        <label class="font-weight-bold" for="banned_reason">Banned reason</label><br/>
-        <textarea class="form-control form-control-sm" style="min-height:90px;" id="banned_reason" name="banned_reason" placeholder="Enter banned reason here"><?=$banned_reason?></textarea>
 
       </div>
     </div>
