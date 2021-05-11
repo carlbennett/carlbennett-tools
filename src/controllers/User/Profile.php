@@ -87,6 +87,7 @@ class Profile extends Controller
     $model->display_name = $data['display_name'] ?? null;
     $model->email = $data['email'] ?? null;
     $model->error = ProfileModel::ERROR_INTERNAL;
+    $model->is_disabled = $data['disabled'] ?? null;
     $model->timezone = $data['timezone'] ?? null;
 
     if ($model->manage)
@@ -99,7 +100,6 @@ class Profile extends Controller
       $model->acl_plex_users = $data['acl_plex_users'] ?? null;
       $model->internal_notes = $data['internal_notes'] ?? '';
       $model->is_banned = $data['banned'] ?? null;
-      $model->is_disabled = $data['disabled'] ?? null;
     }
 
     try // -- Set email --
@@ -159,6 +159,19 @@ class Profile extends Controller
       return;
     }
 
+    if ($model->is_disabled && !$user->isDisabled())
+    {
+      $user->setDateDisabled($now);
+      $user->setOption(User::OPTION_DISABLED, true);
+    }
+    else if (!$model->is_disabled && $user->isDisabled())
+    {
+      $user->setDateDisabled(null);
+      $user->setOption(User::OPTION_DISABLED, false);
+    }
+    $model->date_disabled = $user->getDateDisabled();
+    $model->is_disabled = $user->isDisabled();
+
     if ($model->manage)
     {
       if ($model->is_banned && !$user->isBanned())
@@ -173,19 +186,6 @@ class Profile extends Controller
       }
       $model->date_banned = $user->getDateBanned();
       $model->is_banned = $user->isBanned();
-
-      if ($model->is_disabled && !$user->isDisabled())
-      {
-        $user->setDateDisabled($now);
-        $user->setOption(User::OPTION_DISABLED, true);
-      }
-      else if (!$model->is_disabled && $user->isDisabled())
-      {
-        $user->setDateDisabled(null);
-        $user->setOption(User::OPTION_DISABLED, false);
-      }
-      $model->date_disabled = $user->getDateDisabled();
-      $model->is_disabled = $user->isDisabled();
 
       $user->setOption(User::OPTION_ACL_INVITE_USERS, ($model->acl_invite_users ? true : false));
       $user->setOption(User::OPTION_ACL_MANAGE_USERS, ($model->acl_manage_users ? true : false));
