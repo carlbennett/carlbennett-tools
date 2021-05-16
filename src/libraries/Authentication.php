@@ -8,8 +8,11 @@ use \CarlBennett\Tools\Libraries\User;
 
 use \DateTime;
 use \DateTimeZone;
+use \Exception;
 use \InvalidArgumentException;
 use \PDO;
+use \RuntimeException;
+use \UnexpectedValueException;
 
 /**
  * Authentication
@@ -33,6 +36,11 @@ class Authentication {
   public static $user;
 
   /**
+   * @var DateTimeZone $timezone
+   */
+  protected static $timezone;
+
+  /**
    * __construct()
    * This class's constructor is private to prevent being instantiated.
    * All functionality of this class is meant to be used as a global state
@@ -41,14 +49,14 @@ class Authentication {
   private function __construct() {}
 
   /**
-   * discard()
-   * Discards fingerprint server-side so lookup cannot succeed.
+   * discardKey()
+   * Discards fingerprint by key id server-side so lookup cannot succeed.
    *
    * @param string $key The secret key.
    *
    * @return bool Indicates if the operation succeeded.
    */
-  protected static function discard(string $key) {
+  protected static function discardKey(string $key) {
     if (!isset(Common::$database)) {
       Common::$database = DatabaseDriver::getDatabaseObject();
     }
@@ -58,6 +66,43 @@ class Authentication {
     ');
 
     $stmt->bindParam(':id', $key, PDO::PARAM_STR);
+
+    $r = $stmt->execute();
+    $stmt->closeCursor();
+
+    return $r;
+  }
+
+  /**
+   * expireUser()
+   * Sets expiration to now for all fingerprints by user id server-side so
+   * lookup cannot succeed. This effectively ends all login sessions by user.
+   *
+   * @param User $user The User object to have all sessions ended.
+   * @throws InvalidArgumentException when user id must be a non-empty string
+   * @return bool Indicates if the operation succeeded.
+   */
+  public static function expireUser(User &$user) {
+    $id = $user->getId();
+
+    if (!is_string($id) || empty($id)) {
+      throw new InvalidArgumentException('user id must be a non-empty string');
+    }
+
+    if (!self::$timezone) self::setTimezone('Etc/UTC');
+    $now = (new DateTime('now', self::$timezone))->format(self::DATE_SQL);
+
+    if (!isset(Common::$database)) {
+      Common::$database = DatabaseDriver::getDatabaseObject();
+    }
+
+    $stmt = Common::$database->prepare('
+      UPDATE `user_sessions` SET `expires_datetime` = :dt
+      WHERE `user_id` = UuidToBin(:id) AND `expires_datetime` > :dt;
+    ');
+
+    $stmt->bindParam(':id', $id, PDO::PARAM_STR);
+    $stmt->bindParam(':dt', $now, PDO::PARAM_STR);
 
     $r = $stmt->execute();
     $stmt->closeCursor();
@@ -162,7 +207,7 @@ class Authentication {
    * @return bool Indicates if the browser cookie was sent.
    */
   public static function logout() {
-    self::discard(self::$key);
+    self::discardKey(self::$key);
 
     self::$key  = '';
     self::$user = null;
@@ -191,13 +236,12 @@ class Authentication {
    * @return array The fingerprint details, or false if not found.
    */
   protected static function lookup(string $key) {
+    if (!self::$timezone) self::setTimezone('Etc/UTC');
+    $now = (new DateTime('now', self::$timezone))->format(self::DATE_SQL);
+
     if (!isset(Common::$database)) {
       Common::$database = DatabaseDriver::getDatabaseObject();
     }
-
-    $dt_now_str = (new DateTime(
-      'now', new DateTimeZone('Etc/UTC')
-    ))->format(self::DATE_SQL);
 
     $fingerprint = false;
 
@@ -211,7 +255,7 @@ class Authentication {
     ');
 
     $stmt->bindParam(':id', $key, PDO::PARAM_STR);
-    $stmt->bindParam(':dt', $dt_now_str, PDO::PARAM_STR);
+    $stmt->bindParam(':dt', $now, PDO::PARAM_STR);
 
     $r = $stmt->execute();
 
@@ -225,6 +269,32 @@ class Authentication {
   }
 
   /**
+   * setTimezone()
+   * Sets the timezone used for database operations.
+   *
+   * @param string $value The timezone, optional, defaults to 'Etc/UTC'
+   * @throws InvalidArgumentException when value must be a string
+   * @throws UnexpectedValueException when value must be a valid timezone
+   * @return bool Indicates if the operation succeeded. Always true.
+   */
+  public static function setTimezone(string $value = 'Etc/UTC') {
+    if (!is_string($value)) {
+      throw new InvalidArgumentException('value must be a string');
+    }
+
+    try {
+      $tz = new DateTimeZone($value);
+      if (!$tz) throw new RuntimeException();
+    } catch (Exception $e) {
+      throw new UnexpectedValueException('value must be a valid timezone', $e);
+    } finally {
+      self::$timezone = $tz;
+    }
+
+    return true;
+  }
+
+  /**
    * store()
    * Stores authentication info server-side for lookup later.
    *
@@ -234,23 +304,23 @@ class Authentication {
    * @return bool Indicates if the operation succeeded.
    */
   protected static function store(string $key, array &$fingerprint) {
-    if (!isset(Common::$database)) {
-      Common::$database = DatabaseDriver::getDatabaseObject();
-    }
-
-    $tz = new DateTimeZone('Etc/UTC');
+    if (!self::$timezone) self::setTimezone('Etc/UTC');
 
     $user_id     = $fingerprint['user_id'];
     $ip_address  = $fingerprint['ip_address'];
     $user_agent  = $fingerprint['user_agent'];
-    $created_dt  = new DateTime('now', $tz);
+    $created_dt  = new DateTime('now', self::$timezone);
     $created_str = $created_dt->format(self::DATE_SQL);
     $expires_dt = new DateTime(
-      '@' . ($created_dt->getTimestamp() + self::TTL), $tz
+      '@' . ($created_dt->getTimestamp() + self::TTL), self::$timezone
     );
     $expires_str = $expires_dt->format(self::DATE_SQL);
 
     $r = false;
+
+    if (!isset(Common::$database)) {
+      Common::$database = DatabaseDriver::getDatabaseObject();
+    }
 
     $stmt = Common::$database->prepare('
       INSERT INTO `user_sessions` (

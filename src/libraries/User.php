@@ -582,7 +582,9 @@ class User implements IDatabaseObject {
         if (!$tz) throw new RuntimeException();
         unset($tz);
       } catch (Exception $e) {
-        throw new UnexpectedValueException('value must be a valid timezone');
+        throw new UnexpectedValueException(
+          'value must be a valid timezone', $e
+        );
       }
     }
 
