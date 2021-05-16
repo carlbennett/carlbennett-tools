@@ -24,6 +24,7 @@ class Authentication {
   const DATE_SQL       = 'Y-m-d H:i:s';
   const MAX_USER_AGENT = 255;
   const TTL            = 2592000; // 1 month
+  const TZ             = 'Etc/UTC';
 
   /**
    * @var string $key
@@ -272,12 +273,12 @@ class Authentication {
    * setTimezone()
    * Sets the timezone used for database operations.
    *
-   * @param string $value The timezone, optional, defaults to 'Etc/UTC'
+   * @param string $value The timezone, optional, defaults to self::TZ
    * @throws InvalidArgumentException when value must be a string
    * @throws UnexpectedValueException when value must be a valid timezone
    * @return bool Indicates if the operation succeeded. Always true.
    */
-  public static function setTimezone(string $value = 'Etc/UTC') {
+  public static function setTimezone(string $value = self::TZ) {
     if (!is_string($value)) {
       throw new InvalidArgumentException('value must be a string');
     }
