@@ -63,6 +63,11 @@ class Login extends Controller {
       return;
     }
 
+    if ($user->isBanned()) {
+      $model->feedback['email'] = 'Account is banned.';
+      return;
+    }
+
     Authentication::login($user);
     if (!empty($model->return)) {
       $model->_responseCode = 303;
