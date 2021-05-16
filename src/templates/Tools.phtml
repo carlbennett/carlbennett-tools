@@ -11,6 +11,12 @@ require("./header.inc.phtml"); ?>
   <table class="table table-striped">
     <thead><tr><th>Tool</th><th>Description</th></tr></thead>
     <tbody>
+<?php if ($active_user) { ?>
+      <tr>
+        <td><a title="Edit Profile" href="<?=Common::relativeUrlToAbsolute('/user/profile')?>">📝 Edit Profile</a></td>
+        <td>Edit your account profile.</td>
+      </tr>
+<?php } ?>
       <tr>
         <td><a title="Gandalf Sax Guy for 10 hours" href="<?=Common::relativeUrlToAbsolute('/gandalf')?>">🎶 Gandalf </a></td>
         <td>Gandalf Sax Guy for 10 hours.</td>

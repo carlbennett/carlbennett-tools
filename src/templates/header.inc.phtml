@@ -75,7 +75,7 @@ function _header_active($url, $sr) {
 <?php if (!$_header_user) { ?>
     <a class="btn btn-sm btn-outline-success my-2 my-sm-0" tabindex="-1" href="<?=Common::relativeUrlToAbsolute('/user/login?return=' . rawurlencode((getenv('REQUEST_URI') == '/user/logout' ? '/tools' : getenv('REQUEST_URI'))))?>">Log in</a>
 <?php } else { ?>
-<span class="nav-item navbar-text mx-3"><?=$_header_user->getName()?><?=($_header_user->isBanned() ? ' <span class="font-weight-bold text-danger">(Banned)</span>' : '')?><?=($_header_user->isDisabled() ? ' <span class="font-weight-bold text-danger">(Disabled)</span>' : '')?></span>
+<span class="nav-item navbar-text mx-3"><a href="<?=Common::relativeUrlToAbsolute('/user/profile')?>"><?=$_header_user->getName()?></a><?=($_header_user->isBanned() ? ' <span class="font-weight-bold text-danger">(Banned)</span>' : '')?><?=($_header_user->isDisabled() ? ' <span class="font-weight-bold text-danger">(Disabled)</span>' : '')?></span>
     <a class="btn btn-sm btn-outline my-2 my-sm-0" tabindex="-1" href="<?=Common::relativeUrlToAbsolute('/user/logout')?>">Log out</a>
 <?php } ?>
   </div>
