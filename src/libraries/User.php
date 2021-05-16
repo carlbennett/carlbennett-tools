@@ -402,6 +402,7 @@ class User implements IDatabaseObject {
   }
 
   public function getTimezoneObject() {
+    if (empty($this->timezone)) return null;
     return new DateTimeZone($this->timezone);
   }
 
@@ -569,19 +570,20 @@ class User implements IDatabaseObject {
       throw new InvalidArgumentException('value must be a string');
     }
 
-    if (is_string($value)
-      && (empty($value) || strlen($value) > self::MAX_TIMEZONE)) {
+    if (is_string($value) && strlen($value) > self::MAX_TIMEZONE) {
       throw new LengthException(sprintf(
-        'value must be between 1 and %d characters', self::MAX_TIMEZONE
+        'value must be less than or equal to %d characters', self::MAX_TIMEZONE
       ));
     }
 
-    try {
-      $tz = new DateTimeZone($value);
-      if (!$tz) throw new RuntimeException();
-      unset($tz);
-    } catch (Exception $e) {
-      throw new UnexpectedValueException('value must be a valid timezone');
+    if (!empty($value)) {
+      try {
+        $tz = new DateTimeZone($value);
+        if (!$tz) throw new RuntimeException();
+        unset($tz);
+      } catch (Exception $e) {
+        throw new UnexpectedValueException('value must be a valid timezone');
+      }
     }
 
     $this->timezone = $value;

@@ -26,7 +26,8 @@ $manage = $model->manage;
 $record_updated = $model->record_updated;
 
 $fmt = 'D, M j, Y g:i A T';
-$tz = ($active_user ? $active_user->getTimezoneObject() : new DateTimeZone('Etc/UTC'));
+$tz = ($active_user ? $active_user->getTimezoneObject() : null);
+if (!$tz) $tz = new DateTimeZone('Etc/UTC');
 $tzs = DateTimeZone::listIdentifiers();
 
 if ($date_added) $date_added->setTimezone($tz);
@@ -45,7 +46,7 @@ $date_disabled_class = (!is_null($date_disabled) ? 'text-warning' : 'text-second
 
 switch ($error)
 {
-  case ProfileModel::ERROR_NONE: $error_str = 'None'; break;
+  case ProfileModel::ERROR_NONE: $error_str = 'Profile saved successfully'; break;
   case ProfileModel::ERROR_INTERNAL: $error_str = 'Internal error'; break;
   case ProfileModel::ERROR_EMAIL_INVALID: $error_str = 'Invalid email address'; break;
   case ProfileModel::ERROR_EMAIL_LENGTH: $error_str = 'Invalid email address length'; break;
@@ -59,10 +60,10 @@ switch ($error)
 ?>
 <div class="container">
   <form method="POST">
-<?php if ($error !== ProfileModel::ERROR_NONE) { ?>
+<?php if (!is_null($error)) { ?>
     <div class="row">
       <div class="col-lg-12">
-        <div class="alert alert-danger">
+        <div class="alert alert-<?=($error === ProfileModel::ERROR_NONE ? 'success' : 'danger')?>">
           <?=$error_str?>
         </div>
       </div>
