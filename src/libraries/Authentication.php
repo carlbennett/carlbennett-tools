@@ -89,7 +89,7 @@ class Authentication {
       throw new InvalidArgumentException('user id must be a non-empty string');
     }
 
-    if (!self::$timezone) self::setTimezone('Etc/UTC');
+    if (!self::$timezone) self::setTimezone();
     $now = (new DateTime('now', self::$timezone))->format(self::DATE_SQL);
 
     if (!isset(Common::$database)) {
@@ -236,7 +236,7 @@ class Authentication {
    * @return array The fingerprint details, or false if not found.
    */
   protected static function lookup(string $key) {
-    if (!self::$timezone) self::setTimezone('Etc/UTC');
+    if (!self::$timezone) self::setTimezone();
     $now = (new DateTime('now', self::$timezone))->format(self::DATE_SQL);
 
     if (!isset(Common::$database)) {
@@ -304,7 +304,7 @@ class Authentication {
    * @return bool Indicates if the operation succeeded.
    */
   protected static function store(string $key, array &$fingerprint) {
-    if (!self::$timezone) self::setTimezone('Etc/UTC');
+    if (!self::$timezone) self::setTimezone();
 
     $user_id     = $fingerprint['user_id'];
     $ip_address  = $fingerprint['ip_address'];
