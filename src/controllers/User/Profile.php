@@ -76,6 +76,7 @@ class Profile extends Controller
     $model->is_banned = $user->isBanned();
     $model->is_disabled = $user->isDisabled();
     $model->record_updated = $user->getRecordUpdated();
+    $model->timezone = $user->getTimezone();
   }
 
   protected function processProfile(Router &$router, ProfileModel &$model)
