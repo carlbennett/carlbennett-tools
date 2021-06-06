@@ -53,11 +53,6 @@ class Login extends Controller {
 
     $check = $user->checkPassword($model->password);
 
-    if ($check & User::PASSWORD_CHECK_EXPIRED) {
-      $model->feedback['password'] = 'Password expired.';
-      return;
-    }
-
     if (!($check & User::PASSWORD_CHECK_VERIFIED)) {
       $model->feedback['password'] = 'Incorrect password.';
       return;
@@ -66,6 +61,12 @@ class Login extends Controller {
     if ($user->isBanned()) {
       $model->feedback['email'] = 'Account is banned.';
       return;
+    }
+
+    if ($check & User::PASSWORD_CHECK_UPGRADE) {
+      // Upgrade with provided password, it is verified in previous step
+      $user->setPasswordHash(User::createPassword($model->password));
+      $user->commit();
     }
 
     Authentication::login($user);

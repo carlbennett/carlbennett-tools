@@ -41,7 +41,7 @@ class User implements IDatabaseObject {
   const OPTION_ACL_PLEX_USERS     = 0x00000100;
 
   const PASSWORD_CHECK_VERIFIED = 1;
-  const PASSWORD_CHECK_EXPIRED  = 2;
+  const PASSWORD_CHECK_UPGRADE  = 2;
 
   const UUID_REGEX = '/([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}){1}/';
 
@@ -149,7 +149,7 @@ class User implements IDatabaseObject {
     $r = 0;
 
     if ($verified) $r |= self::PASSWORD_CHECK_VERIFIED;
-    if ($rehash)   $r |= self::PASSWORD_CHECK_EXPIRED;
+    if ($rehash)   $r |= self::PASSWORD_CHECK_UPGRADE;
 
     return $r;
   }
