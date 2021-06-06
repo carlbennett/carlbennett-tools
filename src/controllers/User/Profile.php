@@ -18,17 +18,49 @@ class Profile extends Controller
 {
   public function &run(Router &$router, View &$view, array &$args)
   {
+    $arg = array_shift($args);
+
     $model = new ProfileModel();
     $model->active_user = Authentication::$user;
 
-    if (!$model->active_user)
+    if (!$model->active_user && $arg == 'profile')
     {
       $model->_responseCode = 401;
       $view->render($model);
       return $model;
     }
+    else
+    {
+      $model->manage = ($model->active_user ? $model->active_user->getOption(User::OPTION_ACL_MANAGE_USERS) : false);
+    }
 
-    $model->manage = $model->active_user->getOption(User::OPTION_ACL_MANAGE_USERS);
+    if ($arg == 'profile') {
+      $model->user = $model->active_user;
+    }
+    else
+    {
+      try
+      {
+        $model->user = new User($arg);
+      }
+      catch (InvalidArgumentException $e) // invalid or unsuitable input value
+      {
+        $model->user = null;
+        $model->_responseCode = 400;
+        $view->render($model);
+        return $model;
+      }
+      catch (UnexpectedValueException $e) // user not found
+      {
+        $model->user = null;
+        $model->_responseCode = 404;
+        $view->render($model);
+        return $model;
+      }
+    }
+
+    $model->id = ($model->user ? $model->user->getId() : null);
+    $model->self_manage = ($model->user == $model->active_user);
     self::assignProfile($model);
 
     $model->_responseCode = 200;
@@ -40,10 +72,10 @@ class Profile extends Controller
     if (!empty($return)) $return = Common::relativeUrlToAbsolute($return);
     $model->return = $return;
 
-    if ($router->getRequestMethod() == 'POST')
+    if ($router->getRequestMethod() == 'POST' && ($model->manage || $model->self_manage))
     {
       $this->processProfile($router, $model);
-      $model->manage = $model->active_user->getOption(User::OPTION_ACL_MANAGE_USERS);
+      $model->manage = ($model->active_user ? $model->active_user->getOption(User::OPTION_ACL_MANAGE_USERS) : false);
     }
 
     if (!empty($model->return))
@@ -58,7 +90,7 @@ class Profile extends Controller
 
   protected static function assignProfile(ProfileModel &$model)
   {
-    $user = $model->active_user;
+    $user = $model->user;
 
     $model->acl_invite_users = ($user ? $user->getOption(User::OPTION_ACL_INVITE_USERS) : null);
     $model->acl_manage_users = ($user ? $user->getOption(User::OPTION_ACL_MANAGE_USERS) : null);
@@ -83,7 +115,7 @@ class Profile extends Controller
   {
     $data = $router->getRequestBodyArray();
     $now = new DateTime('now');
-    $user = $model->active_user;
+    $user = $model->user;
 
     $model->display_name = $data['display_name'] ?? null;
     $model->email = $data['email'] ?? null;

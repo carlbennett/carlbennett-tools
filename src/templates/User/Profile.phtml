@@ -2,10 +2,14 @@
 use \CarlBennett\MVC\Libraries\Common;
 $active_user = $this->getContext()->active_user;
 $feedback = $this->getContext()->feedback;
+$manage = $this->getContext()->manage;
 $return = $this->getContext()->return;
-$title = 'Edit Profile';
+$self_manage = $this->getContext()->self_manage;
+$title = 'User Profile';
+$user = $this->getContext()->user;
 
 require('./header.inc.phtml');
+
 if (!$active_user) {
   echo '<div class="container">';
   require('./LoginRequired.inc.phtml');
@@ -13,5 +17,18 @@ if (!$active_user) {
   echo '</div>';
   return;
 }
-require('./User/ProfileForm.inc.phtml');
+
+if (is_null($user)) {
+  echo '<div class="container">';
+  echo '<h1>' . $title . '</h1>';
+  echo '<div class="alert alert-danger" role="alert">';
+  echo '<p class="mb-1">The requested user could not be found.</p>';
+  echo '</div>';
+  echo '</div>';
+} else if ($manage || $self_manage) {
+  require('./User/ProfileForm.inc.phtml');
+} else {
+  require('./User/ProfileView.inc.phtml');
+}
+
 require('./footer.inc.phtml');

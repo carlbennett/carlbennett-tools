@@ -1,0 +1,99 @@
+<?php namespace CarlBennett\Tools\Templates\User;
+use \CarlBennett\MVC\Libraries\Common;
+use \CarlBennett\Tools\Libraries\User;
+use \CarlBennett\Tools\Models\User\Profile as ProfileModel;
+use \DateTimeZone;
+
+$model = $this->getContext();
+
+$avatar = filter_var($model->avatar, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$date_added = $model->date_added;
+$date_banned = $model->date_banned;
+$date_disabled = $model->date_disabled;
+$display_name = filter_var($model->display_name, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$id = $model->id;
+
+$fmt = 'D, M j, Y g:i A T';
+$tz = ($user ? $user->getTimezoneObject() : null);
+if (!$tz) $tz = new DateTimeZone('Etc/UTC');
+
+if ($date_added) $date_added->setTimezone($tz);
+if ($date_banned) $date_banned->setTimezone($tz);
+if ($date_disabled) $date_disabled->setTimezone($tz);
+
+$id_str = (!is_null($id) ? $id : '<em>&ndash;</em>');
+$date_added_str = (!is_null($date_added) ? $date_added->format($fmt) : '<em>(not added)</em>');
+$date_banned_str = (!is_null($date_banned) ? $date_banned->format($fmt) : '<em>(not banned)</em>');
+$date_disabled_str = (!is_null($date_disabled) ? $date_disabled->format($fmt) : '<em>(not disabled)</em>');
+
+$date_banned_class = (!is_null($date_banned) ? 'text-danger' : 'text-secondary');
+$date_disabled_class = (!is_null($date_disabled) ? 'text-warning' : 'text-secondary');
+
+?>
+<div class="container">
+    <div class="row">
+      <div class="col-md-1">
+        <!-- Avatar -->
+
+        <div class="text-center">
+          <label class="font-weight-bold m-1">Gravatar</label>
+          <img class="border border-primary p-1 rounded-lg" style="max-width:96px;" src="<?=$avatar?>"/>
+        </div>
+
+      </div>
+      <div class="col-lg-6">
+        <!-- Display name, Timezone -->
+
+        <table class="table table-borderless">
+          <thead></thead><tbody>
+            <tr>
+              <th scope="row" class="align-middle text-right"><label class="m-0" for="display_name">Name</label></th>
+              <td><?=$display_name?></td>
+            </tr>
+            <tr>
+              <th scope="row" class="align-middle text-right"><label class="m-0" for="timezone">Timezone</label></th>
+              <td><?=$tz->getName()?></td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+      <div class="col-lg-5">
+        <!-- Uuid, Timestamps -->
+
+        <table class="table table-borderless">
+          <thead></thead><tbody>
+            <tr>
+              <th scope="row" class="align-middle text-right">Uuid</th>
+              <td><code><?=$id_str?></code></td>
+            </tr>
+            <tr>
+              <th scope="row" class="align-middle text-right text-success">Date added</th>
+              <td class="text-success"><?=$date_added_str?></td>
+            </tr>
+<?php if ($date_banned) { ?>
+            <tr>
+              <th scope="row" class="align-middle text-right <?=$date_banned_class?>">Date banned</th>
+              <td class="<?=$date_banned_class?>"><?=$date_banned_str?></td>
+            </tr>
+<?php } ?>
+<?php if ($date_disabled) { ?>
+            <tr>
+              <th scope="row" class="align-middle text-right <?=$date_disabled_class?>">Date disabled</th>
+              <td class="<?=$date_disabled_class?>"><?=$date_disabled_str?></td>
+            </tr>
+<?php } ?>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  <hr/>
+  <div class="row">
+    <div class="col">
+      <div class="text-center">
+        <a class="btn btn-primary mr-2" href="javascript:history.go(-1);">Back</a>
+      </div>
+    </div>
+  </div>
+</div>

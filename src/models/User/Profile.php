@@ -41,5 +41,7 @@ class Profile extends ActiveUserModel {
   public $password_desired;
   public $record_updated;
   public $return;
+  public $self_manage;
+  public $user;
 
 }

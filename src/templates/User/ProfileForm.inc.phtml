@@ -19,14 +19,14 @@ $date_disabled = $model->date_disabled;
 $display_name = filter_var($model->display_name, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $error = $model->error;
 $email = filter_var($model->email, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$id = $model->id;
 $internal_notes = filter_var($model->internal_notes, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $is_banned = ($model->is_banned ? ' checked' : '');
 $is_disabled = ($model->is_disabled ? ' checked' : '');
-$manage = $model->manage;
 $record_updated = $model->record_updated;
 
 $fmt = 'D, M j, Y g:i A T';
-$tz = ($active_user ? $active_user->getTimezoneObject() : null);
+$tz = ($user ? $user->getTimezoneObject() : null);
 if (!$tz) $tz = new DateTimeZone('Etc/UTC');
 $tzs = DateTimeZone::listIdentifiers();
 
@@ -35,7 +35,7 @@ if ($date_banned) $date_banned->setTimezone($tz);
 if ($date_disabled) $date_disabled->setTimezone($tz);
 if ($record_updated) $record_updated->setTimezone($tz);
 
-$id_str = (!is_null($active_user) ? $active_user->getId() : '<em>&ndash;</em>');
+$id_str = (!is_null($id) ? $id : '<em>&ndash;</em>');
 $date_added_str = (!is_null($date_added) ? $date_added->format($fmt) : '<em>(not added)</em>');
 $date_banned_str = (!is_null($date_banned) ? $date_banned->format($fmt) : '<em>(not banned)</em>');
 $date_disabled_str = (!is_null($date_disabled) ? $date_disabled->format($fmt) : '<em>(not disabled)</em>');
@@ -59,7 +59,9 @@ switch ($error)
 
 ?>
 <div class="container">
+<?php if ($manage || $self_manage) { ?>
   <form method="POST">
+<?php } ?>
 <?php if (!is_null($error)) { ?>
     <div class="row">
       <div class="col-lg-12">
@@ -209,5 +211,7 @@ switch ($error)
         </div>
       </div>
     </div>
+<?php if ($manage || $self_manage) { ?>
   </form>
+<?php } ?>
 </div>
