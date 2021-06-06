@@ -24,6 +24,7 @@ class User implements IDatabaseObject {
   const DEFAULT_TIMEZONE = 'Etc/UTC';
 
   # Maximum SQL field lengths, alter as appropriate.
+  const MAX_BIOGRAPHY         = 65535;
   const MAX_DISPLAY_NAME      = 191;
   const MAX_EMAIL             = 191;
   const MAX_INTERNAL_NOTES    = 65535;
@@ -47,6 +48,7 @@ class User implements IDatabaseObject {
 
   private $_id;
 
+  protected $biography;
   protected $date_added;
   protected $date_banned;
   protected $date_disabled;
@@ -93,9 +95,10 @@ class User implements IDatabaseObject {
 
     $q = Common::$database->prepare('
       SELECT
-        `date_added`, `date_banned`, `date_disabled`, `display_name`, `email`,
-        UuidFromBin(`id`) AS `id`, `internal_notes`, `invites_available`,
-        `options`, `password_hash`, `record_updated`, `timezone`
+        `biography`, `date_added`, `date_banned`, `date_disabled`,
+        `display_name`, `email`, UuidFromBin(`id`) AS `id`, `internal_notes`,
+        `invites_available`, `options`, `password_hash`, `record_updated`,
+        `timezone`
       FROM `users` WHERE id = UuidToBin(:id) LIMIT 1;
     ');
     $q->bindParam(':id', $id, PDO::PARAM_STR);
@@ -120,6 +123,7 @@ class User implements IDatabaseObject {
   protected function allocateObject(StdClass $value) {
     $tz = new DateTimeZone('Etc/UTC');
 
+    $this->setBiography($value->biography);
     $this->setDateAdded(new DateTime($value->date_added, $tz));
     $this->setDateBanned(
       $value->date_banned ? new DateTime($value->date_banned, $tz) : null
@@ -171,14 +175,14 @@ class User implements IDatabaseObject {
 
     $q = Common::$database->prepare('
       INSERT INTO `users` (
-        `date_added`, `date_banned`, `date_disabled`, `display_name`, `email`,
-        `id`, `internal_notes`, `invites_available`, `options`, `password_hash`,
-        `record_updated`, `timezone`
+        `biography`, `date_added`, `date_banned`, `date_disabled`,
+        `display_name`, `email`, `id`, `internal_notes`, `invites_available`,
+        `options`, `password_hash`, `record_updated`, `timezone`
       ) VALUES (
-        :added, :banned, :disabled, :name, :email, UuidToBin(:id), :int_notes,
-        :invites_a, :options, :password, :record_updated, :tz
+        :bio, :added, :banned, :disabled, :name, :email, UuidToBin(:id),
+        :int_notes, :invites_a, :options, :password, :record_updated, :tz
       ) ON DUPLICATE KEY UPDATE
-        `date_added` = :added, `date_banned` = :banned,
+        `biography` = :bio, `date_added` = :added, `date_banned` = :banned,
         `date_disabled` = :disabled, `display_name` = :name, `email` = :email,
         `internal_notes` = :int_notes, `invites_available` = :invites_a,
         `options` = :options, `password_hash` = :password,
@@ -205,6 +209,8 @@ class User implements IDatabaseObject {
     $q->bindParam(':banned', $date_banned, (
       is_null($date_banned) ? PDO::PARAM_NULL : PDO::PARAM_STR
     ));
+
+    $q->bindParam(':bio', $this->biography, PDO::PARAM_STR);
 
     $q->bindParam(':disabled', $date_disabled, (
       is_null($date_disabled) ? PDO::PARAM_NULL : PDO::PARAM_STR
@@ -249,9 +255,10 @@ class User implements IDatabaseObject {
 
     $q = Common::$database->prepare('
       SELECT
-        `date_added`, `date_banned`, `date_disabled`, `display_name`, `email`,
-        UuidFromBin(`id`) AS `id`, `internal_notes`, `invites_available`,
-        `options`, `password_hash`, `record_updated`, `timezone`
+        `biography`, `date_added`, `date_banned`, `date_disabled`,
+        `display_name`, `email`, UuidFromBin(`id`) AS `id`, `internal_notes`,
+        `invites_available`, `options`, `password_hash`, `record_updated`,
+        `timezone`
       FROM `users`
       ORDER BY `date_added`, `display_name`, `email`;
     ');
@@ -275,9 +282,10 @@ class User implements IDatabaseObject {
 
     $q = Common::$database->prepare('
       SELECT
-        `date_added`, `date_banned`, `date_disabled`, `display_name`, `email`,
-        UuidFromBin(`id`) AS `id`, `internal_notes`, `invites_available`,
-        `options`, `password_hash`, `record_updated`, `timezone`
+        `biography`, `date_added`, `date_banned`, `date_disabled`,
+        `display_name`, `email`, UuidFromBin(`id`) AS `id`, `internal_notes`,
+        `invites_available`, `options`, `password_hash`, `record_updated`,
+        `timezone`
       FROM `users` WHERE `email` = :email;
     ');
     $q->bindParam(':email', $value, PDO::PARAM_STR);
@@ -293,6 +301,10 @@ class User implements IDatabaseObject {
 
     $q->closeCursor();
     return $r;
+  }
+
+  public function getBiography() {
+    return $this->biography;
   }
 
   public function getDateAdded() {
@@ -412,6 +424,20 @@ class User implements IDatabaseObject {
 
   public function isDisabled() {
     return $this->getOption(self::OPTION_DISABLED);
+  }
+
+  public function setBiography(string $value) {
+    if (!is_string($value)) {
+      throw new InvalidArgumentException('value must be a string');
+    }
+
+    if (strlen($value) > self::MAX_BIOGRAPHY) {
+      throw new LengthException(sprintf(
+        'value must be less than or equal to %d characters', self::MAX_BIOGRAPHY
+      ));
+    }
+
+    $this->biography = $value;
   }
 
   public function setDateAdded(DateTime $value) {

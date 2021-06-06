@@ -13,6 +13,7 @@ $acl_phpinfo = ($model->acl_phpinfo ? ' checked' : '');
 $acl_plex_requests = ($model->acl_plex_requests ? ' checked' : '');
 $acl_plex_users = ($model->acl_plex_users ? ' checked' : '');
 $avatar = filter_var($model->avatar, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$biography = filter_var($model->biography, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $date_added = $model->date_added;
 $date_banned = $model->date_banned;
 $date_disabled = $model->date_disabled;
@@ -193,7 +194,7 @@ switch ($error)
     </div>
 <?php if ($manage) { ?>
     <div class="row">
-      <div class="col">
+      <div class="col mb-1">
         <!-- Internal notes -->
 
         <label class="font-weight-bold" for="internal_notes">Internal notes</label><br/>
@@ -202,6 +203,15 @@ switch ($error)
       </div>
     </div>
 <?php } ?>
+    <div class="row">
+      <div class="col">
+        <!-- Biography -->
+
+        <label class="font-weight-bold" for="biography">Biography</label><br/>
+        <textarea class="form-control form-control-sm" style="min-height:90px;" id="biography" name="biography" placeholder="Enter biography here"><?=$biography?></textarea>
+
+      </div>
+    </div>
     <hr/>
     <div class="row">
       <div class="col">

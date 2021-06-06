@@ -14,6 +14,7 @@ class Profile extends ActiveUserModel {
   const ERROR_INTERNAL_NOTES_LENGTH = 5;
   const ERROR_TIMEZONE_INVALID = 6;
   const ERROR_TIMEZONE_LENGTH = 7;
+  const ERROR_BIOGRAPHY_LENGTH = 8;
 
   public $acl_invite_users;
   public $acl_manage_users;

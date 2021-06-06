@@ -1,5 +1,6 @@
 <?php namespace CarlBennett\Tools\Templates\User;
 use \CarlBennett\MVC\Libraries\Common;
+use \CarlBennett\MVC\Libraries\Markdown;
 use \CarlBennett\Tools\Libraries\User;
 use \CarlBennett\Tools\Models\User\Profile as ProfileModel;
 use \DateTimeZone;
@@ -7,6 +8,7 @@ use \DateTimeZone;
 $model = $this->getContext();
 
 $avatar = filter_var($model->avatar, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$biography = (new Markdown())->text($model->biography);
 $date_added = $model->date_added;
 $date_banned = $model->date_banned;
 $date_disabled = $model->date_disabled;
@@ -42,7 +44,7 @@ $date_disabled_class = (!is_null($date_disabled) ? 'text-warning' : 'text-second
 
       </div>
       <div class="col-lg-6">
-        <!-- Display name, Timezone -->
+        <!-- Display name, Timezone, Biography -->
 
         <table class="table table-borderless">
           <thead></thead><tbody>
@@ -54,6 +56,12 @@ $date_disabled_class = (!is_null($date_disabled) ? 'text-warning' : 'text-second
               <th scope="row" class="align-middle text-right"><label class="m-0" for="timezone">Timezone</label></th>
               <td><?=$tz->getName()?></td>
             </tr>
+<?php if (!empty($biography)) { ?>
+            <tr>
+              <th scope="row" class="align-middle text-right"><label class="m-0" for="biography">Biography</label></th>
+              <td><?=$biography?></td>
+            </tr>
+<?php } ?>
           </tbody>
         </table>
 

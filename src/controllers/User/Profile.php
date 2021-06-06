@@ -99,16 +99,17 @@ class Profile extends Controller
     $model->acl_plex_requests = ($user ? $user->getOption(User::OPTION_ACL_PLEX_REQUESTS) : null);
     $model->acl_plex_users = ($user ? $user->getOption(User::OPTION_ACL_PLEX_USERS) : null);
     $model->avatar = filter_var((new Gravatar($user ? $user->getEmail() : ''))->getUrl(96, 'mp'), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $model->biography = ($user ? $user->getBiography() : null);
     $model->date_added = ($user ? $user->getDateAdded() : null);
     $model->date_banned = ($user ? $user->getDateBanned() : null);
     $model->date_disabled = ($user ? $user->getDateDisabled() : null);
     $model->display_name = ($user ? $user->getName() : null);
     $model->email = ($user ? $user->getEmail() : null);
-    $model->internal_notes = $user->getInternalNotes();
-    $model->is_banned = $user->isBanned();
-    $model->is_disabled = $user->isDisabled();
-    $model->record_updated = $user->getRecordUpdated();
-    $model->timezone = $user->getTimezone();
+    $model->internal_notes = ($user ? $user->getInternalNotes() : null);
+    $model->is_banned = ($user ? $user->isBanned() : null);
+    $model->is_disabled = ($user ? $user->isDisabled() : null);
+    $model->record_updated = ($user ? $user->getRecordUpdated() : null);
+    $model->timezone = ($user ? $user->getTimezone() : null);
   }
 
   protected function processProfile(Router &$router, ProfileModel &$model)
@@ -117,6 +118,7 @@ class Profile extends Controller
     $now = new DateTime('now');
     $user = $model->user;
 
+    $model->biography = $data['biography'] ?? null;
     $model->display_name = $data['display_name'] ?? null;
     $model->email = $data['email'] ?? null;
     $model->error = ProfileModel::ERROR_INTERNAL;
@@ -133,6 +135,16 @@ class Profile extends Controller
       $model->acl_plex_users = $data['acl_plex_users'] ?? null;
       $model->internal_notes = $data['internal_notes'] ?? '';
       $model->is_banned = $data['banned'] ?? null;
+    }
+
+    try // -- Set biography --
+    {
+      $user->setBiography($model->biography);
+    }
+    catch (LengthException $e)
+    {
+      $model->error = ProfileModel::ERROR_BIOGRAPHY_LENGTH;
+      return;
     }
 
     try // -- Set email --
