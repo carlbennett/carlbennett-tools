@@ -1,4 +1,7 @@
 {
+  "backend_tasks": {
+    "auth_token": "00000000-0000-0000-0000-000000000000"
+  },
   "maintenance": [
     true,
     "This website is currently undergoing routine maintenance and will be back in a little while. Stay tuned for updates."

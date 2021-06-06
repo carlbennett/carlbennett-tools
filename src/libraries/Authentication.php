@@ -50,6 +50,31 @@ class Authentication {
   private function __construct() {}
 
   /**
+   * discard()
+   * Discards expired fingerprints server-side.
+   *
+   * @return bool Indicates if the operation succeeded.
+   */
+  public static function discard() {
+    if (!isset(Common::$database)) {
+      Common::$database = DatabaseDriver::getDatabaseObject();
+    }
+
+    $stmt = Common::$database->prepare('
+      DELETE FROM `user_sessions` WHERE `expires_datetime` >= :now LIMIT 1;
+    ');
+
+    if (!self::$timezone) self::setTimezone();
+    $now = (new DateTime('now', self::$timezone))->format(self::DATE_SQL);
+    $stmt->bindParam(':now', $now, PDO::PARAM_STR);
+
+    $r = $stmt->execute();
+    $stmt->closeCursor();
+
+    return $r;
+  }
+
+  /**
    * discardKey()
    * Discards fingerprint by key id server-side so lookup cannot succeed.
    *

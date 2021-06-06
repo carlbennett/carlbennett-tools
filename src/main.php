@@ -63,6 +63,10 @@ function main() {
         $router->addRoute(
             '#^/$#', 'RedirectSoft', 'RedirectSoftHtml', '/tools'
         );
+        // URL: /backend_task/(name)
+        $router->addRoute(
+            '#^/backend\_?task/(.*)/?$#', 'BackendTask', 'BackendTaskJSON'
+        );
         // URL: /gandalf
         $router->addRoute(
             '#^/gandalf$#', 'Gandalf', 'GandalfHtml'
