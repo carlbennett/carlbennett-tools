@@ -4,7 +4,8 @@ class PruneUserSessionsTask extends Task
 {
   public function run()
   {
-    $this->model->task_result = Authentication::discard();
-    $this->model->_responseCode = ($this->model->task_result ? 200 : 500);
+    $success = Authentication::discard();
+    $this->model->task_result = array('success' => $success);
+    $this->model->_responseCode = ($success ? 200 : 500);
   }
 }
