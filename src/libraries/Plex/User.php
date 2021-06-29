@@ -74,6 +74,11 @@ class User implements IDatabaseObject {
       throw new InvalidArgumentException('value must be null or a string');
     }
 
+    $now = new DateTime('now');
+    $this->setDateAdded($now);
+    $this->setNotes('');
+    $this->setOptions(self::OPTION_DEFAULT);
+    $this->setRecordUpdated($now);
     $this->setRisk(self::RISK_UNASSESSED);
 
     if (empty($id)) return;
