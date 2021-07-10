@@ -99,7 +99,7 @@ class User implements IDatabaseObject {
         `display_name`, `email`, UuidFromBin(`id`) AS `id`, `internal_notes`,
         `invites_available`, `options`, `password_hash`, `record_updated`,
         `timezone`
-      FROM `users` WHERE id = UuidToBin(:id) LIMIT 1;
+      FROM `users` WHERE `id` = UuidToBin(:id) LIMIT 1;
     ');
     $q->bindParam(':id', $id, PDO::PARAM_STR);
 
