@@ -1,11 +1,9 @@
-<?php
-
+<?php /* vim: set colorcolumn= expandtab shiftwidth=2 softtabstop=2 tabstop=4 smarttab: */
 namespace CarlBennett\Tools\Libraries;
 
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\MVC\Libraries\DatabaseDriver;
 use \CarlBennett\Tools\Libraries\User;
-
 use \DateTime;
 use \DateTimeZone;
 use \Exception;
@@ -18,8 +16,8 @@ use \UnexpectedValueException;
  * Authentication
  * The class that handles authenticating and verifying a client.
  */
-class Authentication {
-
+class Authentication
+{
   const COOKIE_NAME    = 'sid';
   const DATE_SQL       = 'Y-m-d H:i:s';
   const MAX_USER_AGENT = 255;
@@ -55,22 +53,19 @@ class Authentication {
    *
    * @return bool Indicates if the operation succeeded.
    */
-  public static function discard() {
-    if (!isset(Common::$database)) {
+  public static function discard()
+  {
+    if (!isset(Common::$database))
+    {
       Common::$database = DatabaseDriver::getDatabaseObject();
     }
-
-    $stmt = Common::$database->prepare('
+    $q = Common::$database->prepare('
       DELETE FROM `user_sessions` WHERE `expires_datetime` >= :now LIMIT 1;
     ');
-
     if (!self::$timezone) self::setTimezone();
     $now = (new DateTime('now', self::$timezone))->format(self::DATE_SQL);
-    $stmt->bindParam(':now', $now, PDO::PARAM_STR);
-
-    $r = $stmt->execute();
-    $stmt->closeCursor();
-
+    $q->bindParam(':now', $now, PDO::PARAM_STR);
+    $r = $q->execute();
     return $r;
   }
 
@@ -426,5 +421,4 @@ class Authentication {
 
     return true;
   }
-
 }
