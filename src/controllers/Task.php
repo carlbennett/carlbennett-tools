@@ -6,12 +6,12 @@ use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\MVC\Libraries\Controller;
 use \CarlBennett\MVC\Libraries\Router;
 use \CarlBennett\MVC\Libraries\View;
-use \CarlBennett\Tools\Libraries\Tasks\Task;
+use \CarlBennett\Tools\Libraries\Tasks\Task as TaskLib;
 use \CarlBennett\Tools\Libraries\Utility\HTTPForm;
 use \CarlBennett\Tools\Models\Task as TaskModel;
 use \UnexpectedValueException;
 
-class BackendTask extends Controller
+class Task extends Controller
 {
   public function &run(Router &$router, View &$view, array &$args)
   {
@@ -30,7 +30,7 @@ class BackendTask extends Controller
 
     try
     {
-      $task = Task::create($model);
+      $task = TaskLib::create($model);
     }
     catch (UnexpectedValueException $e) // invalid task name
     {
@@ -60,7 +60,7 @@ class BackendTask extends Controller
     $model->auth_token = $p->get('auth_token') ??
       $g->get('auth_token') ?? $h ?? null;
 
-    $cnf_auth_token = Common::$config->backend_tasks->auth_token;
+    $cnf_auth_token = Common::$config->tasks->auth_token;
     $model->auth_token_valid = ($model->auth_token === $cnf_auth_token);
   }
 }

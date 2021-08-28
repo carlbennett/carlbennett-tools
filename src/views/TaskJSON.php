@@ -8,7 +8,7 @@ use \CarlBennett\MVC\Libraries\Model;
 use \CarlBennett\MVC\Libraries\View;
 use \CarlBennett\Tools\Models\Task as TaskModel;
 
-class BackendTaskJSON extends View
+class TaskJSON extends View
 {
   public function getMimeType()
   {

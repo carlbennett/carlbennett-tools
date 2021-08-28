@@ -63,10 +63,6 @@ function main() {
         $router->addRoute(
             '#^/$#', 'RedirectSoft', 'RedirectSoftHtml', '/tools'
         );
-        // URL: /backend_task/(name)
-        $router->addRoute(
-            '#^/backend\_?task/(.*)/?$#', 'BackendTask', 'BackendTaskJSON'
-        );
         // URL: /gandalf
         $router->addRoute(
             '#^/gandalf$#', 'Gandalf', 'GandalfHtml'
@@ -121,6 +117,10 @@ function main() {
         // URL: /remoteaddress.txt
         $router->addRoute(
             '#^/remoteaddress\.txt$#', 'RemoteAddress', 'RemoteAddressPlain'
+        );
+        // URL: /task/(name)
+        $router->addRoute(
+            '#^/task/(.*)/?$#', 'Task', 'TaskJSON'
         );
         // URL: /tools
         $router->addRoute(
