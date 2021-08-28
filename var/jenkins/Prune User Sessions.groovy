@@ -6,7 +6,7 @@
  * @license MIT
  */
 def job_token = ''
-def job_url = 'https://example.com/backend_task/prune_user_sessions'
+def job_url = 'https://example.com/task/prune_user_sessions'
 def job_result = null
 
 node() {
