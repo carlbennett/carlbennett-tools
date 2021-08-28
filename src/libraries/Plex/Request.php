@@ -1,17 +1,15 @@
 <?php
-
 namespace CarlBennett\Tools\Libraries\Plex;
 
 use \CarlBennett\Tools\Libraries\IDatabaseObject;
 use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
 use \CarlBennett\Tools\Libraries\User as BaseUser;
-
 use \PDO;
 use \PDOException;
 use \StdClass;
 
-class Request {
-
+class Request
+{
   const DATE_SQL = 'Y-m-d H:i:s';
 
   const MAX_NOTES = 0;
@@ -44,4 +42,18 @@ class Request {
   protected $url;
   protected $year;
 
+  public function __construct($value = null)
+  {
+
+  }
+
+  public function allocate()
+  {
+
+  }
+
+  public function commit()
+  {
+
+  }
 }
