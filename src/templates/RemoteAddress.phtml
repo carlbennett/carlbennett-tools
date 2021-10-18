@@ -17,18 +17,6 @@ require("./header.inc.phtml"); ?>
     <thead></thead>
     <tbody>
       <tr><th scope="row" class="text-right">IP Address</th><td class="text-left"><code><?=filter_var($ip, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></code></td></tr>
-<?php if ($geoip) { ?>
-<?php foreach ($geoip as $key => $val) {
-        if ($key == 'country_code3') { $key = 'country_code_3'; }
-        $key = ucwords(str_replace('_', ' ', $key));
-        $key = filter_var($key, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $val = filter_var($val, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-?>
-      <tr><th scope="row" class="text-right"><?=$key?></th><td class="text-left"><?=(empty($val) ? '<em>not available</em>' : $val)?></td></tr>
-<?php } ?>
-<?php } else { ?>
-      <tr><th scope="row" class="text-right">GeoIP Info</th><td class="text-left"><em>not available</em></td></tr>
-<?php } ?>
 <?php if ($ua && strlen($ua) <= $ua_max) { ?>
       <tr><th scope="row" class="text-right">User Agent</th><td class="text-left"><code><?=filter_var($ua, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></code></td></tr>
 <?php } else if ($ua && strlen($ua) > $ua_max) { ?>

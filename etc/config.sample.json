@@ -1,4 +1,8 @@
 {
+  "geoip": {
+    "database_file": "/usr/share/GeoIP/GeoLite2-City.mmdb",
+    "database_type": "city"
+  },
   "maintenance": [
     true,
     "This website is currently undergoing routine maintenance and will be back in a little while. Stay tuned for updates."
