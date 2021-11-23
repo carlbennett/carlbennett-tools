@@ -109,16 +109,16 @@ if (!empty($error)) { ?>
             <tr>
               <th scope="row" class="align-middle text-right"><label class="m-0">Options</label></th>
               <td>
-                <div class="custom-control custom-switch m-2">
+                <div class="custom-control custom-switch m-2 text-danger">
                   <input class="custom-control-input" type="checkbox" name="disabled" id="is_disabled" value="1"<?=$is_disabled?>> <label class="custom-control-label" for="is_disabled">Disabled</label>
                 </div>
-                <div class="custom-control custom-switch m-2">
+                <div class="custom-control custom-switch m-2 text-warning">
                   <input class="custom-control-input" type="checkbox" name="expired" id="is_expired" value="1"<?=$is_expired?>> <label class="custom-control-label" for="is_expired">Expired</label>
                 </div>
-                <div class="custom-control custom-switch m-2">
+                <div class="custom-control custom-switch m-2 text-secondary">
                   <input class="custom-control-input" type="checkbox" name="hidden" id="is_hidden" value="1"<?=$is_hidden?>> <label class="custom-control-label" for="is_hidden">Hidden</label>
                 </div>
-                <div class="custom-control custom-switch m-2">
+                <div class="custom-control custom-switch m-2 text-info">
                   <input class="custom-control-input" type="checkbox" name="homeuser" id="is_homeuser" value="1"<?=$is_homeuser?>> <label class="custom-control-label" for="is_homeuser">Home User</label>
                 </div>
               </td>
