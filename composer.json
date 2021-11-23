@@ -27,6 +27,7 @@
     },
     "require": {
         "carlbennett/php-mvc": "^2.1",
+        "erusev/parsedown": "^1.7",
         "ext-gmp": "*",
         "ext-json": "*",
         "geoip2/geoip2": "~2.0",
