@@ -96,7 +96,6 @@ class Profile extends Controller
     $model->acl_manage_users = ($user ? $user->getOption(User::OPTION_ACL_MANAGE_USERS) : null);
     $model->acl_pastebin_admin = ($user ? $user->getOption(User::OPTION_ACL_PASTEBIN_ADMIN) : null);
     $model->acl_phpinfo = ($user ? $user->getOption(User::OPTION_ACL_PHPINFO) : null);
-    $model->acl_plex_requests = ($user ? $user->getOption(User::OPTION_ACL_PLEX_REQUESTS) : null);
     $model->acl_plex_users = ($user ? $user->getOption(User::OPTION_ACL_PLEX_USERS) : null);
     $model->avatar = filter_var((new Gravatar($user ? $user->getEmail() : ''))->getUrl(96, 'mp'), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $model->biography = ($user ? $user->getBiography() : null);
@@ -131,7 +130,6 @@ class Profile extends Controller
       $model->acl_manage_users = $data['acl_manage_users'] ?? null;
       $model->acl_pastebin_admin = $data['acl_pastebin_admin'] ?? null;
       $model->acl_phpinfo = $data['acl_phpinfo'] ?? null;
-      $model->acl_plex_requests = $data['acl_plex_requests'] ?? null;
       $model->acl_plex_users = $data['acl_plex_users'] ?? null;
       $model->internal_notes = $data['internal_notes'] ?? '';
       $model->is_banned = $data['banned'] ?? null;
@@ -238,14 +236,12 @@ class Profile extends Controller
       $user->setOption(User::OPTION_ACL_MANAGE_USERS, ($model->acl_manage_users ? true : false));
       $user->setOption(User::OPTION_ACL_PASTEBIN_ADMIN, ($model->acl_pastebin_admin ? true : false));
       $user->setOption(User::OPTION_ACL_PHPINFO, ($model->acl_phpinfo ? true : false));
-      $user->setOption(User::OPTION_ACL_PLEX_REQUESTS, ($model->acl_plex_requests ? true : false));
       $user->setOption(User::OPTION_ACL_PLEX_USERS, ($model->acl_plex_users ? true : false));
 
       $model->acl_invite_users = $user->getOption(User::OPTION_ACL_INVITE_USERS);
       $model->acl_manage_users = $user->getOption(User::OPTION_ACL_MANAGE_USERS);
       $model->acl_pastebin_admin = $user->getOption(User::OPTION_ACL_PASTEBIN_ADMIN);
       $model->acl_phpinfo = $user->getOption(User::OPTION_ACL_PHPINFO);
-      $model->acl_plex_requests = $user->getOption(User::OPTION_ACL_PLEX_REQUESTS);
       $model->acl_plex_users = $user->getOption(User::OPTION_ACL_PLEX_USERS);
     }
 

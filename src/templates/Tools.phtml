@@ -46,12 +46,6 @@ require("./header.inc.phtml"); ?>
         <td>Prints PHP runtime information.</td>
       </tr>
 <?php } ?>
-<?php if ($active_user && $active_user->getOption(User::OPTION_ACL_PLEX_REQUESTS)) { ?>
-      <tr>
-        <td><a title="Plex Requests" href="<?=Common::relativeUrlToAbsolute('/plex/requests')?>">📢 Plex Requests</a></td>
-        <td>Request content for Carl's Plex.</td>
-      </tr>
-<?php } ?>
 <?php if ($active_user && $active_user->getOption(User::OPTION_ACL_PLEX_USERS)) { ?>
       <tr>
         <td><a title="Plex Users" href="<?=Common::relativeUrlToAbsolute('/plex/users')?>">👥 Plex Users</a></td>

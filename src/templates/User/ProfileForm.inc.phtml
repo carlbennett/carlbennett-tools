@@ -10,7 +10,6 @@ $acl_invite_users = ($model->acl_invite_users ? ' checked' : '');
 $acl_manage_users = ($model->acl_manage_users ? ' checked' : '');
 $acl_pastebin_admin = ($model->acl_pastebin_admin ? ' checked' : '');
 $acl_phpinfo = ($model->acl_phpinfo ? ' checked' : '');
-$acl_plex_requests = ($model->acl_plex_requests ? ' checked' : '');
 $acl_plex_users = ($model->acl_plex_users ? ' checked' : '');
 $avatar = filter_var($model->avatar, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $biography = filter_var($model->biography, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -146,10 +145,6 @@ switch ($error)
                 <div class="custom-control custom-switch m-2">
                   <input class="custom-control-input" type="checkbox" name="acl_phpinfo" id="acl_phpinfo" value="1"<?=$acl_phpinfo?>> <label class="custom-control-label" for="acl_phpinfo">Php Info<br/>
                   <span style="font-size:smaller;" class="text-muted">Able to view <code>phpinfo()</code></span></label>
-                </div>
-                <div class="custom-control custom-switch m-2">
-                  <input class="custom-control-input" type="checkbox" name="acl_plex_requests" id="acl_plex_requests" value="1"<?=$acl_plex_requests?>> <label class="custom-control-label" for="acl_plex_requests">Plex Requests<br/>
-                  <span style="font-size:smaller;" class="text-muted">Manage Plex media requests</span></label>
                 </div>
                 <div class="custom-control custom-switch m-2">
                   <input class="custom-control-input" type="checkbox" name="acl_plex_users" id="acl_plex_users" value="1"<?=$acl_plex_users?>> <label class="custom-control-label" for="acl_plex_users">Plex Users<br/>

@@ -79,10 +79,6 @@ function main() {
         $router->addRoute(
             '#^/phpinfo$#', 'PhpInfo', 'PhpInfoHtml'
         );
-        // URL: /plex/requests
-        $router->addRoute(
-            '#^/plex/requests$#', 'Plex\\Requests', 'Plex\\RequestsHtml'
-        );
         // URL: /plex/users
         $router->addRoute(
             '#^/plex/users$#', 'Plex\\Users', 'Plex\\UsersHtml'
