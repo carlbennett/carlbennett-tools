@@ -138,9 +138,9 @@ function main() {
         $router->addRoute(
             '#^/user/logout$#', 'User\\Logout', 'User\\LogoutHtml'
         );
-        // URL: /user/(profile|uuid)
+        // URL: /user/(uuid)
         $router->addRoute(
-            '#^/user/(profile|([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}))$#', 'User\\Profile', 'User\\ProfileHtml'
+            '#^/user/([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})$#', 'User\\Profile', 'User\\ProfileHtml'
         );
         // URL: *
         $router->addRoute(

@@ -418,6 +418,14 @@ class User implements IDatabaseObject {
     return new DateTimeZone($this->timezone);
   }
 
+  public function getUrl($subcontroller = '') {
+    return Common::relativeUrlToAbsolute(sprintf(
+      '/user/%s%s', (
+        empty($subcontroller) ? '' : '/' . $subcontroller
+      ), $this->getId()
+    ));
+  }
+
   public function isBanned() {
     return $this->getOption(self::OPTION_BANNED);
   }

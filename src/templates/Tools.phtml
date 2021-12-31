@@ -13,7 +13,7 @@ require("./header.inc.phtml"); ?>
     <tbody>
 <?php if ($active_user) { ?>
       <tr>
-        <td><a title="Edit Profile" href="<?=Common::relativeUrlToAbsolute('/user/profile')?>">📝 Edit Profile</a></td>
+        <td><a title="Edit Profile" href="<?=$active_user->getUrl('edit')?>">📝 Edit Profile</a></td>
         <td>Edit your account profile.</td>
       </tr>
 <?php } ?>
