@@ -19,11 +19,12 @@ class Profile extends Controller
   public function &run(Router &$router, View &$view, array &$args)
   {
     $arg = array_shift($args);
+    $profile = ($arg == 'profile');
 
     $model = new ProfileModel();
     $model->active_user = Authentication::$user;
 
-    if (!$model->active_user && $arg == 'profile')
+    if (!$model->active_user && $profile)
     {
       $model->_responseCode = 401;
       $view->render($model);
@@ -34,7 +35,7 @@ class Profile extends Controller
       $model->manage = ($model->active_user ? $model->active_user->getOption(User::OPTION_ACL_MANAGE_USERS) : false);
     }
 
-    if ($arg == 'profile') {
+    if ($profile) {
       $model->user = $model->active_user;
     }
     else
