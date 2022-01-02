@@ -1,44 +1,36 @@
 <?php namespace CarlBennett\Tools\Templates;
 $title = 'Url Encode & Decode';
-$decode_in = $this->getContext()->decode_in;
-$decode_out = $this->getContext()->decode_out;
-$encode_in = $this->getContext()->encode_in;
-$encode_out = $this->getContext()->encode_out;
+$decode = $this->getContext()->decode;
+$input = $this->getContext()->input;
+$output = $this->getContext()->output;
 require('./header.inc.phtml'); ?>
 <div class="container">
   <h1>Url Encode &amp; Decode</h1>
   <p>This tool is a user interface to the PHP <code><a href="https://www.php.net/manual/function.rawurlencode.php">rawurlencode()</a></code> and <code><a href="https://www.php.net/manual/function.rawurldecode.php">rawurldecode()</a></code> functions.</p>
   <form method="POST">
     <div class="row">
-      <div class="col-md-6">
-        <h2>Decode In</h2>
+      <div class="col">
+        <h2>Input</h2>
         <div class="m-3">
-          <textarea name="decode_in" id="decode_in" class="form-control bg-dark text-light"><?=filter_var($decode_in, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></textarea>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <h2<?=(!empty($decode_out) ? ' class="text-success"' : '')?>>Decode Out</h2>
-        <div class="<?=(!empty($decode_out) ? 'border border-success ' : '')?>m-3 p-2">
-          <code><?=filter_var($decode_out, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></code>
+          <div class="custom-control custom-switch m-2">
+            <input class="custom-control-input" type="checkbox" name="decode" id="decode" value="1"<?=$decode ? ' checked' : ''?>> <label class="custom-control-label" for="decode">Decode</label>
+          </div>
+          <textarea name="input" id="input" class="form-control bg-dark text-light"><?=filter_var($input, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></textarea>
         </div>
       </div>
     </div>
+<?php if (!empty($output)) { ?>
     <div class="row">
-      <div class="col-md-6">
-        <h2>Encode In</h2>
+      <div class="col">
+        <h2>Output</h2>
         <div class="m-3">
-          <textarea name="encode_in" id="encode_in" class="form-control bg-dark text-light"><?=filter_var($encode_in, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></textarea>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <h2<?=(!empty($encode_out) ? ' class="text-success"' : '')?>>Encode Out</h2>
-        <div class="<?=(!empty($encode_out) ? 'border border-success ' : '')?>m-3 p-2">
-          <code><?=filter_var($encode_out, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></code>
+          <textarea id="output" class="form-control bg-dark text-light"><?=filter_var($output, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></textarea>
         </div>
       </div>
     </div>
+<?php } ?>
     <div class="row">
-      <div class="col-md-12">
+      <div class="col">
         <input type="submit" class="btn btn-success" value="Submit"/>
       </div>
     </div>

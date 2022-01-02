@@ -13,15 +13,14 @@ class UrlEncodeDecode extends Controller {
 
     if ($router->getRequestMethod() == 'POST') {
       $data = $router->getRequestBodyArray();
-      $model->decode_in = $data['decode_in'] ?? null;
-      $model->encode_in = $data['encode_in'] ?? null;
+      $model->decode = ($data['decode'] ?? null) ? true : false;
+      $model->input = $data['input'] ?? null;
 
-      if (!empty($model->decode_in)) {
-        $model->decode_out = rawurldecode($model->decode_in);
-      }
-
-      if (!empty($model->encode_in)) {
-        $model->encode_out = rawurlencode($model->encode_in);
+      if (!empty($model->input)) {
+        $model->output = (
+          $model->decode ?
+          rawurldecode($model->input) : rawurlencode($model->input)
+        );
       }
     }
 
