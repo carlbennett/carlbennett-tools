@@ -421,7 +421,7 @@ class User implements IDatabaseObject {
   public function getUrl($subcontroller = '') {
     return Common::relativeUrlToAbsolute(sprintf(
       '/user/%s%s', (
-        empty($subcontroller) ? '' : '/' . $subcontroller
+        empty($subcontroller) ? '' : $subcontroller . '/'
       ), $this->getId()
     ));
   }
