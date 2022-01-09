@@ -5,6 +5,7 @@ use \CarlBennett\Tools\Libraries\User;
 use \CarlBennett\Tools\Libraries\User\Acl;
 $title = 'Tool Overview';
 $active_user = $this->getContext()->active_user;
+$active_user_acl = ($active_user ? $active_user->getAclObject() : null);
 require("./header.inc.phtml"); ?>
 <div class="container">
   <h3>Select a Tool</h3>
@@ -22,7 +23,7 @@ require("./header.inc.phtml"); ?>
         <td><a title="Gandalf Sax Guy for 10 hours" href="<?=Common::relativeUrlToAbsolute('/gandalf')?>">🎶 Gandalf </a></td>
         <td>Gandalf Sax Guy for 10 hours.</td>
       </tr>
-<?php if ($active_user && ($active_user->getAclObject()->getAcl(Acl::ACL_USERS_INVITE) || $active_user->getInvitesAvailable() > 0)) { ?>
+<?php if ($active_user_acl && $active_user_acl->getAcl(Acl::ACL_USERS_INVITE)) { ?>
       <tr>
         <td><a title="Invite User" href="<?=Common::relativeUrlToAbsolute('/user/invite')?>">👤 Invite User</a></td>
         <td>Invite user to Carl's Toolbox.</td>
@@ -37,17 +38,23 @@ require("./header.inc.phtml"); ?>
         <td>Log in to your account.</td>
 <?php } ?>
       </tr>
+<?php if ($active_user_acl && $active_user_acl->getAcl(Acl::ACL_USERS_MANAGE)) { ?>
+      <tr>
+        <td><a title="Manage Users" href="<?=Common::relativeUrlToAbsolute('/users')?>">👥 Manage Users</a></td>
+        <td>Manage users for Carl's Toolbox.</td>
+      </tr>
+<?php } ?>
       <tr>
         <td><a title="Pastebin" href="<?=Common::relativeUrlToAbsolute('/paste')?>">📝 Pastebin</a></td>
         <td>A quick place to paste stuff.</td>
       </tr>
-<?php if ($active_user && $active_user->getAclObject()->getAcl(Acl::ACL_PHPINFO)) { ?>
+<?php if ($active_user_acl && $active_user_acl->getAcl(Acl::ACL_PHPINFO)) { ?>
       <tr>
         <td><a title="Php Info" href="<?=Common::relativeUrlToAbsolute('/phpinfo')?>">ℹ Php Info</a></td>
         <td>Prints PHP runtime information.</td>
       </tr>
 <?php } ?>
-<?php if ($active_user && $active_user->getAclObject()->getAcl(Acl::ACL_PLEX_USERS)) { ?>
+<?php if ($active_user_acl && $active_user_acl->getAcl(Acl::ACL_PLEX_USERS)) { ?>
       <tr>
         <td><a title="Plex Users" href="<?=Common::relativeUrlToAbsolute('/plex/users')?>">👥 Plex Users</a></td>
         <td>Manage users for Carl's Plex.</td>
