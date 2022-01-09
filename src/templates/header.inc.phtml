@@ -49,16 +49,6 @@ function _header_active($url, $sr) {
       <li class="nav-item<?=_header_active('/tools', false)?>">
         <a class="nav-link" href="<?=Common::relativeUrlToAbsolute('/tools')?>">Tools<?=_header_active('/tools', true)?></a>
       </li>
-      <li class="nav-item dropdown<?=_header_active('/plex/', false)?>">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarPlexDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Plex<?=_header_active('/plex/', true)?>
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarPlexDropdown">
-          <a class="dropdown-item<?=_header_active('/plex/users', false)?>" href="<?=Common::relativeUrlToAbsolute('/plex/users')?>">Plex Users<?=_header_active('/plex/users', true)?></a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item<?=_header_active('/plex/welcome', false)?>" href="<?=Common::relativeUrlToAbsolute('/plex/welcome')?>">Welcome<?=_header_active('/plex/welcome', true)?></a>
-        </div>
-      </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarOtherDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Other
