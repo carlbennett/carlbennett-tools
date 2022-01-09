@@ -142,6 +142,10 @@ function main() {
         $router->addRoute(
             '#^/user/([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})$#', 'User\\Profile', 'User\\ProfileHtml'
         );
+        // URL: /users
+        $router->addRoute(
+            '#^/users$#', 'Users', 'UsersHtml'
+        );
         // URL: *
         $router->addRoute(
             '#.*#', 'PageNotFound', 'PageNotFoundHtml'

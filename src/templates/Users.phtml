@@ -1,0 +1,114 @@
+<?php
+namespace CarlBennett\Tools\Templates;
+use \CarlBennett\MVC\Libraries\Common;
+use \CarlBennett\MVC\Libraries\Gravatar;
+use \CarlBennett\Tools\Libraries\User as User;
+use \DateTimeZone;
+$highlight_id = $this->getContext()->id;
+$highlight_act = $this->getContext()->hl;
+if (!empty($highlight_id)) {
+  try {
+    $highlight_user = new User($highlight_id);
+  } catch (Exception $e) {
+    $highlight_user = null;
+  }
+  if ($highlight_user) {
+    $highlight_user_email = $highlight_user->getEmail();
+    $highlight_user_name = $highlight_user->getName();
+    if (empty($highlight_user_name) && !empty($highlight_user_email)) {
+      $highlight_name = $highlight_user_email;
+    } else if (!empty($highlight_user_name) && empty($highlight_user_email)) {
+      $highlight_name = $highlight_user_name;
+    } else {
+      $highlight_name = sprintf('%s (%s)', $highlight_user_name, $highlight_user_email);
+    }
+  }
+}
+switch (strtolower($highlight_act)) {
+  case 'add': $highlight_act = 'added'; break;
+  case 'edit': $highlight_act = 'edited'; break;
+  default: $highlight_act = null;
+}
+$title = 'Users';
+require('./header.inc.phtml'); ?>
+<div class="container-fluid" style="max-width:1920px;">
+<?php if ($this->getContext()->users === false) { ?>
+  <h1><?=$title;?></h1>
+  <?php require('./LoginRequired.inc.phtml'); ?>
+<?php } else { ?>
+<?php if (!empty($highlight_name) && !empty($highlight_act)) { ?>
+  <div class="alert alert-info">
+    The user <strong><?=$highlight_name?></strong> was <?=$highlight_act?>.
+  </div>
+<?php } ?>
+  <div class="float-right">
+    <a class="btn btn-lg btn-success" href="<?=Common::relativeUrlToAbsolute('/users/add')?>">Add User</a>
+  </div>
+  <h1><?=$title;?></h1>
+  <p>The following is a list of the registered users and associated data.</p>
+  <table id="users" class="nowrap table table-hover table-striped w-100">
+    <thead class="thead-dark"><tr>
+      <th scope="col">Username &amp; Email</th>
+      <th scope="col">Added</th>
+      <th scope="col">Tags</th>
+      <th scope="col">Notes</th>
+      <th scope="col"></th>
+    </tr></thead>
+    <tbody>
+<?php foreach ($this->getContext()->users as $user) {
+        $avatar = filter_var((new Gravatar($user->getEmail()))->getUrl(32, 'mp'), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $date_added = array($user->getDateAdded()->format('D, M jS, Y'), $user->getDateAdded()->format('g:i A T'));
+        $email = filter_var($user->getEmail(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $id = filter_var($user->getId(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $internal_notes = filter_var($user->getInternalNotes(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $username = filter_var($user->getName(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $banned = ($user->isBanned() ? ' <span class="badge badge-danger">Banned</span> ' : '');
+        $disabled = ($user->isDisabled() ? ' <span class="badge badge-danger">Disabled</span> ' : '');
+        if (empty($username) && !empty($email)) {
+          $name = $email;
+        } else if (!empty($username) && empty($email)) {
+          $name = $username;
+        } else {
+          $name = sprintf('%s<br/><span class="text-secondary">%s</span>', $username, $email);
+        }
+        if (empty($internal_notes)) { $internal_notes = '<em>&ndash;</em>'; }
+        ?>
+      <tr>
+        <td class="align-middle">
+          <div class="d-table-cell align-middle"><img class="rounded mr-2" src="<?=$avatar?>"/></div>
+          <div class="d-table-cell align-middle"><?=$name?></div>
+        </td>
+        <td class="align-middle"><time datetime="<?=$user->getDateAdded()->format(DATE_W3C)?>"><?=$date_added[0]?><br/><span class="text-secondary"><?=$date_added[1]?></span></time></td>
+        <td class="align-middle text-center"><?=$banned?><?=$disabled?></td>
+        <td class="align-middle"><?=$internal_notes?></td>
+        <td class="align-middle text-right"><a class="btn btn-sm btn-primary" href="<?=Common::relativeUrlToAbsolute('/user/' . $id)?>">Edit</a></td>
+      </tr>
+<?php } ?>
+    </tbody>
+  </table>
+<?php ob_start(); ?>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $('#users').DataTable({
+        "columnDefs": [
+          { responsivePriority: 1, targets: 0 },
+          { responsivePriority: 3, targets: 1 },
+          { responsivePriority: 2, targets: 2 },
+          { responsivePriority: 4, targets: 3 },
+          { responsivePriority: 1, targets: 4 }
+        ],
+        "columns": [
+          null,
+          null,
+          null,
+          null,
+          { "orderable": false }
+        ],
+        "responsive": true
+      });
+    });
+  </script>
+<?php $_footer_script = ob_get_clean(); ?>
+<?php } ?>
+</div>
+<?php require('./footer.inc.phtml'); ?>
