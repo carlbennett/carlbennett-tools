@@ -9,6 +9,7 @@ use \CarlBennett\MVC\Libraries\View;
 use \CarlBennett\Tools\Libraries\Authentication;
 use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
 use \CarlBennett\Tools\Libraries\User;
+use \CarlBennett\Tools\Libraries\User\Acl;
 use \CarlBennett\Tools\Libraries\Utility\HTTPForm;
 use \CarlBennett\Tools\Models\Plex\Users as UsersModel;
 
@@ -18,7 +19,7 @@ class Users extends Controller {
     $model->active_user = Authentication::$user;
 
     if (!$model->active_user
-      || !$model->active_user->getOption(User::OPTION_ACL_PLEX_USERS)) {
+      || !$model->active_user->getAclObject()->getAcl(Acl::ACL_PLEX_USERS)) {
       $model->users = false;
     } else {
       $model->users = PlexUser::getAll();

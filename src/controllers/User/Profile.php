@@ -8,6 +8,7 @@ use \CarlBennett\MVC\Libraries\Router;
 use \CarlBennett\MVC\Libraries\View;
 use \CarlBennett\Tools\Libraries\Authentication;
 use \CarlBennett\Tools\Libraries\User;
+use \CarlBennett\Tools\Libraries\User\Acl;
 use \CarlBennett\Tools\Libraries\User\Invite;
 use \CarlBennett\Tools\Models\User\Profile as ProfileModel;
 use \DateTime;
@@ -32,7 +33,7 @@ class Profile extends Controller
     }
     else
     {
-      $model->manage = ($model->active_user ? $model->active_user->getOption(User::OPTION_ACL_MANAGE_USERS) : false);
+      $model->manage = ($model->active_user ? $model->active_user->getAclObject()->getAcl(Acl::ACL_USERS_MANAGE) : false);
     }
 
     if ($profile) {
@@ -76,7 +77,7 @@ class Profile extends Controller
     if ($router->getRequestMethod() == 'POST' && ($model->manage || $model->self_manage))
     {
       $this->processProfile($router, $model);
-      $model->manage = ($model->active_user ? $model->active_user->getOption(User::OPTION_ACL_MANAGE_USERS) : false);
+      $model->manage = ($model->active_user ? $model->active_user->getAclObject()->getAcl(Acl::ACL_USERS_MANAGE) : false);
     }
 
     if (!empty($model->return))
@@ -92,12 +93,13 @@ class Profile extends Controller
   protected static function assignProfile(ProfileModel &$model)
   {
     $user = $model->user;
+    $acl = ($user ? $user->getAclObject() : null);
 
-    $model->acl_invite_users = ($user ? $user->getOption(User::OPTION_ACL_INVITE_USERS) : null);
-    $model->acl_manage_users = ($user ? $user->getOption(User::OPTION_ACL_MANAGE_USERS) : null);
-    $model->acl_pastebin_admin = ($user ? $user->getOption(User::OPTION_ACL_PASTEBIN_ADMIN) : null);
-    $model->acl_phpinfo = ($user ? $user->getOption(User::OPTION_ACL_PHPINFO) : null);
-    $model->acl_plex_users = ($user ? $user->getOption(User::OPTION_ACL_PLEX_USERS) : null);
+    $model->acl_invite_users = ($acl && $acl->getAcl(Acl::ACL_USERS_INVITE));
+    $model->acl_manage_users = ($acl && $acl->getAcl(Acl::ACL_USERS_MANAGE));
+    $model->acl_pastebin_admin = ($acl && $acl->getAcl(Acl::ACL_PASTEBIN_ADMIN));
+    $model->acl_phpinfo = ($acl && $acl->getAcl(Acl::ACL_PHPINFO));
+    $model->acl_plex_users = ($acl && $acl->getAcl(Acl::ACL_PLEX_USERS));
     $model->avatar = filter_var((new Gravatar($user ? $user->getEmail() : ''))->getUrl(96, 'mp'), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $model->biography = ($user ? $user->getBiography() : null);
     $model->date_added = ($user ? $user->getDateAdded() : null);
@@ -233,17 +235,19 @@ class Profile extends Controller
       $model->date_banned = $user->getDateBanned();
       $model->is_banned = $user->isBanned();
 
-      $user->setOption(User::OPTION_ACL_INVITE_USERS, ($model->acl_invite_users ? true : false));
-      $user->setOption(User::OPTION_ACL_MANAGE_USERS, ($model->acl_manage_users ? true : false));
-      $user->setOption(User::OPTION_ACL_PASTEBIN_ADMIN, ($model->acl_pastebin_admin ? true : false));
-      $user->setOption(User::OPTION_ACL_PHPINFO, ($model->acl_phpinfo ? true : false));
-      $user->setOption(User::OPTION_ACL_PLEX_USERS, ($model->acl_plex_users ? true : false));
+      $acl = $user->getAclObject();
+      $acl->setAcl(Acl::ACL_USERS_INVITE, ($model->acl_invite_users ? true : false));
+      $acl->setAcl(Acl::ACL_USERS_MANAGE, ($model->acl_manage_users ? true : false));
+      $acl->setAcl(Acl::ACL_PASTEBIN_ADMIN, ($model->acl_pastebin_admin ? true : false));
+      $acl->setAcl(Acl::ACL_PHPINFO, ($model->acl_phpinfo ? true : false));
+      $acl->setAcl(Acl::ACL_PLEX_USERS, ($model->acl_plex_users ? true : false));
+      $acl->commit();
 
-      $model->acl_invite_users = $user->getOption(User::OPTION_ACL_INVITE_USERS);
-      $model->acl_manage_users = $user->getOption(User::OPTION_ACL_MANAGE_USERS);
-      $model->acl_pastebin_admin = $user->getOption(User::OPTION_ACL_PASTEBIN_ADMIN);
-      $model->acl_phpinfo = $user->getOption(User::OPTION_ACL_PHPINFO);
-      $model->acl_plex_users = $user->getOption(User::OPTION_ACL_PLEX_USERS);
+      $model->acl_invite_users = $acl->getAcl(Acl::ACL_USERS_INVITE);
+      $model->acl_manage_users = $acl->getAcl(Acl::ACL_USERS_MANAGE);
+      $model->acl_pastebin_admin = $acl->getAcl(Acl::ACL_PASTEBIN_ADMIN);
+      $model->acl_phpinfo = $acl->getAcl(Acl::ACL_PHPINFO);
+      $model->acl_plex_users = $acl->getAcl(Acl::ACL_PLEX_USERS);
     }
 
     $user->setRecordUpdated($now);

@@ -2,6 +2,7 @@
 namespace CarlBennett\Tools\Templates;
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\Tools\Libraries\User;
+use \CarlBennett\Tools\Libraries\User\Acl;
 $title = 'Tool Overview';
 $active_user = $this->getContext()->active_user;
 require("./header.inc.phtml"); ?>
@@ -21,7 +22,7 @@ require("./header.inc.phtml"); ?>
         <td><a title="Gandalf Sax Guy for 10 hours" href="<?=Common::relativeUrlToAbsolute('/gandalf')?>">🎶 Gandalf </a></td>
         <td>Gandalf Sax Guy for 10 hours.</td>
       </tr>
-<?php if ($active_user && ($active_user->getOption(User::OPTION_ACL_INVITE_USERS) || $active_user->getInvitesAvailable() > 0)) { ?>
+<?php if ($active_user && ($active_user->getAclObject()->getAcl(Acl::ACL_USERS_INVITE) || $active_user->getInvitesAvailable() > 0)) { ?>
       <tr>
         <td><a title="Invite User" href="<?=Common::relativeUrlToAbsolute('/user/invite')?>">👤 Invite User</a></td>
         <td>Invite user to Carl's Toolbox.</td>
@@ -40,13 +41,13 @@ require("./header.inc.phtml"); ?>
         <td><a title="Pastebin" href="<?=Common::relativeUrlToAbsolute('/paste')?>">📝 Pastebin</a></td>
         <td>A quick place to paste stuff.</td>
       </tr>
-<?php if ($active_user && $active_user->getOption(User::OPTION_ACL_PHPINFO)) { ?>
+<?php if ($active_user && $active_user->getAclObject()->getAcl(Acl::ACL_PHPINFO)) { ?>
       <tr>
         <td><a title="Php Info" href="<?=Common::relativeUrlToAbsolute('/phpinfo')?>">ℹ Php Info</a></td>
         <td>Prints PHP runtime information.</td>
       </tr>
 <?php } ?>
-<?php if ($active_user && $active_user->getOption(User::OPTION_ACL_PLEX_USERS)) { ?>
+<?php if ($active_user && $active_user->getAclObject()->getAcl(Acl::ACL_PLEX_USERS)) { ?>
       <tr>
         <td><a title="Plex Users" href="<?=Common::relativeUrlToAbsolute('/plex/users')?>">👥 Plex Users</a></td>
         <td>Manage users for Carl's Plex.</td>

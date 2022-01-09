@@ -11,6 +11,7 @@ use \CarlBennett\MVC\Libraries\View;
 use \CarlBennett\Tools\Libraries\Authentication;
 use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
 use \CarlBennett\Tools\Libraries\User;
+use \CarlBennett\Tools\Libraries\User\Acl;
 use \CarlBennett\Tools\Libraries\Utility\HTTPForm;
 use \CarlBennett\Tools\Models\Plex\Users\UserForm as UserFormModel;
 
@@ -26,7 +27,7 @@ class Add extends Controller {
     $query = $router->getRequestQueryArray();
 
     if (!($model->active_user &&
-      $model->active_user->getOption(User::OPTION_ACL_PLEX_USERS)
+      $model->active_user->getAclObject()->getAcl(Acl::ACL_PLEX_USERS)
     )) {
       $view->render($model);
       $model->_responseCode = 401;

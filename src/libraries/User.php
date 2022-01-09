@@ -5,6 +5,7 @@ namespace CarlBennett\Tools\Libraries;
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\MVC\Libraries\DatabaseDriver;
 use \CarlBennett\Tools\Libraries\IDatabaseObject;
+use \CarlBennett\Tools\Libraries\User\Acl;
 use \CarlBennett\Tools\Libraries\User\Invite as Invitation;
 
 use \DateTime;
@@ -31,15 +32,8 @@ class User implements IDatabaseObject {
   const MAX_INVITES_AVAILABLE = 65535;
   const MAX_TIMEZONE          = 191;
 
-  const OPTION_DISABLED           = 0x00000001;
-  const OPTION_BANNED             = 0x00000002;
-  const OPTION_RESERVED_0         = 0x00000004;
-  const OPTION_ACL_INVITE_USERS   = 0x00000008;
-  const OPTION_ACL_MANAGE_USERS   = 0x00000010;
-  const OPTION_ACL_PASTEBIN_ADMIN = 0x00000020;
-  const OPTION_ACL_PHPINFO        = 0x00000040;
-  const OPTION_RESERVED_1         = 0x00000080;
-  const OPTION_ACL_PLEX_USERS     = 0x00000100;
+  const OPTION_DISABLED = 0x00000001;
+  const OPTION_BANNED   = 0x00000002;
 
   const PASSWORD_CHECK_VERIFIED = 1;
   const PASSWORD_CHECK_UPGRADE  = 2;
@@ -301,6 +295,10 @@ class User implements IDatabaseObject {
 
     $q->closeCursor();
     return $r;
+  }
+
+  public function getAclObject() {
+    return new Acl($this->id);
   }
 
   public function getBiography() {

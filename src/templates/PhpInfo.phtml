@@ -2,6 +2,7 @@
 namespace CarlBennett\Tools\Templates;
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\Tools\Libraries\User;
+use \CarlBennett\Tools\Libraries\User\Acl;
 $title = 'Php Info';
 $active_user = $this->getContext()->active_user;
 $phpinfo = $this->getContext()->phpinfo;
@@ -21,7 +22,7 @@ $phpinfo = preg_replace('#\</html\>#', '', $phpinfo);
 
 require('./header.inc.phtml');
 
-if (!($active_user && $active_user->getOption(User::OPTION_ACL_PHPINFO)))
+if (!($active_user && $active_user->getAclObject()->getAcl(Acl::ACL_PHPINFO)))
 {
   echo '<div class="container">';
   require('./LoginRequired.inc.phtml');

@@ -9,6 +9,7 @@ use \CarlBennett\MVC\Libraries\View;
 use \CarlBennett\Tools\Libraries\Authentication;
 use \CarlBennett\Tools\Libraries\PasteObject;
 use \CarlBennett\Tools\Libraries\User;
+use \CarlBennett\Tools\Libraries\User\Acl;
 use \CarlBennett\Tools\Models\Paste as PasteModel;
 
 use \DateInterval;
@@ -23,7 +24,7 @@ class Paste extends Controller {
     $model->active_user = Authentication::$user;
     $model->pastebin_admin = (
       $model->active_user &&
-      $model->active_user->getOption(User::OPTION_ACL_PASTEBIN_ADMIN)
+      $model->active_user->getAclObject()->getAcl(Acl::ACL_PASTEBIN_ADMIN)
     );
 
     $limit = 10;
