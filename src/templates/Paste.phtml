@@ -7,15 +7,90 @@ use \DateTimeInterface;
 $title = 'Pastebin';
 $now = new DateTime('now');
 $error = $this->getContext()->error;
-require("./header.inc.phtml"); ?>
+require('./header.inc.phtml'); ?>
 <div id="paste_page" class="container">
   <h1><?=$title?></h1>
-  <section class="m-2" id="recent_pastes">
-    <h3>Recent Pastes</h3>
-    <p class="text-muted">The following are the most recent pastes by date, title, and creator.</p>
-    <table class="table table-sm table-striped" id="recent_pastes_tbl">
-      <thead><tr><th>Title</th><th>Created</th><th>Creator</th></tr></thead>
-      <tbody>
+  <div class="row">
+    <div class="col col-lg-9" id="new_paste">
+      <h3>New Paste</h3>
+      <form method="POST">
+        <div class="form-group">
+          <p class="text-muted">Upload a file or paste text contents below.</p>
+          <div class="form-row">
+            <div class="col input-group mb-4">
+              <div class="input-group-prepend">
+                <label class="bg-secondary border border-secondary input-group-text text-white" for="title_file">Title:</label>
+              </div>
+              <input class="bg-primary border border-secondary form-control text-white" type="text" name="title" id="title_file" placeholder="Enter a title" value=""/>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col input-group mb-2">
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" id="file" name="file"/>
+                <label class="bg-primary border border-secondary custom-file-label text-white" for="file">Choose file</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col">
+              <textarea id="text" name="text" class="bg-primary border border-secondary mb-2 p-2 rounded text-monospace text-white w-100" style="min-height:300px;" placeholder="Paste here"></textarea>
+            </div>
+          </div>
+          <div class="form-row my-2">
+            <div class="col-lg input-group my-1">
+              <div class="input-group-prepend">
+                <label class="bg-warning border border-warning input-group-text text-white" for="password_text">Password:</label>
+              </div>
+              <input class="bg-primary border border-warning form-control text-white" type="password" name="password" id="password_text" autocomplete="new-password" placeholder="Enter an optional password" value=""/>
+            </div>
+            <div class="col-lg input-group my-1">
+              <div class="input-group-prepend">
+                <label class="bg-danger border border-danger input-group-text text-white" for="expire_text">Expiration:</label>
+              </div>
+              <select class="bg-primary border border-danger form-control text-white" id="expire_text" name="expire">
+                <option value="0">never</option>
+                <option value="60">1 minute</option>
+                <option value="300">5 minutes</option>
+                <option value="900">15 minutes</option>
+                <option value="1800">30 minutes</option>
+                <option value="3600">1 hour</option>
+                <option value="21600">6 hours</option>
+                <option value="43200">12 hours</option>
+                <option value="86400">1 day</option>
+                <option value="259200">3 days</option>
+                <option value="604800">1 week</option>
+                <option value="1209600">2 weeks</option>
+                <option value="2592000">1 month</option>
+                <option value="15552000">6 months</option>
+                <option value="31536000">1 year</option>
+              </select>
+            </div>
+            <div class="col-lg my-1">
+              <input class="btn btn-success float-right" type="submit" value="Upload"/>
+  <?php if (Authentication::$user instanceof User) { ?>
+              <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="anonymous_text" name="anonymous" value="1"/>
+                <label class="custom-control-label" for="anonymous_text">Anonymous</label>
+              </div>
+  <?php } ?>
+              <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="unlisted_text" name="unlisted" value="1"/>
+                <label class="custom-control-label" for="unlisted_text">Unlisted</label>
+              </div>
+            </div>
+          </div>
+        </div>
+  <?php if ($error && ($error['fields'] == 'text' || (is_array($error['fields']) && in_array('text', $error['fields'])))) { ?>
+        <div class="alert alert-<?=$error['color']?>">
+          <p class="alert-text m-0"><?=$error['message']?></p>
+        </div>
+  <?php } ?>
+      </form>
+    </div>
+    <div class="col col-lg-3" id="recent_pastes">
+      <h3>Recent Pastes</h3>
+      <p class="text-muted">The following are the most recent pastes by date, title, and creator.</p>
 <?php foreach ($this->getContext()->recent_pastes as $paste_object) {
         $paste_object_user = $paste_object->getUser();
         $paste_object_added = $paste_object->getDateAdded();
@@ -35,129 +110,39 @@ require("./header.inc.phtml"); ?>
         if ($created == '1 minutes ago') $created = '1 minute ago';
         if ($created == '1 hours ago') $created = '1 hour ago';
         $creator = (is_null($paste_object_user) ? 'Anonymous' : $paste_object_user->getName());
-        if (Authentication::$user instanceof User && Authentication::$user == $paste_object_user) $creator .= ' (you)';
+        if (Authentication::$user instanceof User && Authentication::$user == $paste_object_user) $creator .= ' (<strong>you</strong>)';
 ?>
-        <tr>
-          <td>
+        <div class="card m-1" id="recent_paste_<?=$paste_object->getId()?>">
+          <div class="card-body p-2">
             <!-- Clickable title -->
             <a href="<?=$paste_object->getURI()?>"><?=filter_var($paste_object->getTitle(), FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></a>
 
-            <!-- Open in new tab link -->
-            <a class="ml-1" title="Open in new tab" href="<?=$paste_object->getURI()?>" target="_blank">
-              <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-box-arrow-in-up-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" d="M6.364 13.5a.5.5 0 0 0 .5.5H13.5a1.5 1.5 0 0 0 1.5-1.5v-10A1.5 1.5 0 0 0 13.5 1h-10A1.5 1.5 0 0 0 2 2.5v6.636a.5.5 0 1 0 1 0V2.5a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5H6.864a.5.5 0 0 0-.5.5z"/>
-                <path fill-rule="evenodd" d="M11 5.5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793l-8.147 8.146a.5.5 0 0 0 .708.708L10 6.707V10.5a.5.5 0 0 0 1 0v-5z"/>
-              </svg></a>
+            <div class="d-inline-block">
+              <!-- Open in new tab link -->
+              <a class="ml-1" title="Open in new tab" href="<?=$paste_object->getURI()?>" target="_blank">
+                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-box-arrow-in-up-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M6.364 13.5a.5.5 0 0 0 .5.5H13.5a1.5 1.5 0 0 0 1.5-1.5v-10A1.5 1.5 0 0 0 13.5 1h-10A1.5 1.5 0 0 0 2 2.5v6.636a.5.5 0 1 0 1 0V2.5a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5H6.864a.5.5 0 0 0-.5.5z"/>
+                  <path fill-rule="evenodd" d="M11 5.5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793l-8.147 8.146a.5.5 0 0 0 .708.708L10 6.707V10.5a.5.5 0 0 0 1 0v-5z"/>
+                </svg></a>
 
-            <!-- Download link -->
-            <a class="ml-1" title="Download" href="<?=$paste_object->getURI() . '?dl=1'?>">
-              <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-download" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                <path fill-rule="evenodd" d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
-              </svg></a>
-          </td>
-          <td><time datetime="<?=$paste_object->getDateAdded()->format(DateTimeInterface::RFC3339_EXTENDED)?>"><?=$created?></time></td>
-          <td><?=$creator?></td>
-        </tr>
+              <!-- Download link -->
+              <a class="ml-1" title="Download" href="<?=$paste_object->getURI() . '?dl=1'?>">
+                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-download" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                  <path fill-rule="evenodd" d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                </svg></a>
+            </div>
+            <br/>
+            <small><time datetime="<?=$paste_object->getDateAdded()->format(DateTimeInterface::RFC3339_EXTENDED)?>"><?=$created?></time> | <?=$creator?></small>
+          </div>
+        </div>
 <?php } ?>
-      </tbody>
-    </table>
-  </section>
-  <hr class="border-primary"/>
-  <section class="m-2" id="new_paste">
-    <h3>New Paste</h3>
-    <form method="POST">
-      <div class="form-group">
-        <p class="text-muted">Upload a file or paste text contents below.</p>
-        <div class="form-row">
-          <div class="col input-group mb-2">
-            <div class="input-group-prepend">
-              <label class="bg-secondary border border-secondary input-group-text text-white" for="title_file">Title:</label>
-            </div>
-            <input class="bg-primary border border-secondary form-control text-white" type="text" name="title" id="title_file" placeholder="Enter a title" value=""/>
-          </div>
-        </div>
-        <div class="form-row m-2">
-          <div class="col input-group">
-            <div class="custom-file">
-              <input type="file" class="custom-file-input" id="file" name="file"/>
-              <label class="bg-primary border border-secondary custom-file-label text-white" for="file">Choose file</label>
-            </div>
-          </div>
-        </div>
-        <div class="form-row m-2">
-          <div class="col">
-            <textarea id="text" name="text" class="bg-primary border border-secondary mb-2 p-2 rounded text-monospace text-white w-100" style="min-height:300px;" placeholder="Paste here"></textarea>
-          </div>
-        </div>
-        <div class="form-row m-2">
-          <div class="col-lg-5 input-group mt-2 mb-2">
-            <div class="input-group-prepend">
-              <label class="bg-warning border border-warning input-group-text text-white" for="password_text">Password:</label>
-            </div>
-            <input class="bg-primary border border-warning form-control text-white" type="password" name="password" id="password_text" autocomplete="new-password" placeholder="Enter an optional password" value=""/>
-          </div>
-          <div class="col-lg-4 input-group mt-2 mb-2">
-            <div class="input-group-prepend">
-              <label class="bg-danger border border-danger input-group-text text-white" for="expire_text">Expiration:</label>
-            </div>
-            <select class="bg-primary border border-danger form-control text-white" id="expire_text" name="expire">
-              <option value="0">never</option>
-              <option value="60">1 minute</option>
-              <option value="300">5 minutes</option>
-              <option value="900">15 minutes</option>
-              <option value="1800">30 minutes</option>
-              <option value="3600">1 hour</option>
-              <option value="21600">6 hours</option>
-              <option value="43200">12 hours</option>
-              <option value="86400">1 day</option>
-              <option value="259200">3 days</option>
-              <option value="604800">1 week</option>
-              <option value="1209600">2 weeks</option>
-              <option value="2592000">1 month</option>
-              <option value="15552000">6 months</option>
-              <option value="31536000">1 year</option>
-            </select>
-          </div>
-          <div class="col-lg-3 mt-2 mb-2">
-            <input class="btn btn-success float-right" type="submit" value="Upload"/>
-<?php if (Authentication::$user instanceof User) { ?>
-            <div class="custom-control custom-switch">
-              <input type="checkbox" class="custom-control-input" id="anonymous_text" name="anonymous" value="1"/>
-              <label class="custom-control-label" for="anonymous_text">Anonymous</label>
-            </div>
-<?php } ?>
-            <div class="custom-control custom-switch">
-              <input type="checkbox" class="custom-control-input" id="unlisted_text" name="unlisted" value="1"/>
-              <label class="custom-control-label" for="unlisted_text">Unlisted</label>
-            </div>
-          </div>
-        </div>
       </div>
-<?php if ($error && ($error['fields'] == 'text' || (is_array($error['fields']) && in_array('text', $error['fields'])))) { ?>
-      <div class="alert alert-<?=$error['color']?>">
-        <p class="alert-text m-0"><?=$error['message']?></p>
-      </div>
-<?php } ?>
-    </form>
-  </section>
+    </div>
+  </div>
 </div>
 <?php ob_start(); ?>
   <script type="text/javascript">
-    $(document).ready(function(){
-      $('#recent_pastes_tbl').DataTable({
-        'columnDefs': [
-          {'responsivePriority': 1, 'targets': 0},
-          {'responsivePriority': 1, 'type': 'date', 'targets': 1},
-          {'responsivePriority': 1, 'targets': 2},
-        ],
-        'info': false,
-        'language': {'zeroRecords': 'No matching pastes found'},
-        'lengthChange': false,
-        'order': [[1, 'asc'], [0, 'asc'], [2, 'asc']],
-        'paging': false
-      });
-    });
     $('.custom-file-input').on('change', function() {
       var fileName = $(this).val().split("\\").pop();
       $(this).siblings('.custom-file-label').addClass('selected').html(fileName);

@@ -27,7 +27,7 @@ class Paste extends Controller {
       $model->active_user->getAclObject()->getAcl(Acl::ACL_PASTEBIN_ADMIN)
     );
 
-    $limit = 10;
+    $limit = 5;
     $bitmask = ($model->pastebin_admin ? 0 : null);
     $passworded = $model->pastebin_admin;
     $model->recent_pastes = PasteObject::getRecentPastes(
