@@ -136,22 +136,30 @@ if (!empty($error)) { ?>
               <th scope="row" class="align-middle text-right">Uuid</th>
               <td><code><?=$id_str?></code></td>
             </tr>
+<?php if (!is_null($date_added)) { ?>
             <tr>
               <th scope="row" class="align-middle text-right text-success">Date added</th>
               <td class="text-success"><?=$date_added_str?></td>
             </tr>
+<?php } ?>
+<?php if (!is_null($date_expired)) { ?>
             <tr>
               <th scope="row" class="align-middle text-right <?=$date_expired_class?>">Date expired</th>
               <td class="<?=$date_expired_class?>"><?=$date_expired_str?></td>
             </tr>
+<?php } ?>
+<?php if (!is_null($date_disabled)) { ?>
             <tr>
               <th scope="row" class="align-middle text-right <?=$date_disabled_class?>">Date disabled</th>
               <td class="<?=$date_disabled_class?>"><?=$date_disabled_str?></td>
             </tr>
+<?php } ?>
+<?php if (!is_null($record_updated)) { ?>
             <tr>
               <th scope="row" class="align-middle text-right text-info">Record last updated</th>
               <td class="text-info"><?=$record_updated_str?></td>
             </tr>
+<?php } ?>
           </tbody>
         </table>
 
