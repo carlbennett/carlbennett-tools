@@ -52,7 +52,7 @@ switch ($error)
   case ProfileModel::ERROR_EMAIL_LENGTH: $error_str = 'Invalid email address length'; break;
   case ProfileModel::ERROR_DISPLAY_NAME_LENGTH: $error_str = 'Invalid display name length'; break;
   case ProfileModel::ERROR_INTERNAL_NOTES_LENGTH: $error_str = 'Invalid internal notes length'; break;
-  case ProfileModel::ERROR_TIMEZONE_INVALID: $error_str = 'Invalid tomezone'; break;
+  case ProfileModel::ERROR_TIMEZONE_INVALID: $error_str = 'Invalid timezone'; break;
   case ProfileModel::ERROR_TIMEZONE_LENGTH: $error_str = 'Invalid timezone string length'; break;
   default: $error_str = sprintf('Unknown (%d)', $error);
 }
