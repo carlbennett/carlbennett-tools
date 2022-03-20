@@ -1,0 +1,69 @@
+<?php
+namespace CarlBennett\Tools\Templates;
+$title = 'Whois Service';
+$description = 'This tool looks up domain name and ASN information on the Internet.';
+$active_user = $this->getContext()->active_user;
+$query = filter_var($this->getContext()->query ?? '', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$result = $this->getContext()->result;
+require('./header.inc.phtml');
+if (!$this->getContext()->acl)
+{
+  echo "<div class=\"container\">\n";
+  require('./LoginRequired.inc.phtml');
+  echo "</div>\n";
+  require('./footer.inc.phtml');
+  return;
+} ?>
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <h1><?=$title?></h1>
+      <p><?=$description?></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <form method="GET">
+        <div class="input-group mb-3">
+          <input id="query" name="q" type="text" class="form-control bg-dark border-secondary text-light" placeholder="Enter a domain name or AS&lt;num&gt;" aria-label="Enter a domain name or AS&lt;num&gt;" aria-describedby="query-button" value="<?=$query?>">
+          <div class="input-group-append">
+            <input id="query-button" type="submit" class="btn btn-outline-success border-success" value="Submit"/>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+<?php if ($result) { ?>
+<?php if (isset($result['error.connection']) || isset($result['error.server_mismatch']) || isset($result['error.whois'])) { ?>
+  <div class="row">
+    <div class="col">
+<?php if (isset($result['error.connection'])) { ?>
+      <p class="text-danger"><strong>Connection error:</strong> <?=filter_var($result['error.connection'], FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></p>
+<?php } if (isset($result['error.server_mismatch'])) { ?>
+      <p class="text-danger"><strong>Server mismatch error:</strong> <?=filter_var($result['error.server_mismatch'], FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></p>
+<?php } if (isset($result['error.whois'])) { ?>
+      <p class="text-danger"><strong>Whois error:</strong> <?=filter_var($result['error.whois'], FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></p>
+<?php } ?>
+    </div>
+  </div>
+<?php } if (isset($result['domain.available'])) { ?>
+  <div class="row">
+    <div class="col">
+      <p><strong>Domain availability:</strong> <span class="text-<?=($result['domain.available'] ? 'success' : 'danger')?>"><?=($result['domain.available'] ? 'available' : 'unavailable')?></span></p>
+    </div>
+  </div>
+<?php } if (isset($result['domain.lookup'])) { ?>
+  <div class="row">
+    <div class="col">
+      <pre><code><?=filter_var($result['domain.lookup'], FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></code></pre>
+    </div>
+  </div>
+<?php } if (isset($result['asn.lookup'])) { ?>
+  <div class="row">
+    <div class="col">
+      <pre><code><?=filter_var($result['asn.lookup'], FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></code></pre>
+    </div>
+  </div>
+<?php }} ?>
+</div>
+<?php require('./footer.inc.phtml'); ?>

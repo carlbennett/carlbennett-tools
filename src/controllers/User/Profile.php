@@ -100,6 +100,7 @@ class Profile extends Controller
     $model->acl_pastebin_admin = ($acl && $acl->getAcl(Acl::ACL_PASTEBIN_ADMIN));
     $model->acl_phpinfo = ($acl && $acl->getAcl(Acl::ACL_PHPINFO));
     $model->acl_plex_users = ($acl && $acl->getAcl(Acl::ACL_PLEX_USERS));
+    $model->acl_whois_service = ($acl && $acl->getAcl(Acl::ACL_WHOIS_SERVICE));
     $model->avatar = filter_var((new Gravatar($user ? $user->getEmail() : ''))->getUrl(96, 'mp'), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $model->biography = ($user ? $user->getBiography() : null);
     $model->date_added = ($user ? $user->getDateAdded() : null);
@@ -134,6 +135,7 @@ class Profile extends Controller
       $model->acl_pastebin_admin = $data['acl_pastebin_admin'] ?? null;
       $model->acl_phpinfo = $data['acl_phpinfo'] ?? null;
       $model->acl_plex_users = $data['acl_plex_users'] ?? null;
+      $model->acl_whois_service = $data['acl_whois_service'] ?? null;
       $model->internal_notes = $data['internal_notes'] ?? '';
       $model->is_banned = $data['banned'] ?? null;
     }
@@ -241,6 +243,7 @@ class Profile extends Controller
       $acl->setAcl(Acl::ACL_PASTEBIN_ADMIN, ($model->acl_pastebin_admin ? true : false));
       $acl->setAcl(Acl::ACL_PHPINFO, ($model->acl_phpinfo ? true : false));
       $acl->setAcl(Acl::ACL_PLEX_USERS, ($model->acl_plex_users ? true : false));
+      $acl->setAcl(Acl::ACL_WHOIS_SERVICE, ($model->acl_whois_service ? true : false));
       $acl->commit();
 
       $model->acl_invite_users = $acl->getAcl(Acl::ACL_USERS_INVITE);
@@ -248,6 +251,7 @@ class Profile extends Controller
       $model->acl_pastebin_admin = $acl->getAcl(Acl::ACL_PASTEBIN_ADMIN);
       $model->acl_phpinfo = $acl->getAcl(Acl::ACL_PHPINFO);
       $model->acl_plex_users = $acl->getAcl(Acl::ACL_PLEX_USERS);
+      $model->acl_whois_service = $acl->getAcl(Acl::ACL_WHOIS_SERVICE);
     }
 
     $user->setRecordUpdated($now);

@@ -21,6 +21,7 @@ class Profile extends ActiveUserModel {
   public $acl_pastebin_admin;
   public $acl_phpinfo;
   public $acl_plex_users;
+  public $acl_whois_service;
   public $avatar;
   public $date_added;
   public $date_banned;

@@ -146,6 +146,10 @@ function main() {
         $router->addRoute(
             '#^/users$#', 'Users', 'UsersHtml'
         );
+        // URL: /whois
+        $router->addRoute(
+            '#^/whois$#', 'WhoisService', 'WhoisServiceHtml'
+        );
         // URL: *
         $router->addRoute(
             '#.*#', 'PageNotFound', 'PageNotFoundHtml'

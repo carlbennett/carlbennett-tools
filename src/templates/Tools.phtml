@@ -72,6 +72,12 @@ require("./header.inc.phtml"); ?>
         <td><a title="Url Encode &amp; Decode" href="<?=Common::relativeUrlToAbsolute('/urlencodedecode')?>">⚙ Url Encode &amp; Decode</a></td>
         <td>Encode and decode url strings.</td>
       </tr>
+<?php if ($active_user_acl && $active_user_acl->getAcl(Acl::ACL_WHOIS_SERVICE)) { ?>
+      <tr>
+        <td><a title="Whois Service" href="<?=Common::relativeUrlToAbsolute('/whois')?>">🔍 Whois Service</a></td>
+        <td>Looks up domain name and ASN information on the Internet.</td>
+      </tr>
+<?php } ?>
     </tbody>
   </table>
 <?php if (!$active_user) { ?>

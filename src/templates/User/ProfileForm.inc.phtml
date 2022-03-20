@@ -11,6 +11,7 @@ $acl_manage_users = ($model->acl_manage_users ? ' checked' : '');
 $acl_pastebin_admin = ($model->acl_pastebin_admin ? ' checked' : '');
 $acl_phpinfo = ($model->acl_phpinfo ? ' checked' : '');
 $acl_plex_users = ($model->acl_plex_users ? ' checked' : '');
+$acl_whois_service = ($model->acl_whois_service ? ' checked' : '');
 $avatar = filter_var($model->avatar, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $biography = filter_var($model->biography, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $date_added = $model->date_added;
@@ -149,6 +150,10 @@ switch ($error)
                 <div class="custom-control custom-switch m-2">
                   <input class="custom-control-input" type="checkbox" name="acl_plex_users" id="acl_plex_users" value="1"<?=$acl_plex_users?>> <label class="custom-control-label" for="acl_plex_users">Plex Users<br/>
                   <span style="font-size:smaller;" class="text-muted">Manage Plex user data</span></label>
+                </div>
+                <div class="custom-control custom-switch m-2">
+                  <input class="custom-control-input" type="checkbox" name="acl_whois_service" id="acl_whois_service" value="1"<?=$acl_whois_service?>> <label class="custom-control-label" for="acl_whois_service">Whois Service<br/>
+                  <span style="font-size:smaller;" class="text-muted">Able to use the whois service</span></label>
                 </div>
               </td>
             </tr>

@@ -21,6 +21,7 @@ class Acl implements IDatabaseObject
   const ACL_PLEX_USERS = 'plex.users';
   const ACL_USERS_INVITE = 'users.invite';
   const ACL_USERS_MANAGE = 'users.manage';
+  const ACL_WHOIS_SERVICE = 'whois.service';
 
   # Maximum SQL field lengths, alter as appropriate.
   const MAX_ACL_ID = 255;

@@ -27,6 +27,7 @@
         "ext-gmp": "*",
         "ext-json": "*",
         "geoip2/geoip2": "~2.0",
+        "io-developer/php-whois": "^4.1",
         "php-64bit": ">=5.5.0"
     }
 }
