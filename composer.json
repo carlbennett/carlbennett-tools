@@ -15,10 +15,6 @@
     },
     "autoload": {
         "psr-4": {
-            "CarlBennett\\MVC\\Controllers\\": "vendor/carlbennett/php-mvc/controllers/",
-            "CarlBennett\\MVC\\Libraries\\": "vendor/carlbennett/php-mvc/libraries/",
-            "CarlBennett\\MVC\\Models\\": "vendor/carlbennett/php-mvc/models/",
-            "CarlBennett\\MVC\\Views\\": "vendor/carlbennett/php-mvc/views/",
             "CarlBennett\\Tools\\Controllers\\": "src/controllers/",
             "CarlBennett\\Tools\\Libraries\\": "src/libraries/",
             "CarlBennett\\Tools\\Models\\": "src/models/",
