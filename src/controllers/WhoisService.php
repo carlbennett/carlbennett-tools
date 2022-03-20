@@ -39,31 +39,27 @@ class WhoisService extends Controller
 
     $query = $router->getRequestQueryArray();
     $query = new HTTPForm($query);
-
     $model->query = $query->get('q');
-    $query_asn = (1 === preg_match('/^ASN?[0-9]+$/i', $model->query));
-    $query_domain = !$query_asn;
 
-    if ($query_domain || $query_asn)
+    if (!empty($model->query))
     {
       $result = array();
       try
       {
         $whois = Factory::get()->createWhois();
 
-        if ($query_domain)
+        if (1 === preg_match('/^ASN?[0-9]+$/i', $model->query))
+        {
+          // Getting raw-text lookup
+          $result['asn.lookup'] = $whois->lookupAsn($model->query)->text;
+        }
+        else
         {
           // Checking availability
           $result['domain.available'] = $whois->isDomainAvailable($model->query);
 
           // Getting raw-text lookup
           $result['domain.lookup'] = $whois->lookupDomain($model->query)->text;
-        }
-
-        if ($query_asn)
-        {
-          // Getting raw-text lookup
-          $result['asn.lookup'] = $whois->lookupAsn($model->query)->text;
         }
       }
       catch (Throwable $e)
