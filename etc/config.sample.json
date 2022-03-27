@@ -30,6 +30,14 @@
     },
     "data_location": "Hello World"
   },
+  "smtp": {
+    "hostname": "localhost",
+    "keepalive": true,
+    "password": "",
+    "port": 587,
+    "tls": true,
+    "username": "noreply@localhost"
+  },
   "tasks": {
     "auth_token": "00000000-0000-0000-0000-000000000000"
   },
