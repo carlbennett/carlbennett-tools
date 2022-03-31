@@ -15,10 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "CarlBennett\\Tools\\Controllers\\": "src/controllers/",
-            "CarlBennett\\Tools\\Libraries\\": "src/libraries/",
-            "CarlBennett\\Tools\\Models\\": "src/models/",
-            "CarlBennett\\Tools\\Views\\": "src/views/"
+            "CarlBennett\\Tools\\": "src/"
         }
     },
     "require": {

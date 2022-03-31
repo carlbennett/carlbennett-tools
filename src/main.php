@@ -4,7 +4,7 @@
  *
  * @package CarlBennett\Tools
  * @author Carl Bennett <carl@carlbennett.me>
- * @copyright 2016-2020 Carl Bennett
+ * @copyright 2016-2022 Carl Bennett
  * @license Proprietary
  */
 declare(strict_types=1);
@@ -45,8 +45,8 @@ function main() {
     Authentication::verify();
 
     $router = new Router(
-      'CarlBennett\\Tools\\Controllers\\',
-      'CarlBennett\\Tools\\Views\\'
+      '\\CarlBennett\\Tools\\Controllers\\',
+      '\\CarlBennett\\Tools\\Views\\'
     );
 
     if (Common::$config->maintenance[0]) {
