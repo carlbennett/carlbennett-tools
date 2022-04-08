@@ -3,9 +3,9 @@
 namespace CarlBennett\Tools\Libraries\Tasks;
 
 use \CarlBennett\MVC\Libraries\Common;
+use \CarlBennett\MVC\Libraries\DateTime;
 use \CarlBennett\PlexTvAPI\User as PlexTvUser;
 use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
-use \DateTime;
 use \Throwable;
 
 class SyncPlexUsersTask extends Task
@@ -44,12 +44,14 @@ class SyncPlexUsersTask extends Task
                 $_plex_id = $user->getPlexId();
                 $_plex_title = $user->getPlexTitle();
                 $_plex_username = $user->getPlexUsername();
+                $_home = $user->getOption(PlexUser::OPTION_HOMEUSER);
 
                 foreach ($plex_users as $__plex_id => $plex_user)
                 {
                     $__plex_email = $plex_user->getEmail();
                     $__plex_title = $plex_user->getTitle();
                     $__plex_username = $plex_user->getUsername();
+                    $__home = $plex_user->getHome();
 
                     if ((!is_null($_plex_id) && $__plex_id === $_plex_id)
                         || (is_null($_plex_id) && !empty($_plex_email) && strtolower($_plex_email) == strtolower($__plex_email))
@@ -62,11 +64,13 @@ class SyncPlexUsersTask extends Task
                         $user->setPlexId($__plex_id);
                         $user->setPlexTitle($__plex_title);
                         $user->setPlexUsername($__plex_username);
+                        $user->setOption(PlexUser::OPTION_HOMEUSER, $__home);
 
                         if ($_plex_email !== $__plex_email
                             || $_plex_id !== $__plex_id
                             || $_plex_title !== $__plex_title
-                            || $_plex_username !== $__plex_username)
+                            || $_plex_username !== $__plex_username
+                            || $_home != $__home)
                         {
                             // one of the fields has been modified
                             $user->setRecordUpdated(new DateTime('now'));

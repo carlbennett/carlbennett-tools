@@ -4,25 +4,24 @@ use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\MVC\Libraries\Gravatar;
 use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
 use \DateTimeZone;
+use \Throwable;
 $show_hidden = $this->getContext()->show_hidden;
 $highlight_id = $this->getContext()->id;
 $highlight_act = $this->getContext()->hl;
 if (!empty($highlight_id)) {
   try {
     $highlight_user = new PlexUser($highlight_id);
-  } catch (Exception $e) {
+  } catch (Throwable $e) {
     $highlight_user = null;
   }
   if ($highlight_user) {
     $highlight_user_email = $highlight_user->getPlexEmail();
+    $highlight_user_title = $highlight_user->getPlexTitle();
     $highlight_user_name = $highlight_user->getPlexUsername();
-    if (empty($highlight_user_name) && !empty($highlight_user_email)) {
-      $highlight_name = $highlight_user_email;
-    } else if (!empty($highlight_user_name) && empty($highlight_user_email)) {
-      $highlight_name = $highlight_user_name;
-    } else {
-      $highlight_name = sprintf('%s (%s)', $highlight_user_name, $highlight_user_email);
-    }
+    $highlight_name = sprintf('%s (%s)',
+      (!empty($highlight_user_title) ? $highlight_user_title : $highlight_user_name),
+      $highlight_user_email
+    );
   }
 }
 switch (strtolower($highlight_act)) {
@@ -52,11 +51,11 @@ require('./header.inc.phtml'); ?>
     </span>
     <a class="btn btn-lg btn-success" href="<?=Common::relativeUrlToAbsolute('/plex/users/add')?>">Add User</a>
   </div>
-  <h1><?=$title;?></h1>
+  <h1><a href="<?=Common::relativeUrlToAbsolute('/plex/users')?>"><?=$title;?></a></h1>
   <p>The following is a list of the registered Plex users and associated data.</p>
   <table id="plex_users" class="nowrap table table-hover table-striped w-100">
     <thead class="thead-dark"><tr>
-      <th scope="col">Username &amp; Email</th>
+      <th scope="col">Title, Username, &amp; Email</th>
       <th scope="col">Added</th>
       <th scope="col">Tags</th>
       <th scope="col">Notes</th>
@@ -70,18 +69,14 @@ require('./header.inc.phtml'); ?>
         $id = filter_var($user->getId(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $notes = filter_var($user->getNotes(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $plex_email = filter_var($user->getPlexEmail(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $plex_title = filter_var($user->getPlexTitle(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $plex_username = filter_var($user->getPlexUsername(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $disabled = ($user->isDisabled() ? ' <span class="badge badge-danger">Disabled</span> ' : '');
         $expired = ($user->isExpired() ? ' <span class="badge badge-warning">Expired</span> ' : '');
         $homeuser = ($user->isHomeUser() ? ' <span class="badge badge-info">Home User</span> ' : '');
         $risk = $user->getRisk();
-        if (empty($plex_username) && !empty($plex_email)) {
-          $name = $plex_email;
-        } else if (!empty($plex_username) && empty($plex_email)) {
-          $name = $plex_username;
-        } else {
-          $name = sprintf('%s<br/><span class="text-secondary">%s</span>', $plex_username, $plex_email);
-        }
+        $name = (!empty($plex_title) ? $plex_title : (!empty($plex_username) ? $plex_username : $plex_email));
+        if ($name != $plex_email && !empty($plex_email)) { $name .= sprintf('<br/><span class="text-secondary">%s</span>', $plex_email); }
         if (empty($notes)) { $notes = '<em>&ndash;</em>'; }
         switch ($risk) {
           case PlexUser::RISK_UNASSESSED: $risk = array('secondary', 'Unassessed'); break;

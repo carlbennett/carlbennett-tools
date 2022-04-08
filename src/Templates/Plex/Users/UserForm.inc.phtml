@@ -19,6 +19,8 @@ $is_hidden = ($this->getContext()->hidden ? ' checked' : '');
 $is_homeuser = ($this->getContext()->homeuser ? ' checked' : '');
 $notes = filter_var($this->getContext()->notes, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $plex_email = filter_var($this->getContext()->plex_email, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$plex_id = $plex_user->getPlexId();
+$plex_title = filter_var($this->getContext()->plex_title, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $plex_username = filter_var($this->getContext()->plex_username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $record_updated = $plex_user->getRecordUpdated();
 $risk = $this->getContext()->risk;
@@ -76,6 +78,10 @@ if (!empty($error)) { ?>
 
         <table class="table table-borderless">
           <thead></thead><tbody>
+            <tr>
+              <th scope="row" class="align-middle text-right"><label class="m-0" for="plex_title">Title</label></th>
+              <td><input class="form-control form-control-sm" type="text" id="plex_title" name="plex_title" placeholder="Enter the Plex title here" value="<?=$plex_title?>"/></td>
+            </tr>
             <tr>
               <th scope="row" class="align-middle text-right"><label class="m-0" for="plex_username">Username</label></th>
               <td><input class="form-control form-control-sm" type="text" id="plex_username" name="plex_username" placeholder="Enter the Plex username here" value="<?=$plex_username?>"/></td>
@@ -136,6 +142,12 @@ if (!empty($error)) { ?>
               <th scope="row" class="align-middle text-right">Uuid</th>
               <td><code><?=$id_str?></code></td>
             </tr>
+<?php if (!is_null($plex_id)) { ?>
+            <tr>
+              <th scope="row" class="align-middle text-right">Plex Id</th>
+              <td><code><?=$plex_id?></code></td>
+            </tr>
+<?php } ?>
 <?php if (!is_null($date_added)) { ?>
             <tr>
               <th scope="row" class="align-middle text-right text-success">Date added</th>
