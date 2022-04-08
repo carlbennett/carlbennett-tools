@@ -10,13 +10,14 @@ use \CarlBennett\Tools\Libraries\User as BaseUser;
 
 use \DateTimeZone;
 use \InvalidArgumentException;
+use \JsonSerializable;
 use \LengthException;
 use \PDO;
 use \PDOException;
 use \StdClass;
 use \UnexpectedValueException;
 
-class User implements IDatabaseObject {
+class User implements IDatabaseObject, JsonSerializable {
 
   const DATE_SQL = 'Y-m-d H:i:s';
 
@@ -354,6 +355,25 @@ class User implements IDatabaseObject {
     return $this->risk == self::RISK_UNASSESSED;
   }
 
+  public function jsonSerialize() : array
+  {
+    return [
+      'date_added' => $this->date_added,
+      'date_disabled' => $this->date_disabled,
+      'date_expired' => $this->date_expired,
+      'id' => $this->id,
+      'notes' => $this->notes,
+      'options' => $this->options,
+      'plex_email' => $this->plex_email,
+      'plex_id' => $this->plex_id,
+      'plex_title' => $this->plex_title,
+      'plex_username' => $this->plex_username,
+      'record_updated' => $this->record_updated,
+      'risk' => $this->risk,
+      'user_id' => $this->user_id,
+    ];
+  }
+
   public function setDateAdded(DateTime $value) {
     if (!$value instanceof DateTime) {
       throw new InvalidArgumentException(
@@ -453,11 +473,8 @@ class User implements IDatabaseObject {
     $this->plex_email = $value;
   }
 
-  public function setPlexId($value) {
-    if (!(is_null($value) || (is_int($value) && $value >= 0))) {
-      throw new InvalidArgumentException('value must be a positive integer');
-    }
-
+  public function setPlexId(?int $value)
+  {
     $this->plex_id = $value;
   }
 
