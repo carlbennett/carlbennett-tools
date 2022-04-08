@@ -211,7 +211,9 @@ class User implements IDatabaseObject, JsonSerializable {
       is_null($this->plex_id) ? PDO::PARAM_NULL : PDO::PARAM_INT
     ));
 
-    $q->bindParam(':plex_title', $this->plex_title, PDO::PARAM_STR);
+    $q->bindParam(':plex_title', $this->plex_title, (
+      is_null($this->plex_title) ? PDO::PARAM_NULL : PDO::PARAM_STR
+    ));
 
     $q->bindParam(':plex_username', $this->plex_username, (
       is_null($this->plex_username) ? PDO::PARAM_NULL : PDO::PARAM_STR
