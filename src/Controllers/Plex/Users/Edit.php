@@ -92,8 +92,8 @@ class Edit extends Controller {
     if (!$plex_user)
       return UserFormModel::ERROR_NULL_PLEX_USER;
 
-    if (empty($model->plex_username) && empty($model->plex_email))
-      return UserFormModel::ERROR_EMPTY_USERNAME_AND_EMAIL;
+    if (empty($model->plex_title) && empty($model->plex_username) && empty($model->plex_email))
+      return UserFormModel::ERROR_EMPTY_TITLE_USERNAME_AND_EMAIL;
 
     if ($model->risk < 0 || $model->risk > 3)
       return UserFormModel::ERROR_INVALID_RISK;

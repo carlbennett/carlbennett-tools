@@ -9,7 +9,7 @@ class UserForm extends ActiveUserModel {
   const ERROR_SUCCESS = 0;
   const ERROR_INTERNAL_ERROR = 1;
   const ERROR_NULL_PLEX_USER = 2;
-  const ERROR_EMPTY_USERNAME_AND_EMAIL = 3;
+  const ERROR_EMPTY_TITLE_USERNAME_AND_EMAIL = 3;
   const ERROR_INVALID_RISK = 4;
   const ERROR_LINKED_USER_ALREADY_ASSIGNED = 5;
 

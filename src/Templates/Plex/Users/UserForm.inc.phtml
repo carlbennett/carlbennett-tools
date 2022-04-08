@@ -51,8 +51,8 @@ switch ($error) {
     $error = 'An internal error occurred while processing the request.'; break;
   case UserForm::ERROR_NULL_PLEX_USER:
     $error = 'The Plex user was null during processing of the request.'; break;
-  case UserForm::ERROR_EMPTY_USERNAME_AND_EMAIL:
-    $error = 'The <strong>username</strong> and <strong>email address</strong> cannot both be empty.'; break;
+  case UserForm::ERROR_EMPTY_TITLE_USERNAME_AND_EMAIL:
+    $error = 'The <strong>title</strong>, <strong>username</strong>, and <strong>email address</strong> cannot all be empty.'; break;
   case UserForm::ERROR_INVALID_RISK:
     $error = 'The selected risk option is invalid, choose a proper risk value.'; break;
   case UserForm::ERROR_LINKED_USER_ALREADY_ASSIGNED:
