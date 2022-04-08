@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4f052b13c6319857910c4f953edc613b",
+    "content-hash": "272c7b6e3317128e8f05c42c097023a8",
     "packages": [
         {
             "name": "carlbennett/php-mvc",
@@ -70,6 +70,51 @@
                 "source": "https://github.com/carlbennett/php-mvc/tree/master"
             },
             "time": "2020-02-07T09:48:40+00:00"
+        },
+        {
+            "name": "carlbennett/php-plextv-api",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/carlbennett/php-plextv-api.git",
+                "reference": "1c96a9b90fb36f4800ba459f81032f792b294410"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/carlbennett/php-plextv-api/zipball/1c96a9b90fb36f4800ba459f81032f792b294410",
+                "reference": "1c96a9b90fb36f4800ba459f81032f792b294410",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-xml": "*",
+                "php-64bit": "^7.3"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "CarlBennett\\PlexTvAPI\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Carl Bennett",
+                    "email": "carl@carlbennett.me"
+                }
+            ],
+            "description": "A PHP library framework for the Plex.tv API",
+            "homepage": "https://github.com/carlbennett/php-plextv-api",
+            "support": {
+                "issues": "https://github.com/carlbennett/php-plextv-api/issues",
+                "source": "https://github.com/carlbennett/php-plextv-api/tree/main"
+            },
+            "time": "2022-04-08T06:39:31+00:00"
         },
         {
             "name": "composer/ca-bundle",
@@ -648,7 +693,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "carlbennett/php-plextv-api": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

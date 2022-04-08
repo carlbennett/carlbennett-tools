@@ -19,6 +19,7 @@
         }
     },
     "require": {
+        "carlbennett/php-plextv-api": "dev-main",
         "carlbennett/php-mvc": "^2.1",
         "erusev/parsedown": "^1.7",
         "ext-gmp": "*",
