@@ -77,7 +77,10 @@ class SyncPlexUsersTask extends Task
                         }
 
                         $user->commit();
-                        $this->model->task_result['mapped_plex_users'][] = $user;
+                        $this->model->task_result['mapped_plex_users'][] = [
+                            'plex_user' => $user,
+                            'plextv_user' => $plex_user
+                        ];
                         unset($plex_users[$__plex_id]);
                         continue 2;
                     }
