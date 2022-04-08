@@ -77,12 +77,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/carlbennett/php-plextv-api.git",
-                "reference": "1c96a9b90fb36f4800ba459f81032f792b294410"
+                "reference": "26cbb4001ade85e3b19d38dab6433a589c7d9b4e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/carlbennett/php-plextv-api/zipball/1c96a9b90fb36f4800ba459f81032f792b294410",
-                "reference": "1c96a9b90fb36f4800ba459f81032f792b294410",
+                "url": "https://api.github.com/repos/carlbennett/php-plextv-api/zipball/26cbb4001ade85e3b19d38dab6433a589c7d9b4e",
+                "reference": "26cbb4001ade85e3b19d38dab6433a589c7d9b4e",
                 "shasum": ""
             },
             "require": {
@@ -114,7 +114,7 @@
                 "issues": "https://github.com/carlbennett/php-plextv-api/issues",
                 "source": "https://github.com/carlbennett/php-plextv-api/tree/main"
             },
-            "time": "2022-04-08T06:39:31+00:00"
+            "time": "2022-04-08T06:47:12+00:00"
         },
         {
             "name": "composer/ca-bundle",

@@ -13,6 +13,7 @@ abstract class Task
     switch (strtolower($model->task_name))
     {
       case 'prune_user_sessions': return new PruneUserSessionsTask($model);
+      case 'sync_plex_users': return new SyncPlexUsersTask($model);
       case 'test': return new TestTask($model);
       default: throw new UnexpectedValueException('invalid task name');
     }

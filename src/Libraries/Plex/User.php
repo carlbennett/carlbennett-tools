@@ -22,8 +22,9 @@ class User implements IDatabaseObject {
 
   # Maximum SQL field lengths, alter as appropriate.
   const MAX_NOTES         = 65535;
-  const MAX_PLEX_EMAIL    = 191;
-  const MAX_PLEX_USERNAME = 191;
+  const MAX_PLEX_EMAIL    = 255;
+  const MAX_PLEX_TITLE    = 255;
+  const MAX_PLEX_USERNAME = 255;
 
   const OPTION_DEFAULT  = 0x00000000;
   const OPTION_DISABLED = 0x00000001;
@@ -46,6 +47,8 @@ class User implements IDatabaseObject {
   protected $notes;
   protected $options;
   protected $plex_email;
+  protected $plex_id;
+  protected $plex_title;
   protected $plex_username;
   protected $record_updated;
   protected $risk;
@@ -92,8 +95,8 @@ class User implements IDatabaseObject {
     $q = Common::$database->prepare('
       SELECT `date_added`, `date_disabled`, `date_expired`,
              UuidFromBin(`id`) AS `id`, `notes`, `options`, `plex_email`,
-             `plex_username`, `record_updated`, `risk`,
-             UuidFromBin(`user_id`) AS `user_id`
+             `plex_id`, `plex_title`, `plex_username`, `record_updated`,
+             `risk`, UuidFromBin(`user_id`) AS `user_id`
       FROM `plex_users` WHERE `id` = UuidToBin(:id) LIMIT 1;
     ');
     $q->bindParam(':id', $id, PDO::PARAM_STR);
@@ -129,6 +132,8 @@ class User implements IDatabaseObject {
     $this->setNotes($value->notes);
     $this->setOptions($value->options);
     $this->setPlexEmail($value->plex_email);
+    $this->setPlexId($value->plex_id);
+    $this->setPlexTitle($value->plex_title);
     $this->setPlexUsername($value->plex_username);
     $this->setRecordUpdated(new DateTime($value->record_updated, $tz));
     $this->setRisk($value->risk);
@@ -153,14 +158,17 @@ class User implements IDatabaseObject {
     $q = Common::$database->prepare('
       INSERT INTO `plex_users` (
         `date_added`, `date_disabled`, `date_expired`, `id`, `notes`, `options`,
-        `plex_email`, `plex_username`, `record_updated`, `risk`, `user_id`
+        `plex_email`, `plex_id`, `plex_title`, `plex_username`, `record_updated`,
+        `risk`, `user_id`
       ) VALUES (
         :added, :disabled, :expired, UuidToBin(:id), :notes, :options,
-        :plex_email, :plex_username, :record_updated, :risk, UuidToBin(:user_id)
+        :plex_email, :plex_id, :plex_title, :plex_username, :record_updated,
+        :risk, UuidToBin(:user_id)
       ) ON DUPLICATE KEY UPDATE
         `date_added` = :added, `date_disabled` = :disabled,
         `date_expired` = :expired, `notes` = :notes, `options` = :options,
-        `plex_email` = :plex_email, `plex_username` = :plex_username,
+        `plex_email` = :plex_email, `plex_id` = :plex_id,
+        `plex_title` = :plex_title, `plex_username` = :plex_username,
         `record_updated` = :record_updated, `risk` = :risk,
         `user_id` = UuidToBin(:user_id)
       ;
@@ -198,6 +206,12 @@ class User implements IDatabaseObject {
       is_null($this->plex_email) ? PDO::PARAM_NULL : PDO::PARAM_STR
     ));
 
+    $q->bindParam(':plex_id', $this->plex_id, (
+      is_null($this->plex_id) ? PDO::PARAM_NULL : PDO::PARAM_INT
+    ));
+
+    $q->bindParam(':plex_title', $this->plex_title, PDO::PARAM_STR);
+
     $q->bindParam(':plex_username', $this->plex_username, (
       is_null($this->plex_username) ? PDO::PARAM_NULL : PDO::PARAM_STR
     ));
@@ -224,9 +238,10 @@ class User implements IDatabaseObject {
     $q = Common::$database->prepare('
       SELECT `date_added`, `date_disabled`, `date_expired`,
              UuidFromBin(`id`) AS `id`, `notes`, `options`, `plex_email`,
-             `plex_username`, `record_updated`, `risk`,
-             UuidFromBin(`user_id`) AS `user_id`
-      FROM `plex_users` ORDER BY `date_added`, `plex_username`, `plex_email`;
+             `plex_id`, `plex_title`, `plex_username`, `record_updated`,
+             `risk`, UuidFromBin(`user_id`) AS `user_id`
+      FROM `plex_users`
+      ORDER BY `date_added`, `plex_title`, `plex_username`, `plex_email`;
     ');
 
     $r = $q->execute();
@@ -275,6 +290,14 @@ class User implements IDatabaseObject {
 
   public function getPlexEmail() {
     return $this->plex_email;
+  }
+
+  public function getPlexId() {
+    return $this->plex_id;
+  }
+
+  public function getPlexTitle() {
+    return $this->plex_title;
   }
 
   public function getPlexUsername() {
@@ -430,6 +453,33 @@ class User implements IDatabaseObject {
     $this->plex_email = $value;
   }
 
+  public function setPlexId($value) {
+    if (!(is_null($value) || (is_int($value) && $value >= 0))) {
+      throw new InvalidArgumentException('value must be a positive integer');
+    }
+
+    $this->plex_id = $value;
+  }
+
+  public function setPlexTitle($value, $auto_null = true) {
+    if (!(is_null($value) || is_string($value))) {
+      throw new InvalidArgumentException(
+        'value must be null or a string'
+      );
+    }
+
+    if ($auto_null && is_string($value) && empty($value)) { $value = null; }
+
+    if (is_string($value) && strlen($value) > self::MAX_PLEX_TITLE) {
+      throw new LengthException(sprintf(
+        'value must be less than or equal to %d characters',
+        self::MAX_PLEX_TITLE
+      ));
+    }
+
+    $this->plex_title = $value;
+  }
+
   public function setPlexUsername($value, $auto_null = true) {
     if (!(is_null($value) || is_string($value))) {
       throw new InvalidArgumentException(
@@ -485,5 +535,4 @@ class User implements IDatabaseObject {
 
     $this->user_id = $value;
   }
-
 }
