@@ -4,5 +4,3 @@
 
 Carl's Tools (carlbennett-tools) is a website dedicated to housing a collection
 of tools/utilities authored by [@carlbennett](https://github.com/carlbennett).
-
-See also: [carlbennett/php-mvc](https://github.com/carlbennett/php-mvc)
