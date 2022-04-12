@@ -227,7 +227,7 @@ class User implements IDatabaseObject {
     return $r;
   }
 
-  public static function createPassword(string $password) {
+  public static function createPassword(string $password) : string {
     if (!is_string($password)) {
       throw new InvalidArgumentException('value must be a string');
     }
@@ -237,9 +237,7 @@ class User implements IDatabaseObject {
     }
 
     $cost = Common::$config->users->crypt_cost;
-    $digest = $password.$salt.$pepper;
-
-    return password_hash($digest, PASSWORD_BCRYPT, array('cost' => $cost));
+    return password_hash($password, PASSWORD_BCRYPT, array('cost' => $cost));
   }
 
   public static function getAll() {
