@@ -16,7 +16,7 @@ $display_name = filter_var($model->display_name, FILTER_SANITIZE_FULL_SPECIAL_CH
 $id = $model->id;
 
 $fmt = 'D, M j, Y g:i A T';
-$tz = ($user ? $user->getTimezoneObject() : null);
+$tz = ($active_user ? $active_user->getTimezoneObject() : null);
 if (!$tz) $tz = new DateTimeZone('Etc/UTC');
 
 if ($date_added) $date_added->setTimezone($tz);

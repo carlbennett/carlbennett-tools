@@ -27,14 +27,16 @@ $is_disabled = ($model->is_disabled ? ' checked' : '');
 $record_updated = $model->record_updated;
 
 $fmt = 'D, M j, Y g:i A T';
+$active_tz = ($active_user ? $active_user->getTimezoneObject() : null);
+if (!$active_tz) $active_tz = new DateTimeZone('Etc/UTC');
 $tz = ($user ? $user->getTimezoneObject() : null);
 if (!$tz) $tz = new DateTimeZone('Etc/UTC');
 $tzs = DateTimeZone::listIdentifiers();
 
-if ($date_added) $date_added->setTimezone($tz);
-if ($date_banned) $date_banned->setTimezone($tz);
-if ($date_disabled) $date_disabled->setTimezone($tz);
-if ($record_updated) $record_updated->setTimezone($tz);
+if ($date_added) $date_added->setTimezone($active_tz);
+if ($date_banned) $date_banned->setTimezone($active_tz);
+if ($date_disabled) $date_disabled->setTimezone($active_tz);
+if ($record_updated) $record_updated->setTimezone($active_tz);
 
 $id_str = (!is_null($id) ? $id : '<em>&ndash;</em>');
 $date_added_str = (!is_null($date_added) ? $date_added->format($fmt) : '<em>(not added)</em>');
