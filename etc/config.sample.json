@@ -40,6 +40,7 @@
   },
   "tasks": {
     "auth_token": "00000000-0000-0000-0000-000000000000",
+    "plex_create_unmapped_users": false,
     "plex_auth_token": ""
   },
   "users": {

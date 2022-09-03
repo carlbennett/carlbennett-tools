@@ -13,6 +13,7 @@ class SyncPlexUsersTask extends Task
 {
     public function run()
     {
+        $create_unmapped_users = Common::$config->tasks->plex_create_unmapped_users;
         $plex_token = Common::$config->tasks->plex_auth_token;
         $this->model->task_result = array('success' => false);
 
@@ -96,6 +97,36 @@ class SyncPlexUsersTask extends Task
 
             // any leftover $plex_users that were not unset() above are dumped below
             $this->model->task_result['unmapped_plextv_users'] = $plex_users;
+
+            if ($create_unmapped_users)
+            {
+                $created_plex_users = [];
+                foreach ($plex_users as $__plex_id => $unmapped_plextv_user)
+                {
+                    $__plex_email = $unmapped_plextv_user->getEmail();
+                    $__plex_title = $unmapped_plextv_user->getTitle();
+                    $__plex_username = $unmapped_plextv_user->getUsername();
+                    $__home = $unmapped_plextv_user->getHome();
+                    $__restricted = $unmapped_plextv_user->getRestricted();
+
+                    $new_plex_user = new PlexUser(null);
+
+                    $new_plex_user->setPlexEmail($__plex_email);
+                    $new_plex_user->setPlexId($__plex_id);
+                    $new_plex_user->setPlexTitle($__plex_title);
+                    $new_plex_user->setPlexUsername($__plex_username);
+
+                    $new_plex_user->setOption(PlexUser::OPTION_HOMEUSER, $__home);
+
+                    $new_plex_user->setNotes('Created automatically by sync task.');
+
+                    if ($new_plex_user->commit())
+                    {
+                        $created_plex_users[] = $new_plex_user;
+                    }
+                }
+                $this->model->task_result['created_plex_users'] = $created_plex_users;
+            }
 
             // finally, report general success
             $this->model->task_result['success'] = true;
