@@ -1,9 +1,10 @@
 <?php
 
-namespace CarlBennett\Tools\Libraries\Tasks;
+namespace CarlBennett\Tools\Tasks;
 
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\MVC\Libraries\DateTime;
+use \CarlBennett\PlexTvAPI\Exceptions\PlexTvAPIException;
 use \CarlBennett\PlexTvAPI\User as PlexTvUser;
 use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
 use \Throwable;

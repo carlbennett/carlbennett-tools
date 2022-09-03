@@ -1,4 +1,4 @@
-<?php namespace CarlBennett\Tools\Libraries\Tasks;
+<?php namespace CarlBennett\Tools\Tasks;
 use \CarlBennett\Tools\Libraries\Authentication;
 class PruneUserSessionsTask extends Task
 {

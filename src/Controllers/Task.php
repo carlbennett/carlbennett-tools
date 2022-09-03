@@ -6,9 +6,9 @@ use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\MVC\Libraries\Controller;
 use \CarlBennett\MVC\Libraries\Router;
 use \CarlBennett\MVC\Libraries\View;
-use \CarlBennett\Tools\Libraries\Tasks\Task as TaskLib;
 use \CarlBennett\Tools\Libraries\Utility\HTTPForm;
 use \CarlBennett\Tools\Models\Task as TaskModel;
+use \CarlBennett\Tools\Tasks\Task as TaskLib;
 use \UnexpectedValueException;
 
 class Task extends Controller

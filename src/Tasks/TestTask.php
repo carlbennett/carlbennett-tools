@@ -1,4 +1,4 @@
-<?php namespace CarlBennett\Tools\Libraries\Tasks;
+<?php namespace CarlBennett\Tools\Tasks;
 class TestTask extends Task
 {
   public function run()

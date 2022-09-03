@@ -1,6 +1,6 @@
 <?php
 
-namespace CarlBennett\Tools\Libraries\Tasks;
+namespace CarlBennett\Tools\Tasks;
 
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\Tools\Models\Task as TaskModel;
