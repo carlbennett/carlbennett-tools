@@ -5,6 +5,7 @@ namespace CarlBennett\Tools\Libraries\Plex;
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\MVC\Libraries\DatabaseDriver;
 use \CarlBennett\MVC\Libraries\DateTime;
+use \CarlBennett\MVC\Libraries\Gravatar;
 use \CarlBennett\Tools\Libraries\IDatabaseObject;
 use \CarlBennett\Tools\Libraries\User as BaseUser;
 
@@ -24,6 +25,7 @@ class User implements IDatabaseObject, JsonSerializable {
   # Maximum SQL field lengths, alter as appropriate.
   const MAX_NOTES         = 65535;
   const MAX_PLEX_EMAIL    = 255;
+  const MAX_PLEX_THUMB    = 255;
   const MAX_PLEX_TITLE    = 255;
   const MAX_PLEX_USERNAME = 255;
 
@@ -49,6 +51,7 @@ class User implements IDatabaseObject, JsonSerializable {
   protected $options;
   protected $plex_email;
   protected $plex_id;
+  protected $plex_thumb;
   protected $plex_title;
   protected $plex_username;
   protected $record_updated;
@@ -96,8 +99,8 @@ class User implements IDatabaseObject, JsonSerializable {
     $q = Common::$database->prepare('
       SELECT `date_added`, `date_disabled`, `date_expired`,
              UuidFromBin(`id`) AS `id`, `notes`, `options`, `plex_email`,
-             `plex_id`, `plex_title`, `plex_username`, `record_updated`,
-             `risk`, UuidFromBin(`user_id`) AS `user_id`
+             `plex_id`, `plex_thumb`, `plex_title`, `plex_username`,
+             `record_updated`, `risk`, UuidFromBin(`user_id`) AS `user_id`
       FROM `plex_users` WHERE `id` = UuidToBin(:id) LIMIT 1;
     ');
     $q->bindParam(':id', $id, PDO::PARAM_STR);
@@ -134,6 +137,7 @@ class User implements IDatabaseObject, JsonSerializable {
     $this->setOptions($value->options);
     $this->setPlexEmail($value->plex_email);
     $this->setPlexId($value->plex_id);
+    $this->setPlexThumb($value->plex_thumb);
     $this->setPlexTitle($value->plex_title);
     $this->setPlexUsername($value->plex_username);
     $this->setRecordUpdated(new DateTime($value->record_updated, $tz));
@@ -159,17 +163,18 @@ class User implements IDatabaseObject, JsonSerializable {
     $q = Common::$database->prepare('
       INSERT INTO `plex_users` (
         `date_added`, `date_disabled`, `date_expired`, `id`, `notes`, `options`,
-        `plex_email`, `plex_id`, `plex_title`, `plex_username`, `record_updated`,
-        `risk`, `user_id`
+        `plex_email`, `plex_id`, `plex_thumb`, `plex_title`, `plex_username`,
+        `record_updated`, `risk`, `user_id`
       ) VALUES (
         :added, :disabled, :expired, UuidToBin(:id), :notes, :options,
-        :plex_email, :plex_id, :plex_title, :plex_username, :record_updated,
-        :risk, UuidToBin(:user_id)
+        :plex_email, :plex_id, :plex_thumb, :plex_title, :plex_username,
+        :record_updated, :risk, UuidToBin(:user_id)
       ) ON DUPLICATE KEY UPDATE
         `date_added` = :added, `date_disabled` = :disabled,
         `date_expired` = :expired, `notes` = :notes, `options` = :options,
         `plex_email` = :plex_email, `plex_id` = :plex_id,
-        `plex_title` = :plex_title, `plex_username` = :plex_username,
+        `plex_thumb` = :plex_thumb, `plex_title` = :plex_title,
+        `plex_username` = :plex_username,
         `record_updated` = :record_updated, `risk` = :risk,
         `user_id` = UuidToBin(:user_id)
       ;
@@ -211,6 +216,10 @@ class User implements IDatabaseObject, JsonSerializable {
       is_null($this->plex_id) ? PDO::PARAM_NULL : PDO::PARAM_INT
     ));
 
+    $q->bindParam(':plex_thumb', $this->plex_thumb, (
+      is_null($this->plex_thumb) ? PDO::PARAM_NULL : PDO::PARAM_STR
+    ));
+
     $q->bindParam(':plex_title', $this->plex_title, (
       is_null($this->plex_title) ? PDO::PARAM_NULL : PDO::PARAM_STR
     ));
@@ -241,8 +250,8 @@ class User implements IDatabaseObject, JsonSerializable {
     $q = Common::$database->prepare('
       SELECT `date_added`, `date_disabled`, `date_expired`,
              UuidFromBin(`id`) AS `id`, `notes`, `options`, `plex_email`,
-             `plex_id`, `plex_title`, `plex_username`, `record_updated`,
-             `risk`, UuidFromBin(`user_id`) AS `user_id`
+             `plex_id`, `plex_thumb`, `plex_title`, `plex_username`,
+             `record_updated`, `risk`, UuidFromBin(`user_id`) AS `user_id`
       FROM `plex_users`
       ORDER BY `date_added`, `plex_title`, `plex_username`, `plex_email`;
     ');
@@ -257,6 +266,12 @@ class User implements IDatabaseObject, JsonSerializable {
 
     $q->closeCursor();
     return $r;
+  }
+
+  public function getAvatar(?int $size = null) : string
+  {
+    return !empty($this->plex_thumb) ?
+      $this->plex_thumb : (new Gravatar($this->getPlexEmail()))->getUrl($size, 'mp');
   }
 
   public function getDateAdded() {
@@ -297,6 +312,10 @@ class User implements IDatabaseObject, JsonSerializable {
 
   public function getPlexId() {
     return $this->plex_id;
+  }
+
+  public function getPlexThumb() {
+    return $this->plex_thumb;
   }
 
   public function getPlexTitle() {
@@ -368,6 +387,7 @@ class User implements IDatabaseObject, JsonSerializable {
       'options' => $this->options,
       'plex_email' => $this->plex_email,
       'plex_id' => $this->plex_id,
+      'plex_thumb' => $this->plex_thumb,
       'plex_title' => $this->plex_title,
       'plex_username' => $this->plex_username,
       'record_updated' => $this->record_updated,
@@ -478,6 +498,25 @@ class User implements IDatabaseObject, JsonSerializable {
   public function setPlexId(?int $value)
   {
     $this->plex_id = $value;
+  }
+
+  public function setPlexThumb($value, $auto_null = true) {
+    if (!(is_null($value) || is_string($value))) {
+      throw new InvalidArgumentException(
+        'value must be null or a string'
+      );
+    }
+
+    if ($auto_null && is_string($value) && empty($value)) { $value = null; }
+
+    if (is_string($value) && strlen($value) > self::MAX_PLEX_THUMB) {
+      throw new LengthException(sprintf(
+        'value must be less than or equal to %d characters',
+        self::MAX_PLEX_THUMB
+      ));
+    }
+
+    $this->plex_thumb = $value;
   }
 
   public function setPlexTitle($value, $auto_null = true) {

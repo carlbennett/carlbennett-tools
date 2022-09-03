@@ -61,6 +61,9 @@ class Edit extends Controller {
     $model->plex_email = $form->get(
       'plex_email', $model->plex_user->getPlexEmail()
     );
+    $model->plex_thumb = $form->get(
+      'plex_thumb', $model->plex_user->getPlexThumb()
+    );
     $model->plex_title = $form->get(
       'plex_title', $model->plex_user->getPlexTitle()
     );
@@ -109,6 +112,7 @@ class Edit extends Controller {
 
     $plex_user->setNotes($model->notes);
     $plex_user->setPlexEmail($model->plex_email);
+    $plex_user->setPlexThumb($model->plex_thumb);
     $plex_user->setPlexTitle($model->plex_title);
     $plex_user->setPlexUsername($model->plex_username);
     $plex_user->setRecordUpdated(new DateTime('now'));

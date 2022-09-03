@@ -1,6 +1,5 @@
 <?php
 namespace CarlBennett\Tools\Templates;
-use \CarlBennett\MVC\Libraries\Gravatar;
 use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
 use \CarlBennett\Tools\Libraries\User;
 use \CarlBennett\Tools\Models\Plex\Users\UserForm;
@@ -8,7 +7,7 @@ use \DateTimeZone;
 
 $users = User::getAll();
 
-$avatar = filter_var((new Gravatar($plex_user->getPlexEmail()))->getUrl(128, 'mp'), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$avatar = filter_var($plex_user->getAvatar(128), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $date_added = $plex_user->getDateAdded();
 $date_disabled = $plex_user->getDateDisabled();
 $date_expired = $plex_user->getDateExpired();
@@ -20,6 +19,7 @@ $is_homeuser = ($this->getContext()->homeuser ? ' checked' : '');
 $notes = filter_var($this->getContext()->notes, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $plex_email = filter_var($this->getContext()->plex_email, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $plex_id = $plex_user->getPlexId();
+$plex_thumb = filter_var($this->getContext()->plex_thumb, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $plex_title = filter_var($this->getContext()->plex_title, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $plex_username = filter_var($this->getContext()->plex_username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $record_updated = $plex_user->getRecordUpdated();
@@ -68,13 +68,13 @@ if (!empty($error)) { ?>
         <!-- Avatar -->
 
         <div class="text-center">
-          <label class="font-weight-bold m-1">Gravatar</label>
-          <img class="border border-primary p-1 rounded-lg" style="max-width:128px;" src="<?=$avatar?>"/>
+          <label class="font-weight-bold m-1">Avatar</label>
+          <img class="border border-primary p-1 rounded-lg" style="height:128px;width:128px;" src="<?=$avatar?>"/>
         </div>
 
       </div>
       <div class="col-lg-6">
-        <!-- Username, Email address, Linked user, Risk, Options -->
+        <!-- Title, Username, Email address, Thumb, Linked user, Risk, Options -->
 
         <table class="table table-borderless">
           <thead></thead><tbody>
@@ -89,6 +89,10 @@ if (!empty($error)) { ?>
             <tr>
               <th scope="row" class="align-middle text-right"><label class="m-0" for="plex_email">Email address</label></th>
               <td><input class="form-control form-control-sm" type="email" id="plex_email" name="plex_email" placeholder="Enter the Plex email address here" value="<?=$plex_email?>"/></td>
+            </tr>
+            <tr>
+              <th scope="row" class="align-middle text-right"><label class="m-0" for="plex_thumb">Thumbnail</label></th>
+              <td><input class="form-control form-control-sm" type="text" id="plex_thumb" name="plex_thumb" placeholder="Enter the Plex thumbnail url or blank for Gravatar" value="<?=$plex_thumb?>"/></td>
             </tr>
             <tr>
               <th scope="row" class="align-middle text-right"><label class="m-0" for="user_id">Linked user</label></th>

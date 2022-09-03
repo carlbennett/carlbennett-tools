@@ -64,7 +64,7 @@ require('./header.inc.phtml'); ?>
     <tbody>
 <?php foreach ($this->getContext()->users as $user) {
         if ($user->isHidden() && !$show_hidden) continue;
-        $avatar = filter_var((new Gravatar($user->getPlexEmail()))->getUrl(32, 'mp'), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $avatar = filter_var($user->getAvatar(40), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $date_added = array($user->getDateAdded()->format('D, M jS, Y'), $user->getDateAdded()->format('g:i A T'));
         $id = filter_var($user->getId(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $notes = filter_var($user->getNotes(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -89,7 +89,7 @@ require('./header.inc.phtml'); ?>
         ?>
       <tr>
         <td class="align-middle">
-          <div class="d-table-cell align-middle"><img class="rounded mr-2" src="<?=$avatar?>"/></div>
+          <div class="d-table-cell align-middle"><img class="rounded mr-2" style="height:40px;width:40px;" src="<?=$avatar?>"/></div>
           <div class="d-table-cell align-middle"><?=$name?></div>
         </td>
         <td class="align-middle"><time datetime="<?=$user->getDateAdded()->format(DATE_W3C)?>"><?=$date_added[0]?><br/><span class="text-secondary"><?=$date_added[1]?></span></time></td>

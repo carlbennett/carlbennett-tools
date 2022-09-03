@@ -44,6 +44,7 @@ class SyncPlexUsersTask extends Task
 
                 $_plex_email = $user->getPlexEmail();
                 $_plex_id = $user->getPlexId();
+                $_plex_thumb = $user->getPlexThumb();
                 $_plex_title = $user->getPlexTitle();
                 $_plex_username = $user->getPlexUsername();
                 $_home = $user->getOption(PlexUser::OPTION_HOMEUSER);
@@ -51,6 +52,7 @@ class SyncPlexUsersTask extends Task
                 foreach ($plex_users as $__plex_id => $plex_user)
                 {
                     $__plex_email = $plex_user->getEmail();
+                    $__plex_thumb = $plex_user->getThumb();
                     $__plex_title = $plex_user->getTitle();
                     $__plex_username = $plex_user->getUsername();
                     $__home = $plex_user->getHome();
@@ -64,12 +66,14 @@ class SyncPlexUsersTask extends Task
 
                         $user->setPlexEmail($__plex_email);
                         $user->setPlexId($__plex_id);
+                        $user->setPlexThumb($__plex_thumb);
                         $user->setPlexTitle($__plex_title);
                         $user->setPlexUsername($__plex_username);
                         $user->setOption(PlexUser::OPTION_HOMEUSER, $__home);
 
                         if ($_plex_email !== $__plex_email
                             || $_plex_id !== $__plex_id
+                            || $_plex_thumb !== $__plex_thumb
                             || $_plex_title !== $__plex_title
                             || $_plex_username !== $__plex_username
                             || $_home != $__home)
@@ -104,6 +108,7 @@ class SyncPlexUsersTask extends Task
                 foreach ($plex_users as $__plex_id => $unmapped_plextv_user)
                 {
                     $__plex_email = $unmapped_plextv_user->getEmail();
+                    $__plex_thumb = $unmapped_plextv_user->getThumb();
                     $__plex_title = $unmapped_plextv_user->getTitle();
                     $__plex_username = $unmapped_plextv_user->getUsername();
                     $__home = $unmapped_plextv_user->getHome();
@@ -113,6 +118,7 @@ class SyncPlexUsersTask extends Task
 
                     $new_plex_user->setPlexEmail($__plex_email);
                     $new_plex_user->setPlexId($__plex_id);
+                    $new_plex_user->setPlexThumb($__plex_thumb);
                     $new_plex_user->setPlexTitle($__plex_title);
                     $new_plex_user->setPlexUsername($__plex_username);
 

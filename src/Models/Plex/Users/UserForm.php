@@ -21,6 +21,7 @@ class UserForm extends ActiveUserModel {
   public $id;
   public $notes;
   public $plex_email;
+  public $plex_thumb;
   public $plex_title;
   public $plex_user;
   public $plex_username;
