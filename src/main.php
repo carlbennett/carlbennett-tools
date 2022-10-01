@@ -18,17 +18,17 @@ use \CarlBennett\MVC\Libraries\Router;
 
 use \CarlBennett\Tools\Libraries\Authentication;
 
-function main() {
+function main(int $argc, Iterable $argv) {
 
     if (!file_exists(__DIR__ . '/../lib/autoload.php')) {
-        http_response_code(500);
+        \http_response_code(500);
         exit('Server misconfigured. Please run `composer install`.');
     }
     require(__DIR__ . '/../lib/autoload.php');
 
     GlobalErrorHandler::createOverrides();
 
-    date_default_timezone_set('Etc/UTC');
+    \date_default_timezone_set('Etc/UTC');
 
     Common::$config = json_decode(file_get_contents(
         __DIR__ . '/../etc/config.json'
@@ -162,4 +162,4 @@ function main() {
 
 }
 
-main();
+main($argc ?? 0, $argv ?? []);

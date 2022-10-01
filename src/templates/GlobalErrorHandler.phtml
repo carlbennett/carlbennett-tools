@@ -1,0 +1,19 @@
+<?php
+namespace CarlBennett\Tools\Templates;
+\chdir(__DIR__ . '/../Templates/'); // Fix for carlbennett/php-mvc GlobalErrorHandler expectation for lowercase 'templates' directory
+$title = '🛑 Internal Error';
+$description = 'An internal error occurred. The last action may or may not have been successful.';
+require('./header.inc.phtml'); ?>
+<div class="container h-100">
+    <div class="d-flex align-items-center justify-content-center">
+        <div class="alert alert-danger">
+            <h3><?=filter_var($title, \FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></h3>
+            <p class="m-0"><?=filter_var($description, \FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></p>
+        </div>
+    </div>
+    <div class="d-flex align-items-center justify-content-center">
+        <a class="btn btn-danger mr-2" href="javascript:history.go(-1);">⏎ Back</a>
+        <a class="btn btn-outline-danger" href="javascript:window.location.reload();">↻ Reload</a>
+    </div>
+</div>
+<?php require('./footer.inc.phtml'); ?>
