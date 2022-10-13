@@ -268,10 +268,26 @@ class User implements IDatabaseObject, JsonSerializable {
     return $r;
   }
 
+  /**
+   * Gets the avatar thumbnail url for this Plex user.
+   *
+   * @param integer|null $size The Size parameter to pass to the Gravatar service, ignored if the property $plex_thumb is non-empty.
+   * @return string The $plex_thumb property if non-empty, otherwise the Gravatar url based on email.
+   */
   public function getAvatar(?int $size = null) : string
   {
-    return !empty($this->plex_thumb) ?
-      $this->plex_thumb : (new Gravatar($this->getPlexEmail()))->getUrl($size, 'mp');
+    if (!empty($this->plex_thumb)) return $this->plex_thumb;
+
+    $email = $this->getPlexEmail() ?? '';
+    if (empty($email))
+    {
+      $user = $this->getUser();
+      if ($user) $email = $user->getEmail() ?? '';
+    }
+
+    if (empty($email)) $email = 'nobody@example.com'; // no email is set??
+
+    return (new Gravatar($email))->getUrl($size, 'mp');
   }
 
   public function getDateAdded() {

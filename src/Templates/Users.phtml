@@ -9,25 +9,25 @@ $highlight_act = $this->getContext()->hl;
 if (!empty($highlight_id)) {
   try {
     $highlight_user = new User($highlight_id);
-  } catch (Exception $e) {
+  } catch (\Throwable $e) {
     $highlight_user = null;
   }
   if ($highlight_user) {
     $highlight_user_email = $highlight_user->getEmail();
     $highlight_user_name = $highlight_user->getName();
-    if (empty($highlight_user_name) && !empty($highlight_user_email)) {
+    if (\empty($highlight_user_name) && !\empty($highlight_user_email)) {
       $highlight_name = $highlight_user_email;
-    } else if (!empty($highlight_user_name) && empty($highlight_user_email)) {
+    } else if (!\empty($highlight_user_name) && \empty($highlight_user_email)) {
       $highlight_name = $highlight_user_name;
     } else {
-      $highlight_name = sprintf('%s (%s)', $highlight_user_name, $highlight_user_email);
+      $highlight_name = \sprintf('%s (%s)', $highlight_user_name, $highlight_user_email);
     }
   }
 }
-switch (strtolower($highlight_act)) {
+if ($highlight_act === null) $highlight_act = '';
+switch (\strtolower($highlight_act) ?? '') {
   case 'add': $highlight_act = 'added'; break;
   case 'edit': $highlight_act = 'edited'; break;
-  default: $highlight_act = null;
 }
 $title = 'Users';
 require('./header.inc.phtml'); ?>
