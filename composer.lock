@@ -68,12 +68,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/carlbennett/php-mvc.git",
-                "reference": "c2a6eea5450cc99de256bc31f65010465edcab4c"
+                "reference": "50393256ed2799986147c3f2b062dfe48b2855b0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/carlbennett/php-mvc/zipball/c2a6eea5450cc99de256bc31f65010465edcab4c",
-                "reference": "c2a6eea5450cc99de256bc31f65010465edcab4c",
+                "url": "https://api.github.com/repos/carlbennett/php-mvc/zipball/50393256ed2799986147c3f2b062dfe48b2855b0",
+                "reference": "50393256ed2799986147c3f2b062dfe48b2855b0",
                 "shasum": ""
             },
             "require": {
@@ -126,7 +126,7 @@
                 "issues": "https://github.com/carlbennett/php-mvc/issues",
                 "source": "https://github.com/carlbennett/php-mvc/tree/main"
             },
-            "time": "2022-10-13T07:21:00+00:00"
+            "time": "2022-10-14T09:51:14+00:00"
         },
         {
             "name": "carlbennett/php-plextv-api",
