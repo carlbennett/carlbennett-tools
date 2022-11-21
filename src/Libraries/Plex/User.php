@@ -4,134 +4,103 @@ namespace CarlBennett\Tools\Libraries\Plex;
 
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\MVC\Libraries\DatabaseDriver;
-use \CarlBennett\MVC\Libraries\DateTime;
 use \CarlBennett\MVC\Libraries\Gravatar;
-use \CarlBennett\Tools\Libraries\IDatabaseObject;
+use \CarlBennett\Tools\Libraries\DateTimeImmutable;
 use \CarlBennett\Tools\Libraries\User as BaseUser;
-
+use \DateTimeInterface;
 use \DateTimeZone;
-use \InvalidArgumentException;
-use \JsonSerializable;
-use \LengthException;
-use \PDO;
-use \PDOException;
+use \Ramsey\Uuid\Uuid;
 use \StdClass;
-use \UnexpectedValueException;
+use UnexpectedValueException;
 
-class User implements IDatabaseObject, JsonSerializable {
-
-  const DATE_SQL = 'Y-m-d H:i:s';
-
+class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSerializable
+{
   # Maximum SQL field lengths, alter as appropriate.
-  const MAX_NOTES         = 65535;
-  const MAX_PLEX_EMAIL    = 255;
-  const MAX_PLEX_THUMB    = 255;
-  const MAX_PLEX_TITLE    = 255;
-  const MAX_PLEX_USERNAME = 255;
+  public const MAX_NOTES         = 0xFFFF;
+  public const MAX_OPTIONS       = 0xFFFFFFFFFFFFFFFF;
+  public const MAX_PLEX_EMAIL    = 0xFF;
+  public const MAX_PLEX_ID       = 0xFFFFFFFFFFFFFFFF;
+  public const MAX_PLEX_THUMB    = 0xFF;
+  public const MAX_PLEX_TITLE    = 0xFF;
+  public const MAX_PLEX_USERNAME = 0xFF;
 
-  const OPTION_DEFAULT  = 0x00000000;
-  const OPTION_DISABLED = 0x00000001;
-  const OPTION_HIDDEN   = 0x00000002;
-  const OPTION_HOMEUSER = 0x00000004;
+  public const OPTION_DEFAULT  = 0x0000000000000000;
+  public const OPTION_DISABLED = 0x0000000000000001;
+  public const OPTION_HIDDEN   = 0x0000000000000002;
+  public const OPTION_HOMEUSER = 0x0000000000000004;
 
-  const RISK_UNASSESSED = 0;
-  const RISK_LOW        = 1;
-  const RISK_MEDIUM     = 2;
-  const RISK_HIGH       = 3;
+  public const RISK_UNASSESSED = 0;
+  public const RISK_LOW        = 1;
+  public const RISK_MEDIUM     = 2;
+  public const RISK_HIGH       = 3;
 
-  const UUID_REGEX = '/([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}){1}/';
+  protected DateTimeInterface $date_added;
+  protected ?DateTimeInterface $date_disabled;
+  protected ?DateTimeInterface $date_expired;
+  protected ?string $id;
+  protected string $notes;
+  protected int $options;
+  protected ?string $plex_email;
+  protected ?string $plex_id;
+  protected ?string $plex_thumb;
+  protected ?string $plex_title;
+  protected ?string $plex_username;
+  protected DateTimeInterface $record_updated;
+  protected int $risk;
+  protected ?string $user_id;
 
-  private $_id;
-
-  protected $date_added;
-  protected $date_disabled;
-  protected $date_expired;
-  protected $id;
-  protected $notes;
-  protected $options;
-  protected $plex_email;
-  protected $plex_id;
-  protected $plex_thumb;
-  protected $plex_title;
-  protected $plex_username;
-  protected $record_updated;
-  protected $risk;
-  protected $user_id;
-
-  public function __construct($value) {
-    if (is_null($value) || is_string($value)) {
-      $this->_id = $value;
-      $this->allocate();
-      return;
-    }
-
-    if ($value instanceof StdClass) {
+  public function __construct(StdClass|string|null $value)
+  {
+    if ($value instanceof StdClass)
+    {
       $this->allocateObject($value);
       return;
     }
 
-    throw new InvalidArgumentException('value must be a string or StdClass');
+    $this->setId($value);
+    if (!$this->allocate()) throw new UnexpectedValueException();
   }
 
-  public function allocate() {
-    // from the IDatabaseObject interface
-    $id = $this->_id;
+  public function allocate() : bool
+  {
+    $now = new DateTimeImmutable('now');
 
-    if (!(is_null($id) || is_string($id))) {
-      throw new InvalidArgumentException('value must be null or a string');
-    }
-
-    $now = new DateTime('now');
     $this->setDateAdded($now);
+    $this->setDateDisabled(null);
+    $this->setDateExpired(null);
     $this->setNotes('');
     $this->setOptions(self::OPTION_DEFAULT);
+    $this->setPlexEmail(null);
+    $this->setPlexId(null);
+    $this->setPlexThumb(null);
+    $this->setPlexTitle(null);
+    $this->setPlexUsername(null);
     $this->setRecordUpdated($now);
     $this->setRisk(self::RISK_UNASSESSED);
+    $this->setUserId(null);
 
-    if (empty($id)) return;
+    $id = $this->getId();
+    if (is_null($id)) return true;
 
-    $this->setId($id);
-
-    if (!isset(Common::$database)) {
-      Common::$database = DatabaseDriver::getDatabaseObject();
-    }
-
+    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
     $q = Common::$database->prepare('
       SELECT `date_added`, `date_disabled`, `date_expired`,
              UuidFromBin(`id`) AS `id`, `notes`, `options`, `plex_email`,
              `plex_id`, `plex_thumb`, `plex_title`, `plex_username`,
              `record_updated`, `risk`, UuidFromBin(`user_id`) AS `user_id`
-      FROM `plex_users` WHERE `id` = UuidToBin(:id) LIMIT 1;
+      FROM `plex_users` WHERE `id` = UuidToBin(?) LIMIT 1;
     ');
-    $q->bindParam(':id', $id, PDO::PARAM_STR);
-
-    $r = $q->execute();
-    if (!$r) {
-      throw new UnexpectedValueException('an error occurred finding user id');
-    }
-
-    if ($q->rowCount() != 1) {
-      throw new UnexpectedValueException(sprintf(
-        'user id: %s not found', $id
-      ));
-    }
-
-    $r = $q->fetchObject();
+    if (!$q || !$q->execute([$id]) || $q->rowCount() != 1) return false;
+    $this->allocateObject($q->fetchObject());
     $q->closeCursor();
-
-    $this->allocateObject($r);
+    return true;
   }
 
-  protected function allocateObject(StdClass $value) {
-    $tz = new DateTimeZone('Etc/UTC');
-
-    $this->setDateAdded(new DateTime($value->date_added, $tz));
-    $this->setDateDisabled(
-      $value->date_disabled ? new DateTime($value->date_disabled, $tz) : null
-    );
-    $this->setDateExpired(
-      $value->date_expired ? new DateTime($value->date_expired, $tz) : null
-    );
+  private function allocateObject(StdClass $value) : void
+  {
+    $this->setDateAdded($value->date_added);
+    $this->setDateDisabled($value->date_disabled);
+    $this->setDateExpired($value->date_expired);
     $this->setId($value->id);
     $this->setNotes($value->notes);
     $this->setOptions($value->options);
@@ -140,26 +109,17 @@ class User implements IDatabaseObject, JsonSerializable {
     $this->setPlexThumb($value->plex_thumb);
     $this->setPlexTitle($value->plex_title);
     $this->setPlexUsername($value->plex_username);
-    $this->setRecordUpdated(new DateTime($value->record_updated, $tz));
+    $this->setRecordUpdated($value->record_updated);
     $this->setRisk($value->risk);
     $this->setUserId($value->user_id);
   }
 
-  public function commit() {
-    // from the IDatabaseObject interface
+  public function commit() : bool
+  {
+    $id = $this->getId();
+    if (is_null($id)) $id = Uuid::uuid4();
 
-    if (!isset(Common::$database)) {
-      Common::$database = DatabaseDriver::getDatabaseObject();
-    }
-
-    if (empty($this->id)) {
-      $q = Common::$database->query('SELECT UUID();');
-      if (!$q) return $q;
-
-      $this->id = $q->fetch(PDO::FETCH_NUM)[0];
-      $q->closeCursor();
-    }
-
+    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
     $q = Common::$database->prepare('
       INSERT INTO `plex_users` (
         `date_added`, `date_disabled`, `date_expired`, `id`, `notes`, `options`,
@@ -180,73 +140,45 @@ class User implements IDatabaseObject, JsonSerializable {
       ;
     ');
 
-    $date_added = $this->date_added->format(self::DATE_SQL);
+    $p = [
+      ':added' => $this->getDateAdded(),
+      ':disabled' => $this->getDateDisabled(),
+      ':expired' => $this->getDateExpired(),
+      ':id' => $id,
+      ':notes' => $this->getNotes(),
+      ':options' => $this->getOptions(),
+      ':plex_email' => $this->getPlexEmail(),
+      ':plex_id' => $this->getPlexId(),
+      ':plex_thumb' => $this->getPlexThumb(),
+      ':plex_title' => $this->getPlexTitle(),
+      ':plex_username' => $this->getPlexUsername(),
+      ':record_updated' => $this->getRecordUpdated(),
+      ':risk' => $this->getRisk(),
+      ':user_id' => $this->getUserId(),
+    ];
 
-    $date_disabled = (
-      is_null($this->date_disabled) ?
-      null : $this->date_disabled->format(self::DATE_SQL)
-    );
+    foreach ($p as $k => $v)
+      if ($v instanceof DateTimeInterface)
+        $p[$k] = $v->format(self::DATE_SQL);
 
-    $date_expired = (
-      is_null($this->date_expired) ?
-      null : $this->date_expired->format(self::DATE_SQL)
-    );
-
-    $record_updated = $this->record_updated->format(self::DATE_SQL);
-
-    $q->bindParam(':added', $date_added, PDO::PARAM_STR);
-
-    $q->bindParam(':disabled', $date_disabled, (
-      is_null($date_disabled) ? PDO::PARAM_NULL : PDO::PARAM_STR
-    ));
-
-    $q->bindParam(':expired', $date_expired, (
-      is_null($date_expired) ? PDO::PARAM_NULL : PDO::PARAM_STR
-    ));
-
-    $q->bindParam(':id', $this->id, PDO::PARAM_STR);
-    $q->bindParam(':notes', $this->notes, PDO::PARAM_STR);
-    $q->bindParam(':options', $this->options, PDO::PARAM_INT);
-
-    $q->bindParam(':plex_email', $this->plex_email, (
-      is_null($this->plex_email) ? PDO::PARAM_NULL : PDO::PARAM_STR
-    ));
-
-    $q->bindParam(':plex_id', $this->plex_id, (
-      is_null($this->plex_id) ? PDO::PARAM_NULL : PDO::PARAM_INT
-    ));
-
-    $q->bindParam(':plex_thumb', $this->plex_thumb, (
-      is_null($this->plex_thumb) ? PDO::PARAM_NULL : PDO::PARAM_STR
-    ));
-
-    $q->bindParam(':plex_title', $this->plex_title, (
-      is_null($this->plex_title) ? PDO::PARAM_NULL : PDO::PARAM_STR
-    ));
-
-    $q->bindParam(':plex_username', $this->plex_username, (
-      is_null($this->plex_username) ? PDO::PARAM_NULL : PDO::PARAM_STR
-    ));
-
-    $q->bindParam(':record_updated', $record_updated, PDO::PARAM_STR);
-    $q->bindParam(':risk', $this->risk, PDO::PARAM_INT);
-
-    $q->bindParam(':user_id', $this->user_id, (
-      is_null($this->user_id) ? PDO::PARAM_NULL : PDO::PARAM_STR
-    ));
-
-    $r = $q->execute();
-    if (!$r) return $r;
-
+    if (!$q || !$q->execute($p)) return false;
     $q->closeCursor();
-    return $r;
+    return true;
   }
 
-  public static function getAll() {
-    if (!isset(Common::$database)) {
-      Common::$database = DatabaseDriver::getDatabaseObject();
-    }
+  public function deallocate() : bool
+  {
+    $id = $this->getId();
+    if (is_null($id)) return false;
+    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
+    $q = Common::$database->prepare('DELETE FROM `plex_users` WHERE `id` = ? LIMIT 1;');
+    try { return $q && $q->execute([$id]); }
+    finally { if ($q) $q->closeCursor(); }
+  }
 
+  public static function getAll() : ?array
+  {
+    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
     $q = Common::$database->prepare('
       SELECT `date_added`, `date_disabled`, `date_expired`,
              UuidFromBin(`id`) AS `id`, `notes`, `options`, `plex_email`,
@@ -255,15 +187,9 @@ class User implements IDatabaseObject, JsonSerializable {
       FROM `plex_users`
       ORDER BY `date_added`, `plex_title`, `plex_username`, `plex_email`;
     ');
-
-    $r = $q->execute();
-    if (!$r) return $r;
-
-    $r = array();
-    while ($obj = $q->fetchObject()) {
-      $r[] = new self($obj);
-    }
-
+    if (!$q || !$q->execute()) return null;
+    $r = [];
+    while ($row = $q->fetchObject()) $r[] = new self($row);
     $q->closeCursor();
     return $r;
   }
@@ -290,109 +216,127 @@ class User implements IDatabaseObject, JsonSerializable {
     return (new Gravatar($email))->getUrl($size, 'mp');
   }
 
-  public function getDateAdded() {
+  public function getDateAdded() : DateTimeInterface
+  {
     return $this->date_added;
   }
 
-  public function getDateDisabled() {
+  public function getDateDisabled() : ?DateTimeInterface
+  {
     return $this->date_disabled;
   }
 
-  public function getDateExpired() {
+  public function getDateExpired() : ?DateTimeInterface
+  {
     return $this->date_expired;
   }
 
-  public function getId() {
+  public function getId() : ?string
+  {
     return $this->id;
   }
 
-  public function getNotes() {
+  public function getNotes() : string
+  {
     return $this->notes;
   }
 
-  public function getOption(int $option) {
-    if (!is_int($option)) {
-      throw new InvalidArgumentException('value must be an int');
-    }
-
+  public function getOption(int $option) : bool
+  {
     return ($this->options & $option) === $option;
   }
 
-  public function getOptions() {
+  public function getOptions() : int
+  {
     return $this->options;
   }
 
-  public function getPlexEmail() {
+  public function getPlexEmail() : ?string
+  {
     return $this->plex_email;
   }
 
-  public function getPlexId() {
+  public function getPlexId() : ?int
+  {
     return $this->plex_id;
   }
 
-  public function getPlexThumb() {
+  public function getPlexThumb() : ?string
+  {
     return $this->plex_thumb;
   }
 
-  public function getPlexTitle() {
+  public function getPlexTitle() : ?string
+  {
     return $this->plex_title;
   }
 
-  public function getPlexUsername() {
+  public function getPlexUsername() : ?string
+  {
     return $this->plex_username;
   }
 
-  public function getRecordUpdated() {
+  public function getRecordUpdated() : DateTimeInterface
+  {
     return $this->record_updated;
   }
 
-  public function getRisk() {
+  public function getRisk() : int
+  {
     return $this->risk;
   }
 
-  public function getUser() {
-    return (
-      is_null($this->user_id) ? $this->user_id : new BaseUser($this->user_id)
-    );
+  public function getUser() : ?BaseUser
+  {
+    return is_null($this->user_id) ? null : new BaseUser($this->user_id);
   }
 
-  public function getUserId() {
+  public function getUserId() : ?string
+  {
     return $this->user_id;
   }
 
-  public function isDisabled() {
+  public function isDisabled() : bool
+  {
     return $this->getOption(self::OPTION_DISABLED);
   }
 
-  public function isExpired() {
+  public function isExpired() : bool
+  {
     return !is_null($this->getDateExpired());
   }
 
-  public function isHidden() {
+  public function isHidden() : bool
+  {
     return $this->getOption(self::OPTION_HIDDEN);
   }
 
-  public function isHighRisk() {
+  public function isHighRisk() : bool
+  {
     return $this->risk == self::RISK_HIGH;
   }
 
-  public function isHomeUser() {
+  public function isHomeUser() : bool
+  {
     return $this->getOption(self::OPTION_HOMEUSER);
   }
 
-  public function isMediumRisk() {
+  public function isMediumRisk() : bool
+  {
     return $this->risk == self::RISK_MEDIUM;
   }
 
-  public function isLowRisk() {
+  public function isLowRisk() : bool
+  {
     return $this->risk == self::RISK_LOW;
   }
 
-  public function isUnassessedRisk() {
+  public function isUnassessedRisk() : bool
+  {
     return $this->risk == self::RISK_UNASSESSED;
   }
 
-  public function jsonSerialize() : array
+  public function jsonSerialize() : mixed
   {
     return [
       'date_added' => $this->date_added,
@@ -412,200 +356,121 @@ class User implements IDatabaseObject, JsonSerializable {
     ];
   }
 
-  public function setDateAdded(DateTime $value) {
-    if (!$value instanceof DateTime) {
-      throw new InvalidArgumentException(
-        'value must be a DateTime object'
-      );
-    }
-
-    $this->date_added = $value;
+  public function setDateAdded(DateTimeInterface|string $value) : void
+  {
+    $this->date_added = (is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : $value);
   }
 
-  public function setDateDisabled($value) {
-    if (!(is_null($value) || $value instanceof DateTime)) {
-      throw new InvalidArgumentException(
-        'value must be null or a DateTime object'
-      );
-    }
-
-    $this->date_disabled = $value;
+  public function setDateDisabled(DateTimeInterface|string|null $value) : void
+  {
+    $this->date_disabled = (is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : $value);
   }
 
-  public function setDateExpired($value) {
-    if (!(is_null($value) || $value instanceof DateTime)) {
-      throw new InvalidArgumentException(
-        'value must be null or a DateTime object'
-      );
-    }
-
-    $this->date_expired = $value;
+  public function setDateExpired(DateTimeInterface|string|null $value) : void
+  {
+    $this->date_expired = (is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : $value);
   }
 
-  public function setId(string $value) {
-    if (!is_string($value) || preg_match(self::UUID_REGEX, $value) !== 1) {
-      throw new InvalidArgumentException(
-        'value must be a string in UUID format'
-      );
-    }
+  public function setId(?string $value) : void
+  {
+    if (!(is_null($value) || (is_string($value) && preg_match(self::UUID_REGEX, $value) === 1)))
+      throw new UnexpectedValueException('value must be null or a string in UUID format');
 
     $this->id = $value;
   }
 
-  public function setNotes(string $value) {
-    if (!is_string($value)) {
-      throw new InvalidArgumentException(
-        'value must be a string'
-      );
-    }
-
-    if (strlen($value) > self::MAX_NOTES) {
-      throw new LengthException(sprintf(
-        'value must be less than or equal to %d characters', self::MAX_NOTES
-      ));
-    }
+  public function setNotes(string $value) : void
+  {
+    if (strlen($value) > self::MAX_NOTES)
+      throw new UnexpectedValueException(sprintf('value must be between 0-%d characters', self::MAX_NOTES));
 
     $this->notes = $value;
   }
 
-  public function setOption(int $option, bool $value) {
-    if (!is_int($option)) {
-      throw new InvalidArgumentException('option must be an int');
-    }
-
-    if (!is_bool($value)) {
-      throw new InvalidArgumentException('value must be a bool');
-    }
-
-    if ($value) {
-      $this->options |= $option;
-    } else {
-      $this->options &= ~$option;
-    }
+  public function setOption(int $option, bool $value) : void
+  {
+    if ($value) $this->options |= $option;
+    else $this->options &= ~$option;
   }
 
-  public function setOptions(int $value) {
-    if (!is_int($value) || $value < 0) {
-      throw new InvalidArgumentException('value must be a positive integer');
-    }
+  public function setOptions(int $value) : void
+  {
+    if ($value < 0 || $value > self::MAX_OPTIONS)
+      throw new UnexpectedValueException(sprintf('value must be an integer between range 0-%d', self::MAX_OPTIONS));
 
     $this->options = $value;
   }
 
-  public function setPlexEmail($value, $auto_null = true) {
-    if (!(is_null($value) || is_string($value))) {
-      throw new InvalidArgumentException(
-        'value must be null or a string'
-      );
-    }
+  public function setPlexEmail(?string $value, bool $auto_null = true) : void
+  {
+    if ($auto_null && is_string($value) && empty($value)) $value = null;
 
-    if ($auto_null && is_string($value) && empty($value)) { $value = null; }
-
-    if (is_string($value) && strlen($value) > self::MAX_PLEX_EMAIL) {
-      throw new LengthException(sprintf(
-        'value must be less than or equal to %d characters',
-        self::MAX_PLEX_EMAIL
-      ));
-    }
+    if (is_string($value) && strlen($value) > self::MAX_PLEX_EMAIL)
+      throw new UnexpectedValueException(sprintf('value must be null or a string between 1-%d characters', self::MAX_PLEX_EMAIL));
 
     $this->plex_email = $value;
   }
 
-  public function setPlexId(?int $value)
+  public function setPlexId(?int $value) : void
   {
+    if (!is_null($value) && ($value < 0 || $value > self::MAX_PLEX_ID))
+      throw new UnexpectedValueException(sprintf('value must be null or an integer between 0-%d', self::MAX_PLEX_ID));
+
     $this->plex_id = $value;
   }
 
-  public function setPlexThumb($value, $auto_null = true) {
-    if (!(is_null($value) || is_string($value))) {
-      throw new InvalidArgumentException(
-        'value must be null or a string'
-      );
-    }
-
-    if ($auto_null && is_string($value) && empty($value)) { $value = null; }
-
-    if (is_string($value) && strlen($value) > self::MAX_PLEX_THUMB) {
-      throw new LengthException(sprintf(
-        'value must be less than or equal to %d characters',
-        self::MAX_PLEX_THUMB
-      ));
-    }
+  public function setPlexThumb(?string $value, bool $auto_null = true) : void
+  {
+    if ($auto_null && is_string($value) && empty($value)) $value = null;
+  
+    if (is_string($value) && strlen($value) > self::MAX_PLEX_THUMB)
+      throw new UnexpectedValueException(sprintf('value must be null or a string between 1-%d characters', self::MAX_PLEX_THUMB));
 
     $this->plex_thumb = $value;
   }
 
-  public function setPlexTitle($value, $auto_null = true) {
-    if (!(is_null($value) || is_string($value))) {
-      throw new InvalidArgumentException(
-        'value must be null or a string'
-      );
-    }
+  public function setPlexTitle(?string $value, bool $auto_null = true) : void
+  {
+    if ($auto_null && is_string($value) && empty($value)) $value = null;
 
-    if ($auto_null && is_string($value) && empty($value)) { $value = null; }
-
-    if (is_string($value) && strlen($value) > self::MAX_PLEX_TITLE) {
-      throw new LengthException(sprintf(
-        'value must be less than or equal to %d characters',
-        self::MAX_PLEX_TITLE
-      ));
-    }
+    if (is_string($value) && strlen($value) > self::MAX_PLEX_TITLE)
+      throw new UnexpectedValueException(sprintf('value must be null or a string between 1-%d characters', self::MAX_PLEX_TITLE));
 
     $this->plex_title = $value;
   }
 
-  public function setPlexUsername($value, $auto_null = true) {
-    if (!(is_null($value) || is_string($value))) {
-      throw new InvalidArgumentException(
-        'value must be null or a string'
-      );
-    }
+  public function setPlexUsername(?string $value, bool $auto_null = true) : void
+  {
+    if ($auto_null && is_string($value) && empty($value)) $value = null;
 
-    if ($auto_null && is_string($value) && empty($value)) { $value = null; }
-
-    if (is_string($value) && strlen($value) > self::MAX_PLEX_USERNAME) {
-      throw new LengthException(sprintf(
-        'value must be less than or equal to %d characters',
-        self::MAX_PLEX_USERNAME
-      ));
-    }
+    if (is_string($value) && strlen($value) > self::MAX_PLEX_USERNAME)
+      throw new UnexpectedValueException(sprintf('value must be null or a string between 1-%d characters', self::MAX_PLEX_USERNAME));
 
     $this->plex_username = $value;
   }
 
-  public function setRecordUpdated(DateTime $value) {
-    if (!$value instanceof DateTime) {
-      throw new InvalidArgumentException(
-        'value must be a DateTime object'
-      );
-    }
-
-    $this->record_updated = $value;
+  public function setRecordUpdated(DateTimeInterface|string $value) : void
+  {
+    $this->record_updated = (is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : $value);
   }
 
-  public function setRisk(int $value) {
-    if (!is_int($value) || $value < 0 || $value > 3) {
-      throw new InvalidArgumentException(
-        'value must be an integer between range 0-3'
-      );
-    }
+  public function setRisk(int $value) : void
+  {
+    if ($value < self::RISK_UNASSESSED || $value > self::RISK_HIGH)
+      throw new UnexpectedValueException(sprintf('value must be an integer between range %d-%d', self::RISK_UNASSESSED, self::RISK_HIGH));
 
     $this->risk = $value;
   }
 
-  public function setUser(BaseUser $value) {
-    return $this->setUserId(
-      is_null($value) ? $value : $value->getId()
-    );
+  public function setUser(BaseUser|null $value) : void
+  {
+    $this->setUserId(!is_null($value) ? $value->getId() : $value);
   }
 
-  public function setUserId($value) {
-    if (!(is_null($value) || is_string($value)
-      || preg_match(self::UUID_REGEX, $value) === 1)) {
-      throw new InvalidArgumentException(
-        'value must be null or a string in UUID format'
-      );
-    }
+  public function setUserId(string|null $value) : void
+  {
+    if (!is_null($value) && preg_match(self::UUID_REGEX, $value) !== 1)
+      throw new UnexpectedValueException('value must be null or a string in UUID format');
 
     $this->user_id = $value;
   }

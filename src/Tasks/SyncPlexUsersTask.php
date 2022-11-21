@@ -51,18 +51,18 @@ class SyncPlexUsersTask extends Task
 
                 foreach ($plex_users as $__plex_id => $plex_user)
                 {
-                    $__plex_email = $plex_user->getEmail();
-                    $__plex_thumb = $plex_user->getThumb();
-                    $__plex_title = $plex_user->getTitle();
-                    $__plex_username = $plex_user->getUsername();
-                    $__home = $plex_user->getHome();
-
-                    if ((!is_null($_plex_id) && $__plex_id === $_plex_id)
-                        || (is_null($_plex_id) && !empty($_plex_email) && strtolower($_plex_email) == strtolower($__plex_email))
-                        || (is_null($_plex_id) && empty($_plex_email) && !empty($_plex_username) && strtolower($_plex_username) == strtolower($__plex_username))
-                        || (is_null($_plex_id) && empty($_plex_email) && empty($_plex_username) && !empty($_plex_title) && strtolower($_plex_title) == strtolower($__plex_title)))
+                    if ($this->match($user, $plex_user))
                     {
-                        $synced = true;
+                        //  $_property is from our plex_users table
+                        // $__property is from api result
+
+                        // $users, $user is from our plex_users table
+                        // $plex_users, $plex_user is from api result
+                        $__plex_email = $plex_user->getEmail();
+                        $__plex_thumb = $plex_user->getThumb();
+                        $__plex_title = $plex_user->getTitle();
+                        $__plex_username = $plex_user->getUsername();
+                        $__home = $plex_user->getHome();
 
                         $user->setPlexEmail($__plex_email);
                         $user->setPlexId($__plex_id);
@@ -83,6 +83,7 @@ class SyncPlexUsersTask extends Task
                         }
 
                         $user->commit();
+                        $synced = true;
                         $this->model->task_result['mapped_plex_users'][] = [
                             'plex_user' => $user,
                             'plextv_user' => $plex_user
@@ -158,5 +159,17 @@ class SyncPlexUsersTask extends Task
         {
             $this->model->_responseCode = ($this->model->task_result['success'] ? 200 : 500);
         }
+    }
+
+    protected function match($our_user, $api_user) : bool
+    {
+        $match = false;
+
+        if (!$match && !is_null($_plex_id) && $__plex_id === $_plex_id) $match = true;
+        if (!$match && is_null($_plex_id) && !empty($_plex_email) && !empty($__plex_email) && strtolower($_plex_email) == strtolower($__plex_email)) $match = true;
+        if (!$match && is_null($_plex_id) && empty($_plex_email) && !empty($_plex_username) && strtolower($_plex_username) == strtolower($__plex_username))
+        if (!$match && is_null($_plex_id) && empty($_plex_email) && empty($_plex_username) && !empty($_plex_title) && strtolower($_plex_title) == strtolower($__plex_title)))
+
+        return $match;
     }
 }

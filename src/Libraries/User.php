@@ -4,127 +4,103 @@ namespace CarlBennett\Tools\Libraries;
 
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\MVC\Libraries\DatabaseDriver;
-use \CarlBennett\Tools\Libraries\IDatabaseObject;
+use \CarlBennett\Tools\Libraries\DateTimeImmutable;
 use \CarlBennett\Tools\Libraries\User\Acl;
 use \CarlBennett\Tools\Libraries\User\Invite as Invitation;
-
-use \DateTime;
+use \DateTimeInterface;
 use \DateTimeZone;
-use \InvalidArgumentException;
-use \LengthException;
-use \PDO;
-use \PDOException;
+use \Ramsey\Uuid\Uuid;
 use \StdClass;
+use \Throwable;
 use \UnexpectedValueException;
 
-class User implements IDatabaseObject {
-
-  const DATE_SQL = 'Y-m-d H:i:s';
-
-  const DEFAULT_OPTION   = 0x00000000;
-  const DEFAULT_TIMEZONE = 'Etc/UTC';
+class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSerializable
+{
+  public const DEFAULT_OPTION   = 0x00000000;
+  public const DEFAULT_TIMEZONE = 'Etc/UTC';
 
   # Maximum SQL field lengths, alter as appropriate.
-  const MAX_BIOGRAPHY         = 65535;
-  const MAX_DISPLAY_NAME      = 191;
-  const MAX_EMAIL             = 191;
-  const MAX_INTERNAL_NOTES    = 65535;
-  const MAX_INVITES_AVAILABLE = 65535;
-  const MAX_TIMEZONE          = 191;
+  public const MAX_BIOGRAPHY         = 0xFFFF;
+  public const MAX_DISPLAY_NAME      = 0xFF;
+  public const MAX_EMAIL             = 0xFF;
+  public const MAX_INTERNAL_NOTES    = 0xFFFF;
+  public const MAX_INVITES_AVAILABLE = 0xFFFF;
+  public const MAX_OPTIONS           = 0xFFFFFFFFFFFFFFFF;
+  public const MAX_TIMEZONE          = 0xFF;
 
-  const OPTION_DISABLED = 0x00000001;
-  const OPTION_BANNED   = 0x00000002;
+  public const OPTION_DISABLED = 0x00000001;
+  public const OPTION_BANNED   = 0x00000002;
 
-  const PASSWORD_CHECK_VERIFIED = 1;
-  const PASSWORD_CHECK_UPGRADE  = 2;
+  public const PASSWORD_CHECK_VERIFIED = 1;
+  public const PASSWORD_CHECK_UPGRADE  = 2;
 
-  const UUID_REGEX = '/([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}){1}/';
+  protected string $biography;
+  protected DateTimeInterface $date_added;
+  protected ?DateTimeInterface $date_banned;
+  protected ?DateTimeInterface $date_disabled;
+  protected string $display_name;
+  protected string $email;
+  protected ?string $id;
+  protected string $internal_notes;
+  protected int $invites_available;
+  protected int $options;
+  protected string $password_hash;
+  protected DateTimeInterface $record_updated;
+  protected string $timezone;
 
-  private $_id;
-
-  protected $biography;
-  protected $date_added;
-  protected $date_banned;
-  protected $date_disabled;
-  protected $display_name;
-  protected $email;
-  protected $id;
-  protected $internal_notes;
-  protected $invites_available;
-  protected $options;
-  protected $password_hash;
-  protected $record_updated;
-  protected $timezone;
-
-  public function __construct($value) {
-    if (is_null($value) || is_string($value)) {
-      $this->_id = $value;
-      $this->allocate();
-      return;
-    }
-
-    if ($value instanceof StdClass) {
+  public function __construct(StdClass|string|null $value)
+  {
+    if ($value instanceof StdClass)
+    {
       $this->allocateObject($value);
       return;
     }
 
-    throw new InvalidArgumentException('value must be a string or StdClass');
+    $this->setId($value);
+    if (!$this->allocate()) throw new UnexpectedValueException();
   }
 
-  public function allocate() {
-    // from the IDatabaseObject interface
-    $id = $this->_id;
+  public function allocate() : bool
+  {
+    $now = new DateTimeImmutable('now');
 
-    if (!(is_null($id) || is_string($id))) {
-      throw new InvalidArgumentException('value must be null or a string');
-    }
+    $this->setBiography('');
+    $this->setDateAdded($now);
+    $this->setDateBanned(null);
+    $this->setDateDisabled(null);
+    $this->setName('');
+    $this->setEmail('');
+    $this->setInternalNotes('');
+    $this->setInvitesAvailable(0);
+    $this->setOptions(self::DEFAULT_OPTION);
+    $this->setPasswordHash('');
+    $this->setRecordUpdated($now);
+    $this->setTimezone(self::DEFAULT_TIMEZONE);
 
-    if (empty($id)) return;
+    $id = $this->getId();
+    if (is_null($id)) return true;
 
-    $this->setId($id);
-
-    if (!isset(Common::$database)) {
-      Common::$database = DatabaseDriver::getDatabaseObject();
-    }
-
+    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
     $q = Common::$database->prepare('
       SELECT
         `biography`, `date_added`, `date_banned`, `date_disabled`,
         `display_name`, `email`, UuidFromBin(`id`) AS `id`, `internal_notes`,
         `invites_available`, `options`, `password_hash`, `record_updated`,
         `timezone`
-      FROM `users` WHERE `id` = UuidToBin(:id) LIMIT 1;
+      FROM `users` WHERE `id` = UuidToBin(?) LIMIT 1;
     ');
-    $q->bindParam(':id', $id, PDO::PARAM_STR);
-
-    $r = $q->execute();
-    if (!$r) {
-      throw new UnexpectedValueException('an error occurred finding user id');
-    }
-
-    if ($q->rowCount() != 1) {
-      throw new UnexpectedValueException(sprintf(
-        'user id: %s not found', $id
-      ));
-    }
-
-    $r = $q->fetchObject();
+    if (!$q || !$q->execute([$id])) return false;
+    $this->allocateObject($q->fetchObject());
     $q->closeCursor();
-
-    $this->allocateObject($r);
+    return true;
   }
 
-  protected function allocateObject(StdClass $value) {
-    $tz = new DateTimeZone('Etc/UTC');
-
+  protected function allocateObject(StdClass $value) : void
+  {
     $this->setBiography($value->biography);
-    $this->setDateAdded(new DateTime($value->date_added, $tz));
-    $this->setDateBanned(
-      $value->date_banned ? new DateTime($value->date_banned, $tz) : null
-    );
-    $this->setDateDisabled(
-      $value->date_disabled ? new DateTime($value->date_disabled, $tz) : null
-    );
+    $this->setDateAdded($value->date_added);
+    $this->setDateBanned($value->date_banned);
+    $this->setDateDisabled($value->date_disabled);
     $this->setEmail($value->email);
     $this->setId($value->id);
     $this->setInternalNotes($value->internal_notes);
@@ -132,11 +108,12 @@ class User implements IDatabaseObject {
     $this->setName($value->display_name);
     $this->setOptions($value->options);
     $this->setPasswordHash($value->password_hash);
-    $this->setRecordUpdated(new DateTime($value->record_updated, $tz));
+    $this->setRecordUpdated($value->record_updated);
     $this->setTimezone($value->timezone);
   }
 
-  public function checkPassword(string $password) {
+  public function checkPassword(string $password) : int
+  {
     $cost = Common::$config->users->crypt_cost;
     $hash = $this->getPasswordHash();
     $rehash = password_needs_rehash(
@@ -152,21 +129,12 @@ class User implements IDatabaseObject {
     return $r;
   }
 
-  public function commit() {
-    // from the IDatabaseObject interface
+  public function commit() : bool
+  {
+    $id = $this->getId();
+    if (is_null($id)) $id = Uuid::uuid4();
 
-    if (!isset(Common::$database)) {
-      Common::$database = DatabaseDriver::getDatabaseObject();
-    }
-
-    if (empty($this->id)) {
-      $q = Common::$database->query('SELECT UUID();');
-      if (!$q) return $q;
-
-      $this->id = $q->fetch(PDO::FETCH_NUM)[0];
-      $q->closeCursor();
-    }
-
+    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
     $q = Common::$database->prepare('
       INSERT INTO `users` (
         `biography`, `date_added`, `date_banned`, `date_disabled`,
@@ -184,67 +152,51 @@ class User implements IDatabaseObject {
       ;
     ');
 
-    $date_added = $this->date_added->format(self::DATE_SQL);
+    $p = [
+      ':added' => $this->getDateAdded(),
+      ':banned' => $this->getDateBanned(),
+      ':bio' => $this->getBiography(),
+      ':disabled' => $this->getDateDisabled(),
+      ':email' => $this->getEmail(),
+      ':id' => $id,
+      ':int_notes' => $this->getInternalNotes(),
+      ':invites_a' => $this->getInvitesAvailable(),
+      ':name' => $this->getName(),
+      ':options' => $this->getOptions(),
+      ':password' => $this->getPasswordHash(),
+      ':record_updated' => $this->getRecordUpdated(),
+      ':tz' => $this->getTimezone(),
+    ];
 
-    $date_banned = (
-      is_null($this->date_banned) ?
-      null : $this->date_banned->format(self::DATE_SQL)
-    );
+    foreach ($p as $k => $v)
+      if ($v instanceof DateTimeInterface)
+        $p[$k] = $v->format(self::DATE_SQL);
 
-    $date_disabled = (
-      is_null($this->date_disabled) ?
-      null : $this->date_disabled->format(self::DATE_SQL)
-    );
-
-    $record_updated = $this->record_updated->format(self::DATE_SQL);
-
-    $q->bindParam(':added', $date_added, PDO::PARAM_STR);
-
-    $q->bindParam(':banned', $date_banned, (
-      is_null($date_banned) ? PDO::PARAM_NULL : PDO::PARAM_STR
-    ));
-
-    $q->bindParam(':bio', $this->biography, PDO::PARAM_STR);
-
-    $q->bindParam(':disabled', $date_disabled, (
-      is_null($date_disabled) ? PDO::PARAM_NULL : PDO::PARAM_STR
-    ));
-
-    $q->bindParam(':email', $this->email, PDO::PARAM_STR);
-    $q->bindParam(':id', $this->id, PDO::PARAM_STR);
-    $q->bindParam(':int_notes', $this->internal_notes, PDO::PARAM_STR);
-    $q->bindParam(':invites_a', $this->invites_available, PDO::PARAM_INT);
-    $q->bindParam(':name', $this->display_name, PDO::PARAM_STR);
-    $q->bindParam(':options', $this->options, PDO::PARAM_INT);
-    $q->bindParam(':password', $this->password_hash, PDO::PARAM_STR);
-    $q->bindParam(':record_updated', $record_updated, PDO::PARAM_STR);
-    $q->bindParam(':tz', $this->timezone, PDO::PARAM_STR);
-
-    $r = $q->execute();
-    if (!$r) return $r;
-
+    if (!$q || !$q->execute($p)) return false;
     $q->closeCursor();
-    return $r;
+    return true;
   }
 
-  public static function createPassword(string $password) : string {
-    if (!is_string($password)) {
-      throw new InvalidArgumentException('value must be a string');
-    }
-
-    if (empty($password)) {
-      throw new LengthException('value must not be empty');
-    }
-
+  public static function createPassword(string $password) : string
+  {
+    if (empty($password)) throw new UnexpectedValueException('value must not be empty');
     $cost = Common::$config->users->crypt_cost;
     return password_hash($password, PASSWORD_BCRYPT, array('cost' => $cost));
   }
 
-  public static function getAll() {
-    if (!isset(Common::$database)) {
-      Common::$database = DatabaseDriver::getDatabaseObject();
-    }
+  public function deallocate() : bool
+  {
+    $id = $this->getId();
+    if (is_null($id)) return false;
+    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
+    $q = Common::$database->prepare('DELETE FROM `users` WHERE `id` = ? LIMIT 1;');
+    try { return $q && $q->execute([$id]); }
+    finally { if ($q) $q->closeCursor(); }
+  }
 
+  public static function getAll() : ?array
+  {
+    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
     $q = Common::$database->prepare('
       SELECT
         `biography`, `date_added`, `date_banned`, `date_disabled`,
@@ -254,167 +206,141 @@ class User implements IDatabaseObject {
       FROM `users`
       ORDER BY `date_added`, `display_name`, `email`;
     ');
-
-    $r = $q->execute();
-    if (!$r) return $r;
-
-    $r = array();
-    while ($obj = $q->fetchObject()) {
-      $r[] = new self($obj);
-    }
-
+    if (!$q || !$q->execute()) return null;
+    $r = [];
+    while ($row = $q->fetchObject()) $r[] = new self($row);
     $q->closeCursor();
     return $r;
   }
 
-  public static function getByEmail(string $value) {
-    if (!isset(Common::$database)) {
-      Common::$database = DatabaseDriver::getDatabaseObject();
-    }
-
+  public static function getByEmail(string $value) : self|bool
+  {
+    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
     $q = Common::$database->prepare('
       SELECT
         `biography`, `date_added`, `date_banned`, `date_disabled`,
         `display_name`, `email`, UuidFromBin(`id`) AS `id`, `internal_notes`,
         `invites_available`, `options`, `password_hash`, `record_updated`,
         `timezone`
-      FROM `users` WHERE `email` = :email;
+      FROM `users` WHERE `email` = ?;
     ');
-    $q->bindParam(':email', $value, PDO::PARAM_STR);
-
-    $r = $q->execute();
-    if (!$r) return $r;
-
-    if ($q->rowCount()) {
-      $r = new self($q->fetchObject());
-    } else {
-      $r = false;
-    }
-
+    if (!$q || !$q->execute([$value]) || $q->rowCount() != 1) return false;
+    $r = new self($q->fetchObject());
     $q->closeCursor();
     return $r;
   }
 
-  public function getAclObject() {
+  public function getAclObject() : Acl
+  {
     return new Acl($this->id);
   }
 
-  public function getBiography() {
+  public function getBiography() : string
+  {
     return $this->biography;
   }
 
-  public function getDateAdded() {
+  public function getDateAdded() : DateTimeInterface
+  {
     return $this->date_added;
   }
 
-  public function getDateBanned() {
+  public function getDateBanned() : ?DateTimeInterface
+  {
     return $this->date_banned;
   }
 
-  public function getDateDisabled() {
+  public function getDateDisabled() : ?DateTimeInterface
+  {
     return $this->date_disabled;
   }
 
-  public function getEmail() {
+  public function getEmail() : string
+  {
     return $this->email;
   }
 
-  public function getId() {
+  public function getId() : ?string
+  {
     return $this->id;
   }
 
-  public function getInternalNotes() {
+  public function getInternalNotes() : string
+  {
     return $this->internal_notes;
   }
 
-  public function getInvitesAvailable() {
+  public function getInvitesAvailable() : int
+  {
     return $this->invites_available;
   }
 
-  public function getInvitesSent() {
-    if (!isset($this->id) || empty($this->id)) {
-      throw new InvalidArgumentException('id must be set prior to call');
-    }
-
-    if (!isset(Common::$database)) {
-      Common::$database = DatabaseDriver::getDatabaseObject();
-    }
-
+  public function getInvitesSent() : ?array
+  {
+    $id = $this->getId();
+    if (is_null($id)) throw new UnexpectedValueException('id must be set prior to call');
+    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
     $q = Common::$database->prepare(
-      'SELECT UuidFromBin(`id`) AS `id` FROM `user_invites`
-      WHERE `invited_by` = UuidToBin(:id);'
+      'SELECT UuidFromBin(`id`) AS `id` FROM `user_invites` WHERE `invited_by` = UuidToBin(?);'
     );
-    $q->bindParam(':id', $this->id, PDO::PARAM_STR);
-
-    $r = $q->execute();
-    if (!$r) return $r;
-
-    $invites = array();
-    while ($row = $q->fetch(PDO::FETCH_NUM)) {
-      $invites[] = new Invitation($row[0]);
-    };
-
-    $q->closeCursor();
-    return $invites;
-  }
-
-  public function getInvitesUsed() {
-    if (!isset($this->id) || empty($this->id)) {
-      throw new InvalidArgumentException('id must be set prior to call');
-    }
-
-    if (!isset(Common::$database)) {
-      Common::$database = DatabaseDriver::getDatabaseObject();
-    }
-
-    $q = Common::$database->prepare(
-      'SELECT COUNT(*) FROM `user_invites` WHERE `invited_by` = UuidToBin(:id);'
-    );
-    $q->bindParam(':id', $this->id, PDO::PARAM_STR);
-
-    $r = $q->execute();
-    if (!$r) return $r;
-
-    $r = $q->fetch(PDO::FETCH_NUM)[0];
-
+    if (!$q || !$q->execute([$id])) return null;
+    $r = [];
+    while ($row = $q->fetchObject()) $r[] = new Invitation($row->id);
     $q->closeCursor();
     return $r;
   }
 
-  public function getName() {
+  public function getInvitesUsed() : ?int
+  {
+    $id = $this->getId();
+    if (is_null($id)) throw new UnexpectedValueException('id must be set prior to call');
+    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
+    $q = Common::$database->prepare(
+      'SELECT COUNT(*) AS `count` FROM `user_invites` WHERE `invited_by` = UuidToBin(?);'
+    );
+    if (!$q || !$q->execute([$id])) return null;
+    $r = $q->fetchObject()->count;
+    $q->closeCursor();
+    return $r;
+  }
+
+  public function getName() : string
+  {
     return $this->display_name;
   }
 
-  public function getOption(int $option) {
-    if (!is_int($option)) {
-      throw new InvalidArgumentException('value must be an int');
-    }
-
+  public function getOption(int $option) : bool
+  {
     return ($this->options & $option) === $option;
   }
 
-  public function getOptions() {
+  public function getOptions() : int
+  {
     return $this->options;
   }
 
-  public function getPasswordHash() {
+  public function getPasswordHash() : string
+  {
     return $this->password_hash;
   }
 
-  public function getRecordUpdated() {
+  public function getRecordUpdated() : DateTimeInterface
+  {
     return $this->record_updated;
   }
 
-  public function getTimezone() {
+  public function getTimezone() : string
+  {
     return $this->timezone;
   }
 
-  public function getTimezoneObject() {
-    if (empty($this->timezone)) return null;
-    return new DateTimeZone($this->timezone);
+  public function getTimezoneObject() : ?DateTimeZone
+  {
+    return empty($this->timezone) ? null : new DateTimeZone($this->timezone);
   }
 
-  public function getUrl($subcontroller = '') {
+  public function getUrl(string $subcontroller = '') : string
+  {
     return Common::relativeUrlToAbsolute(sprintf(
       '/user/%s%s', (
         empty($subcontroller) ? '' : $subcontroller . '/'
@@ -422,203 +348,150 @@ class User implements IDatabaseObject {
     ));
   }
 
-  public function isBanned() {
+  public function isBanned() : bool
+  {
     return $this->getOption(self::OPTION_BANNED);
   }
 
-  public function isDisabled() {
+  public function isDisabled() : bool
+  {
     return $this->getOption(self::OPTION_DISABLED);
   }
 
-  public function setBiography(string $value) {
-    if (!is_string($value)) {
-      throw new InvalidArgumentException('value must be a string');
-    }
+  public function jsonSerialize() : mixed
+  {
+    return [
+      'biography' => $this->getBiography(),
+      'date_added' => $this->getDateAdded(),
+      'date_banned' => $this->getDateBanned(),
+      'date_disabled' => $this->getDateDisabled(),
+      'email' => $this->getEmail(),
+      'id' => $this->getId(),
+      'invites_available' => $this->getInvitesAvailable(),
+      'name' => $this->getName(),
+      'notes' => $this->getInternalNotes(),
+      'options' => $this->getOptions(),
+      'record_updated' => $this->getRecordUpdated(),
+      'timezone' => $this->getTimezone(),
+    ];
+  }
 
-    if (strlen($value) > self::MAX_BIOGRAPHY) {
-      throw new LengthException(sprintf(
-        'value must be less than or equal to %d characters', self::MAX_BIOGRAPHY
+  public function setBiography(string $value) : void
+  {
+    if (strlen($value) > self::MAX_BIOGRAPHY)
+      throw new UnexpectedValueException(sprintf(
+        'value must be between 0-%d characters', self::MAX_BIOGRAPHY
       ));
-    }
 
     $this->biography = $value;
   }
 
-  public function setDateAdded(DateTime $value) {
-    if (!$value instanceof DateTime) {
-      throw new InvalidArgumentException(
-        'value must be a DateTime object'
-      );
-    }
-
-    $this->date_added = $value;
+  public function setDateAdded(DateTimeInterface|string $value) : void
+  {
+    $this->date_added = (is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : $value);
   }
 
-  public function setDateBanned($value) {
-    if (!(is_null($value) || $value instanceof DateTime)) {
-      throw new InvalidArgumentException(
-        'value must be null or a DateTime object'
-      );
-    }
-
-    $this->date_banned = $value;
+  public function setDateBanned(DateTimeInterface|string|null $value) : void
+  {
+    $this->date_banned = (is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : $value);
   }
 
-  public function setDateDisabled($value) {
-    if (!(is_null($value) || $value instanceof DateTime)) {
-      throw new InvalidArgumentException(
-        'value must be null or a DateTime object'
-      );
-    }
-
-    $this->date_disabled = $value;
+  public function setDateDisabled(DateTimeInterface|string|null $value) : void
+  {
+    $this->date_disabled = (is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : $value);
   }
 
-  public function setEmail($value) {
-    if (!(is_null($value) || is_string($value))) {
-      throw new InvalidArgumentException(
-        'value must be null or a string'
-      );
-    }
-
-    if (is_string($value) && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
-      throw new UnexpectedValueException(
-        'value must be a valid email address'
-      );
-    }
-
-    if (is_string($value) && strlen($value) > self::MAX_EMAIL) {
-      throw new LengthException(sprintf(
-        'email must be less than or equal to %d characters', self::MAX_EMAIL
+  public function setEmail(?string $value) : void
+  {
+    if (is_string($value) && strlen($value) > self::MAX_EMAIL)
+      throw new UnexpectedValueException(sprintf(
+        'value must be between 0-%d characters', self::MAX_EMAIL
       ));
-    }
+
+    if (is_string($value) && !empty($value) && !filter_var($value, FILTER_VALIDATE_EMAIL))
+      throw new UnexpectedValueException('value must be a valid email address');
 
     $this->email = $value;
   }
 
-  public function setId(string $value) {
-    if (!is_string($value) || preg_match(self::UUID_REGEX, $value) !== 1) {
-      throw new InvalidArgumentException(
-        'value must be a string in UUID format'
-      );
-    }
+  public function setId(?string $value) : void
+  {
+    if (!(is_null($value) || (is_string($value) && preg_match(self::UUID_REGEX, $value) === 1)))
+      throw new UnexpectedValueException('value must be null or a string in UUID format');
 
     $this->id = $value;
   }
 
-  public function setInternalNotes(string $value) {
-    if (!is_string($value)) {
-      throw new InvalidArgumentException('value must be a string');
-    }
-
-    if (strlen($value) > self::MAX_INTERNAL_NOTES) {
-      throw new LengthException(sprintf(
-        'value must be less than or equal to %d characters',
-        self::MAX_INTERNAL_NOTES
+  public function setInternalNotes(string $value) : void
+  {
+    if (strlen($value) > self::MAX_INTERNAL_NOTES)
+      throw new UnexpectedValueException(sprintf(
+        'value must be between 0-%d characters', self::MAX_INTERNAL_NOTES
       ));
-    }
 
     $this->internal_notes = $value;
   }
 
-  public function setInvitesAvailable(int $value) {
-    if ($value < 0 || $value > self::MAX_INVITES_AVAILABLE) {
-      throw new InvalidArgumentException(sprintf(
-        'value must be an integer in the 0-%d range',
-        self::MAX_INVITES_AVAILABLE
+  public function setInvitesAvailable(int $value) : void
+  {
+    if ($value < 0 || $value > self::MAX_INVITES_AVAILABLE)
+      throw new UnexpectedValueException(sprintf(
+        'value must be an integer between range 0-%d', self::MAX_INVITES_AVAILABLE
       ));
-    }
 
     $this->invites_available = $value;
   }
 
-  public function setName(string $value) {
-    if (!is_string($value)) {
-      throw new InvalidArgumentException(
-        'value must be a string'
-      );
-    }
-
-    if (strlen($value) > self::MAX_DISPLAY_NAME) {
-      throw new LengthException(sprintf(
-        'value must be less than or equal to %d characters',
-        self::MAX_DISPLAY_NAME
+  public function setName(string $value) : void
+  {
+    if (strlen($value) > self::MAX_DISPLAY_NAME)
+      throw new UnexpectedValueException(sprintf(
+        'value must be between 0-%d characters', self::MAX_DISPLAY_NAME
       ));
-    }
 
     $this->display_name = $value;
   }
 
-  public function setOption(int $option, bool $value) {
-    if (!is_int($option)) {
-      throw new InvalidArgumentException('option must be an int');
-    }
-
-    if (!is_bool($value)) {
-      throw new InvalidArgumentException('value must be a bool');
-    }
-
-    if ($value) {
-      $this->options |= $option;
-    } else {
-      $this->options &= ~$option;
-    }
+  public function setOption(int $option, bool $value) : void
+  {
+    if ($value) $this->options |= $option;
+    else $this->options &= ~$option;
   }
 
-  public function setOptions(int $value) {
-    if (!is_int($value) || $value < 0) {
-      throw new InvalidArgumentException('value must be a positive integer');
-    }
+  public function setOptions(int $value) : void
+  {
+    if ($value < 0 || $value > self::MAX_OPTIONS)
+      throw new UnexpectedValueException(sprintf('value must be an integer between range 0-%d', self::MAX_OPTIONS));
 
     $this->options = $value;
   }
 
-  public function setPasswordHash(string $value) {
-    if (!is_string($value)) {
-      throw new InvalidArgumentException('value must be a string');
-    }
-
-    if (empty($value)) {
-      throw new LengthException('value must be non-empty');
-    }
-
+  public function setPasswordHash(string $value) : void
+  {
     $this->password_hash = $value;
   }
 
-  public function setRecordUpdated(DateTime $value) {
-    if (!$value instanceof DateTime) {
-      throw new InvalidArgumentException(
-        'value must be a DateTime object'
-      );
-    }
-
-    $this->record_updated = $value;
+  public function setRecordUpdated(DateTimeInterface|string $value) : void
+  {
+    $this->record_updated = (is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : $value);
   }
 
-  public function setTimezone(string $value) {
-    if (!is_string($value)) {
-      throw new InvalidArgumentException('value must be a string');
-    }
-
-    if (is_string($value) && strlen($value) > self::MAX_TIMEZONE) {
-      throw new LengthException(sprintf(
-        'value must be less than or equal to %d characters', self::MAX_TIMEZONE
+  public function setTimezone(DateTimeZone|string $value) : void
+  {
+    if (is_string($value) && strlen($value) > self::MAX_TIMEZONE)
+      throw new UnexpectedValueException(sprintf(
+        'value must be between 0-%d characters', self::MAX_TIMEZONE
       ));
+
+    try
+    {
+      if (is_string($value) && !empty($value)) new DateTimeZone($value);
+    }
+    catch (Throwable $e)
+    {
+      throw new UnexpectedValueException('value must be a valid timezone', 0, $e);
     }
 
-    if (!empty($value)) {
-      try {
-        $tz = new DateTimeZone($value);
-        if (!$tz) throw new RuntimeException();
-        unset($tz);
-      } catch (Exception $e) {
-        throw new UnexpectedValueException(
-          'value must be a valid timezone', $e
-        );
-      }
-    }
-
-    $this->timezone = $value;
+    $this->timezone = is_string($value) ? $value : $value->getName();
   }
-
 }

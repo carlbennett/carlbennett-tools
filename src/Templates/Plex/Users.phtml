@@ -18,7 +18,7 @@ if (!empty($highlight_id)) {
     $highlight_user_title = $highlight_user->getPlexTitle();
     $highlight_user_name = $highlight_user->getPlexUsername();
     $highlight_name = \sprintf('%s (%s)',
-      (!\empty($highlight_user_title) ? $highlight_user_title : $highlight_user_name),
+      (!empty($highlight_user_title) ? $highlight_user_title : $highlight_user_name),
       $highlight_user_email
     );
   }

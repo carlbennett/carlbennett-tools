@@ -3,7 +3,6 @@ namespace CarlBennett\Tools\Templates;
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\MVC\Libraries\Gravatar;
 use \CarlBennett\Tools\Libraries\User as User;
-use \DateTimeZone;
 $highlight_id = $this->getContext()->id;
 $highlight_act = $this->getContext()->hl;
 if (!empty($highlight_id)) {
@@ -15,9 +14,9 @@ if (!empty($highlight_id)) {
   if ($highlight_user) {
     $highlight_user_email = $highlight_user->getEmail();
     $highlight_user_name = $highlight_user->getName();
-    if (\empty($highlight_user_name) && !\empty($highlight_user_email)) {
+    if (empty($highlight_user_name) && !empty($highlight_user_email)) {
       $highlight_name = $highlight_user_email;
-    } else if (!\empty($highlight_user_name) && \empty($highlight_user_email)) {
+    } else if (!empty($highlight_user_name) && empty($highlight_user_email)) {
       $highlight_name = $highlight_user_name;
     } else {
       $highlight_name = \sprintf('%s (%s)', $highlight_user_name, $highlight_user_email);

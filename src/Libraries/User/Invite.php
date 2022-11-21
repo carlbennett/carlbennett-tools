@@ -4,28 +4,18 @@ namespace CarlBennett\Tools\Libraries\User;
 
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\MVC\Libraries\DatabaseDriver;
-use \CarlBennett\Tools\Libraries\IDatabaseObject;
+use \CarlBennett\Tools\Libraries\DateTimeImmutable;
 use \CarlBennett\Tools\Libraries\User;
-
-use \DateTime;
+use \DateTimeInterface;
 use \DateTimeZone;
-use \InvalidArgumentException;
 use \PDO;
-use \PDOException;
 use \StdClass;
 use \UnexpectedValueException;
 
-class Invite implements IDatabaseObject
+class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject
 {
-
-  const DATE_SQL = 'Y-m-d H:i:s';
-
   # Maximum SQL field lengths, alter as appropriate.
-  const MAX_EMAIL = 191;
-
-  const UUID_REGEX = '/([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}){1}/';
-
-  private $_id;
+  public const MAX_EMAIL = 0xFF;
 
   protected $date_accepted;
   protected $date_invited;
@@ -36,130 +26,60 @@ class Invite implements IDatabaseObject
   protected $invited_user;
   protected $record_updated;
 
-  /**
-   * Creates an instance of a user invite based by invite id or StdClass object.
-   *
-   * @param mixed $value The id string to lookup or StdClass object to copy.
-   * @throws InvalidArgumentException when value is not: null, string, or StdClass object.
-   */
-  public function __construct($value)
+  public function __construct(StdClass|string $value)
   {
-    if (is_null($value) || is_string($value))
-    {
-      $this->_id = $value;
-      $this->allocate();
-      return;
-    }
-
     if ($value instanceof StdClass)
     {
       $this->allocateObject($value);
       return;
     }
 
-    throw new InvalidArgumentException('value must be a string or StdClass');
+    $this->setId($value);
+    if (!$this->allocate()) throw new UnexpectedValueException();
   }
 
-  /**
-   * Queries the database for the _id value and copies the object to properties.
-   * Inherited from the IDatabaseObject interface.
-   *
-   * @throws InvalidArgumentException when value must be null or a string
-   * @throws UnexpectedValueException when an error occurred finding invite id
-   * @throws UnexpectedValueException when invite id is not found
-   */
-  public function allocate()
+  public function allocate() : bool
   {
-    $id = $this->_id;
+    $this->setDateAccepted(null);
+    $this->setDateInvited('now');
+    $this->setDateRevoked(null);
+    $this->setEmail('', true);
+    $this->setInvitedBy(null);
+    $this->setInvitedUser(null);
+    $this->setRecordUpdated('now');
 
-    if (!(is_null($id) || is_string($id)))
-    {
-      throw new InvalidArgumentException('value must be null or a string');
-    }
+    $id = $this->getId();
+    if (is_null($id)) return true;
 
-    if (empty($id)) return;
-    $this->setId($id);
-
-    if (!isset(Common::$database))
-    {
-      Common::$database = DatabaseDriver::getDatabaseObject();
-    }
-
-    $q = Common::$database->prepare(
-      'SELECT
+    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
+    $q = Common::$database->prepare('
+      SELECT
         `date_accepted`, `date_invited`, `date_revoked`, `email`,
         UuidFromBin(`id`) AS `id`, UuidFromBin(`invited_by`) AS `invited_by`,
         UuidFromBin(`invited_user`) AS `invited_user`, `record_updated`
-      FROM `user_invites` WHERE id = UuidToBin(:id) LIMIT 1;'
-    );
-    $q->bindParam(':id', $id, PDO::PARAM_STR);
-
-    $r = $q->execute();
-    if (!$r)
-    {
-      throw new UnexpectedValueException('an error occurred finding invite id');
-    }
-
-    if ($q->rowCount() != 1)
-    {
-      throw new UnexpectedValueException(sprintf(
-        'invite id: %s not found', $id
-      ));
-    }
-
-    $r = $q->fetchObject();
+      FROM `user_invites` WHERE id = UuidToBin(?) LIMIT 1;
+    ');
+    if (!$q || !$q->execute([$id]) || $q->rowCount() != 1) return false;
+    $this->allocateObject($q->fetchObject());
     $q->closeCursor();
-
-    $this->allocateObject($r);
+    return true;
   }
 
-  /**
-   * Copies a database object into this object's properties.
-   *
-   * @param StdClass $value The database object to copy into properties.
-   */
-  protected function allocateObject(StdClass $value)
+  protected function allocateObject(StdClass $value) : void
   {
-    $tz = new DateTimeZone('Etc/UTC');
-
-    $this->setDateInvited(new DateTime($value->date_invited, $tz));
-    $this->setDateRevoked(
-      $value->date_revoked ? new DateTime($value->date_revoked, $tz) : null
-    );
-    $this->setDateAccepted(
-      $value->date_accepted ? new DateTime($value->date_accepted, $tz) : null
-    );
+    $this->setDateAccepted($value->date_accepted);
+    $this->setDateInvited($value->date_invited);
+    $this->setDateRevoked($value->date_revoked);
     $this->setEmail($value->email);
     $this->setId($value->id);
-    $this->setInvitedBy(
-      $value->invited_by ? new User($value->invited_by) : null
-    );
-    $this->setInvitedUser(
-      $value->invited_user ? new User($value->invited_user) : null
-    );
-    $this->setRecordUpdated(new DateTime($value->record_updated, $tz));
+    $this->setInvitedBy($value->invited_by);
+    $this->setInvitedUser($value->invited_user);
+    $this->setRecordUpdated($value->record_updated);
   }
 
-  /**
-   * Commits the current properties to the database object.
-   * Inherited from the IDatabaseObject interface.
-   */
-  public function commit()
+  public function commit() : bool
   {
-    if (!isset(Common::$database))
-    {
-      Common::$database = DatabaseDriver::getDatabaseObject();
-    }
-
-    if (empty($this->id))
-    {
-      $q = Common::$database->query('SELECT UUID();');
-      if (!$q) return $q;
-
-      $this->id = $q->fetch(PDO::FETCH_NUM)[0];
-      $q->closeCursor();
-    }
-
+    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
     $q = Common::$database->prepare(
       'INSERT INTO `user_invites` (
         `date_accepted`, `date_invited`, `date_revoked`, `email`,
@@ -176,62 +96,34 @@ class Invite implements IDatabaseObject
       ;'
     );
 
-    $date_accepted = (
-      is_null($this->date_accepted) ?
-      null : $this->date_accepted->format(self::DATE_SQL)
-    );
-
-    $date_invited = $this->date_invited->format(self::DATE_SQL);
-
-    $date_revoked = (
-      is_null($this->date_revoked) ?
-      null : $this->date_revoked->format(self::DATE_SQL)
-    );
-
-    $invited_by = (
-      is_null($this->invited_by) ? null : $this->invited_by->getId()
-    );
-
-    $invited_user = (
-      is_null($this->invited_user) ? null : $this->invited_user->getId()
-    );
-
-    $record_updated = $this->record_updated->format(self::DATE_SQL);
-
-    $q->bindParam(':accepted', $date_accepted, (
-      is_null($date_accepted) ? PDO::PARAM_NULL : PDO::PARAM_STR
-    ));
-
-    $q->bindParam(':invited', $date_invited, PDO::PARAM_STR);
-
-    $q->bindParam(':revoked', $date_revoked, (
-      is_null($date_revoked) ? PDO::PARAM_NULL : PDO::PARAM_STR
-    ));
-
-    $q->bindParam(':email', $this->email, PDO::PARAM_STR);
-    $q->bindParam(':id', $this->id, PDO::PARAM_STR);
-
-    $q->bindParam(':invited_by', $invited_by, (
-      is_null($invited_by) ? PDO::PARAM_NULL : PDO::PARAM_STR
-    ));
-
-    $q->bindParam(':invited_user', $invited_user, (
-      is_null($invited_user) ? PDO::PARAM_NULL : PDO::PARAM_STR
-    ));
-
-    $q->bindParam(':record_updated', $record_updated, PDO::PARAM_STR);
-
-    $r = $q->execute();
-    if (!$r) return $r;
-
+    $p = [
+      ':accepted' => $this->getDateAccepted(),
+      ':email' => $this->getEmail(),
+      ':id' => $this->getId(),
+      ':invited_by' => $this->getInvitedBy(),
+      ':invited_user' => $this->getInvitedUser(),
+      ':invited' => $this->getDateInvited(),
+      ':record_updated', $this->getRecordUpdated(),
+      ':revoked' => $this->getDateRevoked(),
+    ];
+    if (!$q || !$q->execute($p)) return false;
     $q->closeCursor();
-    return $r;
+    return true;
+  }
+ 
+  public function deallocate() : bool
+  {
+    $id = $this->getId();
+    if (is_null($id)) return false;
+    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
+    $q = Common::$database->prepare('DELETE FROM `user_invites` WHERE `id` = ? LIMIT 1;');
+    try { return $q && $q->execute([$id]); }
+    finally { if ($q) $q->closeCursor(); }
   }
 
   /**
    * @param string $value The email address to lookup the invite for.
    * @return ?Invite The invite object or null if not found.
-   * @throws PDOException if a database error occurs.
    */
   public static function getByEmail(string $value)
   {
@@ -257,34 +149,22 @@ class Invite implements IDatabaseObject
     return new self($id);
   }
 
-  /**
-   * @return ?DateTime The DateTime object or null value.
-   */
-  public function getDateAccepted()
+  public function getDateAccepted() : ?DateTimeInterface
   {
     return $this->date_accepted;
   }
 
-  /**
-   * @return DateTime The DateTime object.
-   */
-  public function getDateInvited()
+  public function getDateInvited() : DateTimeInterface
   {
     return $this->date_invited;
   }
 
-  /**
-   * @return ?DateTime The DateTime object or null value.
-   */
-  public function getDateRevoked()
+  public function getDateRevoked() : ?DateTimeInterface
   {
     return $this->date_revoked;
   }
 
-  /**
-   * @return string The email address string value.
-   */
-  public function getEmail()
+  public function getEmail() : string
   {
     return $this->email;
   }
@@ -292,77 +172,47 @@ class Invite implements IDatabaseObject
   /**
    * @return string The UUID in hexadecimal string format (with dashes).
    */
-  public function getId()
+  public function getId() : ?string
   {
     return $this->id;
   }
 
-  /**
-   * @return ?User The User object or null value.
-   */
-  public function getInvitedBy()
+  public function getInvitedBy() : ?User
   {
     return $this->invited_by;
   }
 
-  /**
-   * @return ?User The User object or null value.
-   */
-  public function getInvitedUser()
+  public function getInvitedUser() : ?User
   {
     return $this->invited_user;
   }
 
-  /**
-   * @return DateTime The DateTime object.
-   */
-  public function getRecordUpdated()
+  public function getRecordUpdated() : DateTimeInterface
   {
     return $this->record_updated;
   }
 
-  /**
-   * @param ?DateTime $value The DateTime object or null value to set.
-   */
-  public function setDateAccepted(?DateTime $value)
+  public function setDateAccepted(DateTimeInterface|string|null $value) : void
   {
-    $this->date_accepted = $value;
+    $this->date_accepted = (is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : $value);
   }
 
-  /**
-   * @param DateTime $value The DateTime object to set.
-   */
-  public function setDateInvited(DateTime $value)
+  public function setDateInvited(DateTimeInterface|string $value) : void
   {
-    if (is_null($value))
-    {
-      // InvalidArgumentException is in Logic
-      throw new InvalidArgumentException('value cannot be null');
-    }
-
-    $this->date_invited = $value;
+    $this->date_invited = (is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : $value);
   }
 
-  /**
-   * @param ?DateTime $value The DateTime object or null value to set.
-   */
-  public function setDateRevoked(?DateTime $value)
+  public function setDateRevoked(DateTimeInterface|string|null $value) : void
   {
-    $this->date_revoked = $value;
+    $this->date_revoked = (is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : $value);
   }
 
   /**
    * @param string $value The valid email address string to set.
    * @param bool $force If true, skips check with filter_var(). Default: false
    */
-  public function setEmail(string $value, bool $force = false)
+  public function setEmail(string $value, bool $force = false) : void
   {
-    if (!$force && !filter_var($value, FILTER_VALIDATE_EMAIL))
-    {
-      // UnexpectedValueException is at Runtime
-      throw new UnexpectedValueException('value is not a valid email address');
-    }
-
     if (strlen($value) > self::MAX_EMAIL)
     {
       // UnexpectedValueException is at Runtime
@@ -371,54 +221,45 @@ class Invite implements IDatabaseObject
       ));
     }
 
+    if (!$force && !empty($value) && !filter_var($value, FILTER_VALIDATE_EMAIL))
+    {
+      // UnexpectedValueException is at Runtime
+      throw new UnexpectedValueException('value is not a valid email address');
+    }
+
     $this->email = $value;
   }
 
   /**
-   * @param string $value The UUID in hexadecimal format (with dashes) to set.
-   *                      Example: "31952e1c-d05a-44a0-b749-6d892cc96d3a"
+   * @param string|null $value The UUID in hexadecimal format (with dashes) to set.
+   *                           Example: "31952e1c-d05a-44a0-b749-6d892cc96d3a"
    */
-  public function setId(string $value)
+  public function setId(?string $value) : void
   {
-    if (preg_match(self::UUID_REGEX, $value) !== 1)
-    {
-      // InvalidArgumentException is in Logic
-      throw new InvalidArgumentException(
-        'value must be a UUID formatted string'
-      );
-    }
+    if (!(is_null($value) || (is_string($value) && preg_match(self::UUID_REGEX, $value) === 1)))
+      throw new UnexpectedValueException('value must be null or a string in UUID format');
 
     $this->id = $value;
   }
 
-  /**
-   * @param ?User $value The User object or null value to set.
-   */
-  public function setInvitedBy(?User $value)
+  public function setInvitedBy(User|string|null $value) : void
   {
-    $this->invited_by = $value;
+    if (is_string($value) && preg_match(self::UUID_REGEX, $value) !== 1)
+      throw new UnexpectedValueException('value must be null, User, or a string in UUID format');
+
+    $this->invited_by = $value instanceof User ? $value->getId() : $value;
   }
 
-  /**
-   * @param ?User $value The User object or null value to set.
-   */
-  public function setInvitedUser(?User $value)
+  public function setInvitedUser(User|string|null $value) : void
   {
-    $this->invited_user = $value;
+    if (is_string($value) && preg_match(self::UUID_REGEX, $value) !== 1)
+      throw new UnexpectedValueException('value must be null, User, or a string in UUID format');
+
+    $this->invited_user = $value instanceof User ? $value->getId() : $value;
   }
 
-  /**
-   * @param DateTime $value The DateTime object to set.
-   */
-  public function setRecordUpdated(DateTime $value)
+  public function setRecordUpdated(DateTimeInterface|string $value) : void
   {
-    if (is_null($value))
-    {
-      // InvalidArgumentException is in Logic
-      throw new InvalidArgumentException('value cannot be null');
-    }
-
-    $this->record_updated = $value;
+    $this->record_updated = (is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : $value);
   }
-
 }
