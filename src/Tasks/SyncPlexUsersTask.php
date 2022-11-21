@@ -51,7 +51,7 @@ class SyncPlexUsersTask extends Task
 
                 foreach ($plex_users as $__plex_id => $plex_user)
                 {
-                    if ($this->match($user, $plex_user))
+                    if (self::match($user, $plex_user))
                     {
                         //  $_property is from our plex_users table
                         // $__property is from api result
@@ -161,15 +161,19 @@ class SyncPlexUsersTask extends Task
         }
     }
 
-    protected function match($our_user, $api_user) : bool
+    protected static function match(PlexUser $our_user, PlexTvUser $api_user) : bool
     {
-        $match = false;
+        if (!is_null($our_user->getPlexId()) && $our_user->getPlexId() === $api_user->getId()) return true;
 
-        if (!$match && !is_null($_plex_id) && $__plex_id === $_plex_id) $match = true;
-        if (!$match && is_null($_plex_id) && !empty($_plex_email) && !empty($__plex_email) && strtolower($_plex_email) == strtolower($__plex_email)) $match = true;
-        if (!$match && is_null($_plex_id) && empty($_plex_email) && !empty($_plex_username) && strtolower($_plex_username) == strtolower($__plex_username))
-        if (!$match && is_null($_plex_id) && empty($_plex_email) && empty($_plex_username) && !empty($_plex_title) && strtolower($_plex_title) == strtolower($__plex_title)))
+        if (is_string($our_user->getPlexEmail()) && is_string($api_user->getEmail())
+            && \strtolower($our_user->getPlexEmail()) == \strtolower($api_user->getEmail())) return true;
 
-        return $match;
+        if (is_string($our_user->getPlexUsername()) && is_string($api_user->getUsername())
+            && \strtolower($our_user->getPlexUsername()) == \strtolower($api_user->getUsername())) return true;
+
+        if (is_string($our_user->getPlexTitle()) && is_string($api_user->getTitle())
+            && \strtolower($our_user->getPlexTitle()) == \strtolower($api_user->getTitle())) return true;
+
+        return false;
     }
 }
