@@ -88,6 +88,11 @@ function main(int $argc, Iterable $argv) {
             '#^/plex/users/add$#',
             'Plex\\Users\\Add', 'Plex\\Users\\AddHtml'
         );
+        // URL: /plex/users/delete
+        $router->addRoute(
+            '#^/plex/users/delete$#',
+            'Plex\\Users\\Delete', 'Plex\\Users\\DeleteHtml'
+        );
         // URL: /plex/users/edit
         $router->addRoute(
             '#^/plex/users/edit$#',

@@ -198,6 +198,7 @@ if (!empty($error)) { ?>
 <?php if (empty($id)) { ?>
           <input class="btn btn-success" type="submit" value="Add"/>
 <?php } else { ?>
+          <a class="btn btn-danger mx-1" href="<?=\CarlBennett\MVC\Libraries\Common::relativeUrlToAbsolute(\sprintf('/plex/users/delete?id=%s', $id))?>">Delete</a>
           <input class="btn btn-success" type="submit" value="Save"/>
 <?php } ?>
         </div>

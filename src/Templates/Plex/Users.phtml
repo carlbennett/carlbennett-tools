@@ -13,7 +13,9 @@ if (!empty($highlight_id)) {
   } catch (\Throwable $e) {
     $highlight_user = null;
   }
-  if ($highlight_user) {
+  if (!$highlight_user && preg_match(PlexUser::UUID_REGEX, $highlight_id) === 1) {
+    $highlight_name = $highlight_id;
+  } else if ($highlight_user) {
     $highlight_user_email = $highlight_user->getPlexEmail();
     $highlight_user_title = $highlight_user->getPlexTitle();
     $highlight_user_name = $highlight_user->getPlexUsername();
@@ -27,6 +29,7 @@ if ($highlight_act === null) $highlight_act = '';
 switch (\strtolower($highlight_act) ?? '') {
   case 'add': $highlight_act = 'added'; break;
   case 'edit': $highlight_act = 'edited'; break;
+  case 'delete': $highlight_act = 'deleted'; break;
 }
 $title = 'Plex Users';
 require('./header.inc.phtml'); ?>

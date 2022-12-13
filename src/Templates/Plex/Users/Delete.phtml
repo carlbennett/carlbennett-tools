@@ -1,0 +1,43 @@
+<?php
+namespace CarlBennett\Tools\Templates;
+$title = 'Delete Plex User';
+$active_user = $this->getContext()->active_user;
+$plex_user = $this->getContext()->plex_user;
+require('./header.inc.phtml');
+?>
+<div class="container">
+  <h1><?=$title;?></h1>
+<?php
+if (!$active_user) {
+  require('./LoginRequired.inc.phtml');
+} else if (!$plex_user) {
+  require('./Plex/Users/UserNotFound.inc.phtml');
+} else {
+  printf('  <div class="alert alert-danger">Are you sure you want to delete this Plex User?</div>%s', \PHP_EOL);
+
+  $plex_id = $plex_user ? $plex_user->getPlexId() : null;
+  $plex_title = $plex_user ? $plex_user->getPlexTitle() : null;
+  $plex_email = $plex_user ? $plex_user->getPlexEmail() : null;
+  $plex_username = $plex_user ? $plex_user->getPlexUsername() : null;
+
+  $plex_id = is_null($plex_id) ? '<em>(null)</em>' : \sprintf('<code>%d</code>', $plex_id);
+  $plex_title = is_null($plex_title) ? '<em>(null)</em>' : \sprintf('<code>%s</code>', $plex_title);
+  $plex_email = is_null($plex_email) ? '<em>(null)</em>' : \sprintf('<code>%s</code>', $plex_email);
+  $plex_username = is_null($plex_username) ? '<em>(null)</em>' : \sprintf('<code>%s</code>', $plex_username);
+
+  printf('  <form method="POST">%s', \PHP_EOL);
+  printf('    <table class="table table-hover table-sm table-striped">%s', \PHP_EOL);
+  printf('      <tr><th class="text-right w-50"><label for="plex_id">Plex Id:</label></th><td>%s</td></tr>%s', $plex_id, \PHP_EOL);
+  printf('      <tr><th class="text-right"><label for="plex_title">Plex Title:</label></th><td>%s</td></tr>%s', $plex_title, \PHP_EOL);
+  printf('      <tr><th class="text-right"><label for="plex_email">Plex Email:</label></th><td>%s</td></tr>%s', $plex_email, \PHP_EOL);
+  printf('      <tr><th class="text-right"><label for="plex_username">Plex Username:</label></th><td>%s</td></tr>%s', $plex_username, \PHP_EOL);
+  printf('    </table>%s', \PHP_EOL);
+  printf('    <div class="row justify-content-center text-center"><div class="col-12"><form method="POST">%s', \PHP_EOL);
+  printf('      <a class="btn btn-primary" href="javascript:history.go(-1);">Back</a>%s', \PHP_EOL);
+  printf('      <input class="btn btn-danger" type="submit" value="Delete"/>%s', \PHP_EOL);
+  printf('    </div></div>%s', \PHP_EOL);
+  printf('  </form>%s', \PHP_EOL);
+}
+?>
+</div>
+<?php require('./footer.inc.phtml');

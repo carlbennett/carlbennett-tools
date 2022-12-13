@@ -172,7 +172,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     $id = $this->getId();
     if (is_null($id)) return false;
     if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
-    $q = Common::$database->prepare('DELETE FROM `plex_users` WHERE `id` = ? LIMIT 1;');
+    $q = Common::$database->prepare('DELETE FROM `plex_users` WHERE `id` = UuidToBin(?) LIMIT 1;');
     try { return $q && $q->execute([$id]); }
     finally { if ($q) $q->closeCursor(); }
   }
