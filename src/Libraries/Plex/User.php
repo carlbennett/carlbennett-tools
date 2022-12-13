@@ -162,6 +162,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
         $p[$k] = $v->format(self::DATE_SQL);
 
     if (!$q || !$q->execute($p)) return false;
+    $this->setId($id);
     $q->closeCursor();
     return true;
   }
@@ -467,8 +468,10 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     $this->setUserId(!is_null($value) ? $value->getId() : $value);
   }
 
-  public function setUserId(string|null $value) : void
+  public function setUserId(string|null $value, bool $auto_null = true) : void
   {
+    if ($auto_null && is_string($value) && empty($value)) $value = null;
+
     if (!is_null($value) && preg_match(self::UUID_REGEX, $value) !== 1)
       throw new UnexpectedValueException('value must be null or a string in UUID format');
 
