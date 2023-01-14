@@ -13,16 +13,16 @@ require("./header.inc.phtml"); ?>
     <a class="btn btn-sm btn-primary" href="<?=Common::relativeUrlToAbsolute('/remoteaddress.json')?>">Json</a>
     <a class="btn btn-sm btn-primary" href="<?=Common::relativeUrlToAbsolute('/remoteaddress.txt')?>">Plaintext</a>
   </div>
-  <table class="table table-sm">
+  <table class="table table-bordered table-sm">
     <thead></thead>
     <tbody>
-      <tr><th scope="row" class="text-right">IP Address</th><td class="text-left"><code><?=filter_var($ip, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></code></td></tr>
+      <tr><th scope="row" class="bg-primary border-dark text-right">IP Address</th><td class="border-primary text-left"><code><?=filter_var($ip, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></code></td></tr>
 <?php if ($ua && strlen($ua) <= $ua_max) { ?>
-      <tr><th scope="row" class="text-right">User Agent</th><td class="text-left"><code><?=filter_var($ua, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></code></td></tr>
+      <tr><th scope="row" class="bg-primary border-dark text-right">User Agent</th><td class="border-primary text-left"><code><?=filter_var($ua, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></code></td></tr>
 <?php } else if ($ua && strlen($ua) > $ua_max) { ?>
-      <tr><th scope="row" class="text-right">User Agent</th><td class="text-left"><code><?=filter_var(substr($ua, 0, $ua_max), FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></code>&hellip;</td></tr>
+      <tr><th scope="row" class="bg-primary border-dark text-right">User Agent</th><td class="border-primary text-left"><code><?=filter_var(substr($ua, 0, $ua_max), FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></code>&hellip;</td></tr>
 <?php } else { ?>
-      <tr><th scope="row" class="text-right">User Agent</th><td class="text-left"><em>not available</em></td></tr>
+      <tr><th scope="row" class="bg-primary border-dark text-right">User Agent</th><td class="border-primary text-left"><em>not available</em></td></tr>
 <?php } ?>
     </tbody>
   </table>
