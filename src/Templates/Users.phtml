@@ -59,7 +59,7 @@ require('./header.inc.phtml'); ?>
         $date_added = array($user->getDateAdded()->format('D, M jS, Y'), $user->getDateAdded()->format('g:i A T'));
         $email = filter_var($user->getEmail(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $id = filter_var($user->getId(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $internal_notes = filter_var($user->getInternalNotes(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $internal_notes = nl2br(filter_var($user->getInternalNotes(), FILTER_SANITIZE_FULL_SPECIAL_CHARS));
         $username = filter_var($user->getName(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $banned = ($user->isBanned() ? ' <span class="badge badge-danger">Banned</span> ' : '');
         $disabled = ($user->isDisabled() ? ' <span class="badge badge-danger">Disabled</span> ' : '');
