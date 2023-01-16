@@ -2,30 +2,31 @@
 
 namespace CarlBennett\Tools\Controllers;
 
-use \CarlBennett\MVC\Libraries\Controller;
-use \CarlBennett\MVC\Libraries\Router;
-use \CarlBennett\MVC\Libraries\View;
-use \CarlBennett\Tools\Models\UrlEncodeDecode as UrlEncodeDecodeModel;
+use \CarlBennett\Tools\Libraries\Router;
 
-class UrlEncodeDecode extends Controller {
-  public function &run(Router &$router, View &$view, array &$args) {
-    $model = new UrlEncodeDecodeModel();
+class UrlEncodeDecode extends Base
+{
+  public function __construct()
+  {
+    $this->model = new \CarlBennett\Tools\Models\UrlEncodeDecode();
+  }
 
-    if ($router->getRequestMethod() == 'POST') {
-      $data = $router->getRequestBodyArray();
-      $model->decode = ($data['decode'] ?? null) ? true : false;
-      $model->input = $data['input'] ?? null;
+  public function invoke(?array $args): bool
+  {
+    if (Router::requestMethod() == Router::METHOD_POST)
+    {
+      $q = Router::query();
+      $this->model->decode = ($q['decode'] ?? null) ? true : false;
+      $this->model->input = $q['input'] ?? null;
 
-      if (!empty($model->input)) {
-        $model->output = (
-          $model->decode ?
-          rawurldecode($model->input) : rawurlencode($model->input)
-        );
+      if (!empty($this->model->input))
+      {
+        $this->model->output = $this->model->decode ?
+          \rawurldecode($this->model->input) : \rawurlencode($this->model->input);
       }
     }
 
-    $view->render($model);
-    $model->_responseCode = 200;
-    return $model;
+    $this->model->_responseCode = 200;
+    return true;
   }
 }

@@ -2,24 +2,21 @@
 
 namespace CarlBennett\Tools\Controllers;
 
-use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\MVC\Libraries\Controller;
-use \CarlBennett\MVC\Libraries\Router;
-use \CarlBennett\MVC\Libraries\View;
-use \CarlBennett\Tools\Libraries\Authentication;
-use \CarlBennett\Tools\Models\PhpInfo as PhpInfoModel;
+class PhpInfo extends Base
+{
+  public function __construct()
+  {
+    $this->model = new \CarlBennett\Tools\Models\PhpInfo();
+  }
 
-class PhpInfo extends Controller {
-  public function &run(Router &$router, View &$view, array &$args) {
-    $model = new PhpInfoModel();
-    $model->active_user = Authentication::$user;
+  public function invoke(?array $args): bool
+  {
+    if (!\is_null($args) && \count($args) > 0) throw new \InvalidArgumentException();
 
-    ob_start();
-    phpinfo(INFO_ALL);
-    $model->phpinfo = ob_get_clean();
+    \ob_start();
+    $this->model->_responseCode = \phpinfo(\INFO_ALL) ? 200 : 500;
+    $this->model->phpinfo = \ob_get_clean();
 
-    $view->render($model);
-    $model->_responseCode = 200;
-    return $model;
+    return true;
   }
 }

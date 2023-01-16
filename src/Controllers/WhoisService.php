@@ -2,77 +2,59 @@
 
 namespace CarlBennett\Tools\Controllers;
 
-use \CarlBennett\MVC\Libraries\Controller;
-use \CarlBennett\MVC\Libraries\Router;
-use \CarlBennett\MVC\Libraries\View;
-
-use \CarlBennett\Tools\Libraries\Authentication;
-use \CarlBennett\Tools\Libraries\User;
-use \CarlBennett\Tools\Libraries\User\Acl;
-use \CarlBennett\Tools\Libraries\Utility\HTTPForm;
-use \CarlBennett\Tools\Models\WhoisService as WhoisServiceModel;
-
-/* from composer package: io-developer/php-whois */
-use Iodev\Whois\Factory;
-use Iodev\Whois\Exceptions\ConnectionException;
-use Iodev\Whois\Exceptions\ServerMismatchException;
-use Iodev\Whois\Exceptions\WhoisException;
-
-use \DateTimeInterface;
-use \Throwable;
-
-class WhoisService extends Controller
+class WhoisService extends Base
 {
-  public function &run(Router &$router, View &$view, array &$args)
+  public function __construct()
   {
-    $model = new WhoisServiceModel();
-    $model->active_user = Authentication::$user;
-    $model->acl = ($model->active_user && $model->active_user->getAclObject()->getAcl(Acl::ACL_WHOIS_SERVICE));
-    $model->result = null;
+    $this->model = new \CarlBennett\Tools\Models\WhoisService();
+  }
 
-    if (!$model->acl)
+  public function invoke(?array $args): bool
+  {
+    $this->model->acl = $this->model->active_user && $this->model->active_user->getAclObject()->getAcl(\CarlBennett\Tools\Libraries\User\Acl::ACL_WHOIS_SERVICE);
+    $this->model->result = null;
+
+    if (!$this->model->acl)
     {
-      $view->render($model);
-      $model->_responseCode = 401;
-      return $model;
+      $this->model->_responseCode = 401;
+      return true;
     }
 
-    $query = $router->getRequestQueryArray();
-    $query = new HTTPForm($query);
-    $model->query = $query->get('q');
+    $q = new \CarlBennett\Tools\Libraries\Utility\HTTPForm(\CarlBennett\Tools\Libraries\Router::query());
+    $this->model->query = $q->get('q');
 
-    if (!empty($model->query))
+    if (!empty($this->model->query))
     {
-      $result = array();
+      $result = [];
       try
       {
-        $whois = Factory::get()->createWhois();
+        $whois = \Iodev\Whois\Factory::get()->createWhois();
 
-        if (1 === preg_match('/^ASN?[0-9]+$/i', $model->query))
+        if (1 === preg_match('/^ASN?[0-9]+$/i', $this->model->query))
         {
           // Getting raw-text lookup
-          $result['asn.lookup'] = $whois->lookupAsn($model->query)->text;
+          $result['asn.lookup'] = $whois->lookupAsn($this->model->query)->text;
         }
         else
         {
           // Checking availability
-          $result['domain.available'] = $whois->isDomainAvailable($model->query);
+          $result['domain.available'] = $whois->isDomainAvailable($this->model->query);
 
           // Getting raw-text lookup
-          $result['domain.lookup'] = $whois->lookupDomain($model->query)->text;
+          $result['domain.lookup'] = $whois->lookupDomain($this->model->query)->text;
         }
       }
-      catch (Throwable $e)
+      catch (\Throwable $e)
       {
-        if ($e instanceof ConnectionException)
+        if ($e instanceof \Iodev\Whois\Exceptions\ConnectionException)
         {
           $result['error.connection'] = $e->getMessage();
         }
-        else if ($e instanceof ServerMismatchException)
+        else if ($e instanceof \Iodev\Whois\Exceptions\ServerMismatchException)
         {
           $result['error.server_mismatch'] = $e->getMessage();
         }
-        else if ($e instanceof WhoisException)
+        else if ($e instanceof \Iodev\Whois\Exceptions\WhoisException)
         {
           $result['error.whois'] = $e->getMessage();
         }
@@ -83,12 +65,11 @@ class WhoisService extends Controller
       }
       finally
       {
-        $model->result = $result;
+        $this->model->result = $result;
       }
     }
 
-    $view->render($model);
-    $model->_responseCode = 200;
-    return $model;
+    $this->model->_responseCode = 200;
+    return true;
   }
 }

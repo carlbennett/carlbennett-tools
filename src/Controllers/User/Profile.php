@@ -2,98 +2,95 @@
 namespace CarlBennett\Tools\Controllers\User;
 
 use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\MVC\Libraries\Controller;
 use \CarlBennett\MVC\Libraries\Gravatar;
-use \CarlBennett\MVC\Libraries\Router;
-use \CarlBennett\MVC\Libraries\View;
+use \CarlBennett\Tools\Libraries\Router;
 use \CarlBennett\Tools\Libraries\Authentication;
 use \CarlBennett\Tools\Libraries\User;
 use \CarlBennett\Tools\Libraries\User\Acl;
-use \CarlBennett\Tools\Libraries\User\Invite;
 use \CarlBennett\Tools\Models\User\Profile as ProfileModel;
-use \DateTime;
+use \InvalidArgumentException;
 use \LengthException;
 use \UnexpectedValueException;
 
-class Profile extends Controller
+class Profile extends \CarlBennett\Tools\Controllers\Base
 {
-  public function &run(Router &$router, View &$view, array &$args)
+  public function __construct()
   {
-    $arg = array_shift($args);
+    $this->model = new ProfileModel();
+  }
+
+  public function invoke(?array $args): bool
+  {
+    if (\is_null($args) || count($args) < 1) throw new InvalidArgumentException();
+
+    $arg = \array_shift($args);
     $profile = ($arg == 'profile');
 
-    $model = new ProfileModel();
-    $model->active_user = Authentication::$user;
-
-    if (!$model->active_user && $profile)
+    if (!$this->model->active_user && $profile)
     {
-      $model->_responseCode = 401;
-      $view->render($model);
-      return $model;
-    }
-    else
-    {
-      $model->manage = ($model->active_user ? $model->active_user->getAclObject()->getAcl(Acl::ACL_USERS_MANAGE) : false);
+      $this->model->_responseCode = 401;
+      return true;
     }
 
-    if ($profile) {
-      $model->user = $model->active_user;
+    $this->model->manage = $this->model->active_user ? $this->model->active_user->getAclObject()->getAcl(Acl::ACL_USERS_MANAGE) : false;
+
+    if ($profile)
+    {
+      $this->model->context_user = $this->model->active_user;
     }
     else
     {
       try
       {
-        $model->user = new User($arg);
+        $this->model->context_user = new User($arg);
       }
-      catch (InvalidArgumentException $e) // invalid or unsuitable input value
+      catch (\Throwable $e)
       {
-        $model->user = null;
-        $model->_responseCode = 400;
-        $view->render($model);
-        return $model;
-      }
-      catch (UnexpectedValueException $e) // user not found
-      {
-        $model->user = null;
-        $model->_responseCode = 404;
-        $view->render($model);
-        return $model;
+        // InvalidArgumentException if invalid or unsuitable input value
+        // UnexpectedValueException if user not found
+        if ($e instanceof InvalidArgumentException || $e instanceof UnexpectedValueException)
+        {
+          $this->model->context_user = null;
+          $this->model->_responseCode = $e instanceof InvalidArgumentException ? 400 : 404;
+          return true;
+        }
+        else throw $e; // re-throw unknown exception
       }
     }
 
-    $model->id = ($model->user ? $model->user->getId() : null);
-    $model->self_manage = ($model->user == $model->active_user);
-    self::assignProfile($model);
+    $this->model->id = $this->model->context_user ? $this->model->context_user->getId() : null;
+    $this->model->self_manage = ($this->model->context_user == $this->model->active_user);
+    $this->assignProfile();
 
-    $model->_responseCode = 200;
-    $model->feedback = array(); // for bootstrap field/color
-    $query = $router->getRequestQueryArray();
+    $this->model->_responseCode = 200;
+    $this->model->feedback = array(); // for bootstrap field/color
+    $q = Router::query();
 
-    $return = $query['return'] ?? null;
+    $return = $q['return'] ?? null;
     if (!empty($return) && substr($return, 0, 1) != '/') $return = null;
     if (!empty($return)) $return = Common::relativeUrlToAbsolute($return);
-    $model->return = $return;
+    $this->model->return = $return;
 
-    if ($router->getRequestMethod() == 'POST' && ($model->manage || $model->self_manage))
+    if (Router::requestMethod() == Router::METHOD_POST && ($this->model->manage || $this->model->self_manage))
     {
-      $this->processProfile($router, $model);
-      $model->manage = ($model->active_user ? $model->active_user->getAclObject()->getAcl(Acl::ACL_USERS_MANAGE) : false);
+      $this->processProfile();
+      $this->model->manage = $this->model->active_user ? $this->model->active_user->getAclObject()->getAcl(Acl::ACL_USERS_MANAGE) : false;
     }
 
-    if (!empty($model->return))
+    if (!empty($this->model->return))
     {
-      $model->_responseCode = 303;
-      header('Location: ' . $model->return);
+      $this->model->_responseCode = 303;
+      $this->model->_responseHeaders['Location'] = $this->model->return;
     }
 
-    $view->render($model);
-    return $model;
+    return true;
   }
 
-  protected static function assignProfile(ProfileModel &$model)
+  protected function assignProfile(): void
   {
-    $user = $model->user;
-    $acl = ($user ? $user->getAclObject() : null);
+    $model = $this->model;
+    $user = $model->context_user;
+    $acl = $user ? $user->getAclObject() : null;
 
     $model->acl_invite_users = ($acl && $acl->getAcl(Acl::ACL_USERS_INVITE));
     $model->acl_manage_users = ($acl && $acl->getAcl(Acl::ACL_USERS_MANAGE));
@@ -115,11 +112,12 @@ class Profile extends Controller
     $model->timezone = ($user ? $user->getTimezone() : null);
   }
 
-  protected function processProfile(Router &$router, ProfileModel &$model)
+  protected function processProfile(): void
   {
-    $data = $router->getRequestBodyArray();
-    $now = new DateTime('now');
-    $user = $model->user;
+    $data = Router::query();
+    $model = $this->model;
+    $now = new \DateTimeImmutable('now');
+    $user = $model->context_user;
 
     $model->biography = $data['biography'] ?? null;
     $model->display_name = $data['display_name'] ?? null;

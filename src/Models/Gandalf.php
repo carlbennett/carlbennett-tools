@@ -2,8 +2,4 @@
 
 namespace CarlBennett\Tools\Models;
 
-use \CarlBennett\MVC\Libraries\Model;
-
-class Gandalf extends Model {
-
-}
+class Gandalf extends Base {}

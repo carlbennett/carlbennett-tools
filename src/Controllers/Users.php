@@ -2,37 +2,31 @@
 
 namespace CarlBennett\Tools\Controllers;
 
-use \CarlBennett\MVC\Libraries\Controller;
-use \CarlBennett\MVC\Libraries\Router;
-use \CarlBennett\MVC\Libraries\View;
+class Users extends Base
+{
+  public function __construct()
+  {
+    $this->model = new \CarlBennett\Tools\Models\Users();
+  }
 
-use \CarlBennett\Tools\Libraries\Authentication;
-use \CarlBennett\Tools\Libraries\User;
-use \CarlBennett\Tools\Libraries\User\Acl;
-use \CarlBennett\Tools\Libraries\Utility\HTTPForm;
-use \CarlBennett\Tools\Models\Users as UsersModel;
-
-class Users extends Controller {
-  public function &run(Router &$router, View &$view, array &$args) {
-    $model = new UsersModel();
-    $model->active_user = Authentication::$user;
-
-    if (!$model->active_user
-      || !$model->active_user->getAclObject()->getAcl(Acl::ACL_USERS_MANAGE)) {
-      $model->users = false;
-    } else {
-      $model->users = User::getAll();
+  public function invoke(?array $args): bool
+  {
+    if (!$this->model->active_user
+      || !$this->model->active_user->getAclObject()->getAcl(\CarlBennett\Tools\Libraries\User\Acl::ACL_USERS_MANAGE))
+    {
+      $this->model->users = false;
+      $this->model->_responseCode = 401;
+      return true;
     }
 
-    $query = $router->getRequestQueryArray();
-    $query = new HTTPForm($query);
+    $q = new \CarlBennett\Tools\Libraries\Utility\HTTPForm(\CarlBennett\Tools\Libraries\Router::query());
 
-    $model->show_hidden = $query->get('sh');
-    $model->id = $query->get('id');
-    $model->hl = $query->get('hl');
+    $this->model->hl = $q->get('hl');
+    $this->model->id = $q->get('id');
+    $this->model->show_hidden = $q->get('sh');
+    $this->model->users = \CarlBennett\Tools\Libraries\User::getAll();
 
-    $view->render($model);
-    $model->_responseCode = ($model->users ? 200 : 401);
-    return $model;
+    $this->model->_responseCode = 200;
+    return true;
   }
 }

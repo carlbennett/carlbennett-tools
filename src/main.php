@@ -14,13 +14,13 @@ namespace CarlBennett\Tools;
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\MVC\Libraries\DatabaseDriver;
 use \CarlBennett\MVC\Libraries\GlobalErrorHandler;
-use \CarlBennett\MVC\Libraries\Router;
-
 use \CarlBennett\Tools\Libraries\Authentication;
+use \CarlBennett\Tools\Libraries\Router;
 
-function main(int $argc, Iterable $argv) {
-
-    if (!file_exists(__DIR__ . '/../lib/autoload.php')) {
+function main(int $argc, Iterable $argv)
+{
+    if (!file_exists(__DIR__ . '/../lib/autoload.php'))
+    {
         \http_response_code(500);
         exit('Server misconfigured. Please run `composer install`.');
     }
@@ -30,7 +30,7 @@ function main(int $argc, Iterable $argv) {
 
     \date_default_timezone_set('Etc/UTC');
 
-    Common::$config = json_decode(file_get_contents(
+    Common::$config = \json_decode(\file_get_contents(
         __DIR__ . '/../etc/config.json'
     ));
 
@@ -44,127 +44,51 @@ function main(int $argc, Iterable $argv) {
 
     Authentication::verify();
 
-    $router = new Router(
-      '\\CarlBennett\\Tools\\Controllers\\',
-      '\\CarlBennett\\Tools\\Views\\'
-    );
+    if (Common::$config->maintenance[0])
+    {
+        Router::$routes = [
+          ['#.*#', 'Maintenance', ['MaintenanceHtml'], Common::$config->bnetdocs->maintenance[1]],
+        ];
+    }
+    else
+    {
+        $UUID_REGEX = \substr(\CarlBennett\Tools\Interfaces\DatabaseObject::UUID_REGEX, 1, -1); // trim first and last character from constant.
+        Router::$routes = [
+          ['#^/$#', 'RedirectSoft', ['RedirectSoftHtml'], '/tools'],
+          ['#^/gandalf$#', 'Gandalf', ['GandalfHtml']],
+          ['#^/paste$#', 'Paste', ['PasteHtml']],
+          ['#^/paste/([A-Za-z0-9\-]+)$#', 'Paste\\View', ['Paste\\ViewHtml']],
+          ['#^/phpinfo$#', 'PhpInfo', ['PhpInfoHtml']],
+          ['#^/plex/users$#', 'Plex\\Users', ['Plex\\UsersHtml']],
+          ['#^/plex/users/add$#', 'Plex\\Users\\Add', ['Plex\\Users\\AddHtml']],
+          ['#^/plex/users/delete$#', 'Plex\\Users\\Delete', ['Plex\\Users\\DeleteHtml']],
+          ['#^/plex/users/edit$#', 'Plex\\Users\\Edit', ['Plex\\Users\\EditHtml']],
+          ['#^/plex/welcome$#', 'Plex\\Welcome', ['Plex\\WelcomeHtml']],
+          ['#^/privacy$#', 'PrivacyNotice', ['PrivacyNoticeHtml']],
+          ['#^/remoteaddress$#', 'RemoteAddress', ['RemoteAddressHtml', 'RemoteAddressJson', 'RemoteAddressPlain']],
+          ['#^/remoteaddress\.html?$#', 'RemoteAddress', ['RemoteAddressHtml']],
+          ['#^/remoteaddress\.json$#', 'RemoteAddress', ['RemoteAddressJson']],
+          ['#^/remoteaddress\.txt$#', 'RemoteAddress', ['RemoteAddressPlain']],
+          ['#^/task/(.*)/?$#', 'Task', ['TaskJson']],
+          ['#^/tools$#', 'Tools', ['ToolsHtml']],
+          ['#^/urlencodedecode$#', 'UrlEncodeDecode', ['UrlEncodeDecodeHtml']],
+          ['#^/user/invite$#', 'User\\Invite', ['User\\InviteHtml']],
+          ['#^/user/login$#', 'User\\Login', ['User\\LoginHtml']],
+          ['#^/user/logout$#', 'User\\Logout', ['User\\LogoutHtml']],
+          ['#^/user/(' . $UUID_REGEX . ')$#', 'User\\Profile', ['User\\ProfileHtml']],
+          ['#^/users$#', 'Users', ['UsersHtml']],
+          ['#^/whois$#', 'WhoisService', ['WhoisServiceHtml']],
+        ];
 
-    if (Common::$config->maintenance[0]) {
+        //Router::$route_not_found = ['HttpCode', ['HttpCodeHtml', 'HttpCodeJson', 'HttpCodePlain'], HttpCode::HTTP_NOT_FOUND];
+        Router::$route_not_found = ['PageNotFound', ['PageNotFoundHtml', 'PageNotFoundJson', 'PageNotFoundPlain']];
 
-        // URL: *
-        $router->addRoute(
-            '#.*#', 'Maintenance', 'MaintenanceHtml',
-            Common::$config->maintenance[1]
-        );
-
-    } else {
-
-        // URL: /
-        $router->addRoute(
-            '#^/$#', 'RedirectSoft', 'RedirectSoftHtml', '/tools'
-        );
-        // URL: /gandalf
-        $router->addRoute(
-            '#^/gandalf$#', 'Gandalf', 'GandalfHtml'
-        );
-        // URL: /paste
-        $router->addRoute(
-            '#^/paste$#', 'Paste', 'PasteHtml'
-        );
-        // URL: /paste/:id
-        $router->addRoute(
-            '#^/paste/([A-Za-z0-9\-]+)$#', 'Paste\\View', 'Paste\\ViewHtml'
-        );
-        // URL: /phpinfo
-        $router->addRoute(
-            '#^/phpinfo$#', 'PhpInfo', 'PhpInfoHtml'
-        );
-        // URL: /plex/users
-        $router->addRoute(
-            '#^/plex/users$#', 'Plex\\Users', 'Plex\\UsersHtml'
-        );
-        // URL: /plex/users/add
-        $router->addRoute(
-            '#^/plex/users/add$#',
-            'Plex\\Users\\Add', 'Plex\\Users\\AddHtml'
-        );
-        // URL: /plex/users/delete
-        $router->addRoute(
-            '#^/plex/users/delete$#',
-            'Plex\\Users\\Delete', 'Plex\\Users\\DeleteHtml'
-        );
-        // URL: /plex/users/edit
-        $router->addRoute(
-            '#^/plex/users/edit$#',
-            'Plex\\Users\\Edit', 'Plex\\Users\\EditHtml'
-        );
-        // URL: /plex/welcome
-        $router->addRoute(
-            '#^/plex/welcome$#', 'Plex\\Welcome', 'Plex\\WelcomeHtml'
-        );
-        // URL: /privacy
-        $router->addRoute(
-            '#^/privacy$#', 'PrivacyNotice', 'PrivacyNoticeHtml'
-        );
-        // URL: /remoteaddress /remoteaddress.html
-        $router->addRoute(
-            '#^/remoteaddress(?:\.html?)?$#',
-            'RemoteAddress', 'RemoteAddressHtml'
-        );
-        // URL: /remoteaddress.json
-        $router->addRoute(
-            '#^/remoteaddress\.json$#', 'RemoteAddress', 'RemoteAddressJSON'
-        );
-        // URL: /remoteaddress.txt
-        $router->addRoute(
-            '#^/remoteaddress\.txt$#', 'RemoteAddress', 'RemoteAddressPlain'
-        );
-        // URL: /task/(name)
-        $router->addRoute(
-            '#^/task/(.*)/?$#', 'Task', 'TaskJSON'
-        );
-        // URL: /tools
-        $router->addRoute(
-            '#^/tools$#', 'Tools', 'ToolsHtml'
-        );
-        // URL: /urlencodedecode
-        $router->addRoute(
-            '#^/urlencodedecode$#', 'UrlEncodeDecode', 'UrlEncodeDecodeHtml'
-        );
-        // URL: /user/invite
-        $router->addRoute(
-            '#^/user/invite$#', 'User\\Invite', 'User\\InviteHtml'
-        );
-        // URL: /user/login
-        $router->addRoute(
-            '#^/user/login$#', 'User\\Login', 'User\\LoginHtml'
-        );
-        // URL: /user/logout
-        $router->addRoute(
-            '#^/user/logout$#', 'User\\Logout', 'User\\LogoutHtml'
-        );
-        // URL: /user/(uuid)
-        $router->addRoute(
-            '#^/user/([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})$#', 'User\\Profile', 'User\\ProfileHtml'
-        );
-        // URL: /users
-        $router->addRoute(
-            '#^/users$#', 'Users', 'UsersHtml'
-        );
-        // URL: /whois
-        $router->addRoute(
-            '#^/whois$#', 'WhoisService', 'WhoisServiceHtml'
-        );
-        // URL: *
-        $router->addRoute(
-            '#.*#', 'PageNotFound', 'PageNotFoundHtml'
-        );
-
+        /*Router::$route_unauthorized = ['HttpCode', ['HttpCodeHtml', 'HttpCodeJson', 'HttpCodePlain'], HttpCode::HTTP_SEE_OTHER,
+            \sprintf('/user/login?return=%s', \rawurlencode(\getenv('REQUEST_URI')))
+        ];*/
     }
 
-    $router->route();
-    $router->send();
-
+    Router::invoke();
 }
 
 main($argc ?? 0, $argv ?? []);

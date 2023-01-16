@@ -2,21 +2,14 @@
 
 namespace CarlBennett\Tools\Views;
 
-use \CarlBennett\MVC\Libraries\Exceptions\IncorrectModelException;
-use \CarlBennett\MVC\Libraries\Model;
-use \CarlBennett\MVC\Libraries\View;
-use \CarlBennett\Tools\Models\RemoteAddress as RemoteAddressModel;
+class RemoteAddressPlain extends \CarlBennett\Tools\Views\Base\Plain
+{
+  public static function invoke(\CarlBennett\Tools\Interfaces\Model $model): void
+  {
+    if (!$model instanceof \CarlBennett\Tools\Models\RemoteAddress)
+      throw new \CarlBennett\MVC\Libraries\Exceptions\IncorrectModelException();
 
-class RemoteAddressPlain extends View {
-  public function getMimeType() {
-    return 'text/plain;charset=utf-8';
-  }
-
-  public function render(Model &$model) {
-    if (!$model instanceof RemoteAddressModel) {
-      throw new IncorrectModelException();
-    }
+    $model->_responseHeaders['Content-Type'] = self::mimeType();
     echo $model->ip_address;
-    $model->_responseHeaders['Content-Type'] = $this->getMimeType();
   }
 }

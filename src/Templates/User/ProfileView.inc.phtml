@@ -1,14 +1,11 @@
-<?php namespace CarlBennett\Tools\Templates\User;
-use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\MVC\Libraries\Markdown;
-use \CarlBennett\Tools\Libraries\User;
-use \CarlBennett\Tools\Models\User\Profile as ProfileModel;
-use \DateTimeZone;
+<?php
+
+namespace CarlBennett\Tools\Templates\User;
 
 $model = $this->getContext();
 
 $avatar = filter_var($model->avatar, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-$biography = (new Markdown())->text($model->biography);
+$biography = (new \Parsedown())->text($model->biography);
 $date_added = $model->date_added;
 $date_banned = $model->date_banned;
 $date_disabled = $model->date_disabled;
@@ -17,7 +14,7 @@ $id = $model->id;
 
 $fmt = 'D, M j, Y g:i A T';
 $tz = ($active_user ? $active_user->getTimezoneObject() : null);
-if (!$tz) $tz = new DateTimeZone('Etc/UTC');
+if (!$tz) $tz = new \DateTimeZone('Etc/UTC');
 
 if ($date_added) $date_added->setTimezone($tz);
 if ($date_banned) $date_banned->setTimezone($tz);

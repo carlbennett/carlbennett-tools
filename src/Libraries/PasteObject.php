@@ -5,19 +5,17 @@ namespace CarlBennett\Tools\Libraries;
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\MVC\Libraries\DatabaseDriver;
 use \CarlBennett\Tools\Libraries\User;
-use \CarlBennett\Tools\Libraries\IDatabaseObject;
-
 use \DateTime;
+use \DateTimeInterface;
 use \DateTimeZone;
 use \InvalidArgumentException;
 use \LengthException;
 use \PDO;
-use \PDOException;
 use \StdClass;
 use \UnexpectedValueException;
 
-class PasteObject implements IDatabaseObject {
-
+class PasteObject implements \CarlBennett\Tools\Interfaces\DatabaseObject
+{
   const DATE_SQL = 'Y-m-d H:i:s';
 
   # Maximum SQL field lengths, alter as appropriate.
@@ -27,53 +25,38 @@ class PasteObject implements IDatabaseObject {
   const OPTION_QUARANTINE = 0x00000001;
   const OPTION_UNLISTED   = 0x00000002;
 
-  const UUID_REGEX = '/([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}){1}/';
+  protected string $content;
+  protected DateTimeImmutable $date_added;
+  protected ?DateTimeImmutable $date_expires;
+  protected ?string $id;
+  protected string $mimetype;
+  protected int $options_bitmask;
+  protected ?string $password_hash;
+  protected string $title;
+  protected ?string $user_id;
 
-  private $_id;
-
-  protected $content;
-  protected $date_added;
-  protected $date_expires;
-  protected $id;
-  protected $mimetype;
-  protected $options_bitmask;
-  protected $password_hash;
-  protected $title;
-  protected $user_id;
-
-  public function __construct($value) {
-    if (is_null($value) || is_string($value)) {
-      $this->_id = $value;
-      $this->allocate();
-      return;
-    }
-
-    if ($value instanceof StdClass) {
+  public function __construct($value)
+  {
+    if ($value instanceof StdClass)
+    {
       $this->allocateObject($value);
-      return;
     }
-
-    throw new InvalidArgumentException('value must be a string or StdClass');
+    else
+    {
+      $this->id = $value;
+      if (!$this->allocate()) throw new InvalidArgumentException();
+    }
   }
 
-  public function allocate() {
-    // from the IDatabaseObject interface
-    $id = $this->_id;
-
-    if (!(is_null($id) || is_string($id))) {
-      throw new InvalidArgumentException('value must be null or a string');
-    }
-
+  public function allocate(): bool
+  {
     $this->setDateAdded(new DateTime('now', new DateTimeZone('Etc/UTC')));
+    $this->setDateExpires(null);
 
-    if (empty($id)) return;
+    $id = $this->getId();
+    if (empty($id)) return true;
 
-    $this->setId($id);
-
-    if (!isset(Common::$database)) {
-      Common::$database = DatabaseDriver::getDatabaseObject();
-    }
-
+    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
     $q = Common::$database->prepare('
       SELECT
         `content`, `date_added`, `date_expires`, UuidFromBin(`id`) AS `id`,
@@ -98,19 +81,14 @@ class PasteObject implements IDatabaseObject {
     $q->closeCursor();
 
     $this->allocateObject($r);
+    return true;
   }
 
-  protected function allocateObject(StdClass $value) {
-    $tz = new DateTimeZone('Etc/UTC');
-
-    $date_expires = (
-      is_null($value->date_expires) ?
-      null : new DateTime($value->date_expires, $tz)
-    );
-
+  protected function allocateObject(StdClass $value): void
+  {
     $this->setContent($value->content);
-    $this->setDateAdded(new DateTime($value->date_added, $tz));
-    $this->setDateExpires($date_expires);
+    $this->setDateAdded($value->date_added);
+    $this->setDateExpires($value->date_expires);
     $this->setId($value->id);
     $this->setMimetype($value->mimetype);
     $this->setOptionsBitmask($value->options_bitmask);
@@ -119,7 +97,8 @@ class PasteObject implements IDatabaseObject {
     $this->setUserId($value->user_id);
   }
 
-  public function checkPassword(string $password) {
+  public function checkPassword(string $password): bool
+  {
     $hash = $this->getPasswordHash();
     $rehash = password_needs_rehash($hash, PASSWORD_BCRYPT, array(
       'cost' => Common::$config->pastes->bcrypt_cost,
@@ -134,21 +113,11 @@ class PasteObject implements IDatabaseObject {
     return $verified;
   }
 
-  public function commit() {
-    // from the IDatabaseObject interface
+  public function commit(): bool
+  {
+    if (empty($this->id)) $this->id = \Ramsey\Uuid\Uuid::uuid4();
 
-    if (!isset(Common::$database)) {
-      Common::$database = DatabaseDriver::getDatabaseObject();
-    }
-
-    if (empty($this->id)) {
-      $q = Common::$database->query('SELECT UUID();');
-      if (!$q) return $q;
-
-      $this->id = $q->fetch(PDO::FETCH_NUM)[0];
-      $q->closeCursor();
-    }
-
+    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
     $q = Common::$database->prepare('
       INSERT INTO `pastebin` (
         `content`, `date_added`, `date_expires`, `id`, `mimetype`,
@@ -198,7 +167,8 @@ class PasteObject implements IDatabaseObject {
     return $r;
   }
 
-  public static function createPassword(string $password) {
+  public static function createPassword(string $password): string
+  {
     if (!is_string($password)) {
       throw new InvalidArgumentException('value must be a string');
     }
@@ -212,43 +182,57 @@ class PasteObject implements IDatabaseObject {
     ));
   }
 
-  public function getContent() {
+  public function deallocate(): bool
+  {
+    $id = $this->getId();
+    if (\is_null($id)) return false;
+    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
+    $q = Common::$database->prepare('DELETE FROM `pastebin` WHERE `id` = UuidToBin(?) LIMIT 1;');
+    try { return $q && $q->execute([$id]); }
+    finally { if ($q) $q->closeCursor(); }
+  }
+
+  public function getContent(): string
+  {
     return $this->content;
   }
 
-  public function getDateAdded() {
+  public function getDateAdded(): DateTimeInterface
+  {
     return $this->date_added;
   }
 
-  public function getDateExpires() {
+  public function getDateExpires(): ?DateTimeInterface
+  {
     return $this->date_expires;
   }
 
-  public function getId() {
+  public function getId(): string
+  {
     return $this->id;
   }
 
-  public function getMimetype() {
+  public function getMimetype(): string
+  {
     return $this->mimetype;
   }
 
-  public function getOptionsBitmask() {
+  public function getOptionsBitmask(): int
+  {
     return $this->options_bitmask;
   }
 
-  public function getPasswordHash() {
+  public function getPasswordHash(): string
+  {
     return $this->password_hash;
   }
 
-  public static function getRecentPastes($limit = 10, $bitmask = null, $passworded = false) {
-    if (!isset(Common::$database)) {
-      Common::$database = DatabaseDriver::getDatabaseObject();
-    }
-
-    if (is_null($bitmask) || !is_numeric($bitmask)) {
+  public static function getRecentPastes($limit = 10, $bitmask = null, $passworded = false): ?array
+  {
+    if (\is_null($bitmask) || !\is_numeric($bitmask))
       $bitmask = (self::OPTION_QUARANTINE | self::OPTION_UNLISTED);
-    }
 
+    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
     $q = Common::$database->prepare(sprintf('
       SELECT UuidFromBin(`id`) AS `id` FROM `pastebin`
       WHERE %s NOT (`options_bitmask` & %d)
@@ -262,128 +246,106 @@ class PasteObject implements IDatabaseObject {
       );
     }
 
-    $pastes = array();
-    while ($r = $q->fetchObject()) {
-      $pastes[] = new self($r->id);
-    }
+    $pastes = [];
+    while ($r = $q->fetchObject()) $pastes[] = new self($r->id);
     $q->closeCursor();
 
     return $pastes;
   }
 
-  public function getTitle() {
+  public function getTitle(): string
+  {
     return $this->title;
   }
 
-  public function getURI() {
+  public function getURI(): string
+  {
     return Common::relativeUrlToAbsolute('/paste/' . $this->id);
   }
 
-  public function getUser() {
-    return (
-      is_null($this->user_id) ? $this->user_id : new User($this->user_id)
-    );
+  public function getUser(): ?User
+  {
+    return \is_null($this->user_id) ? null : new User($this->user_id);
   }
 
-  public function getUserId() {
+  public function getUserId(): ?string
+  {
     return $this->user_id;
   }
 
-  public function setContent(string $value) {
-    if (!is_string($value)) {
-      throw new InvalidArgumentException('value must be a string');
-    }
+  public function setContent(string $value): void
+  {
+    if (!is_string($value)) throw new InvalidArgumentException('value must be a string');
 
     $this->content = $value;
   }
 
-  public function setDateAdded(DateTime $value) {
-    if (!$value instanceof DateTime) {
-      throw new InvalidArgumentException(
-        'value must be a DateTime object'
-      );
-    }
-
-    $this->date_added = $value;
+  public function setDateAdded(DateTimeInterface|string $value): void
+  {
+    $this->date_added = \is_null($value) ? null : (
+      \is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : DateTimeImmutable::createFromInterface($value)
+    );
   }
 
-  public function setDateExpires(?DateTime $value) {
-    if (!(is_null($value) || $value instanceof DateTime)) {
-      throw new InvalidArgumentException(
-        'value must be null or a DateTime object'
-      );
-    }
-
-    $this->date_expires = $value;
+  public function setDateExpires(DateTimeInterface|string|null $value): void
+  {
+    $this->date_expires = \is_null($value) ? null : (
+      \is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : DateTimeImmutable::createFromInterface($value)
+    );
   }
 
-  public function setId(string $value) {
-    if (!is_string($value) || preg_match(self::UUID_REGEX, $value) !== 1) {
-      throw new InvalidArgumentException(
-        'value must be a string in UUID format'
-      );
-    }
+  public function setId(string $value): void
+  {
+    if (!\is_string($value) || \preg_match(self::UUID_REGEX, $value) !== 1)
+      throw new InvalidArgumentException('value must be a string in UUID format');
 
     $this->id = $value;
   }
 
-  public function setMimetype(string $value) {
-    if (!is_string($value) || empty($value)) {
-      throw new InvalidArgumentException(
-        'value must be a non-empty string in mimetype format'
-      );
-    }
+  public function setMimetype(string $value): void
+  {
+    if (!\is_string($value) || empty($value))
+      throw new InvalidArgumentException('value must be a non-empty string in mimetype format');
 
     $this->mimetype = $value;
   }
 
-  public function setOptionsBitmask(int $value) {
-    if (!is_int($value)) {
-      throw new InvalidArgumentException(
-        'value must be an integer'
-      );
-    }
-
+  public function setOptionsBitmask(int $value): void
+  {
     $this->options_bitmask = $value;
   }
 
-  public function setPasswordHash(?string $value) {
-    if (!(is_null($value) || is_string($value))) {
+  public function setPasswordHash(?string $value): void
+  {
+    if (!(\is_null($value) || \is_string($value)))
       throw new InvalidArgumentException('value must be null or a string');
-    }
 
-    if (!is_null($value) && empty($value)) {
+    if (!\is_null($value) && empty($value))
       throw new LengthException('value must be non-empty');
-    }
 
     $this->password_hash = $value;
   }
 
-  public function setTitle(string $value) {
-    if (!is_string($value)) {
+  public function setTitle(string $value): void
+  {
+    if (!\is_string($value))
       throw new InvalidArgumentException('value must be a string');
-    }
 
     $this->title = $value;
   }
 
-  public function setUser(?User $value) {
-    if (!(is_null($value) || $value instanceof User)) {
-      throw new InvalidArgumentException(
-        'value must be null or instance of User'
-      );
-    }
+  public function setUser(?User $value): void
+  {
+    if (!(\is_null($value) || $value instanceof User))
+      throw new InvalidArgumentException('value must be null or instance of User');
 
     $this->user_id = (is_null($value) ? $value : $value->getId());
   }
 
-  public function setUserId(?string $value) {
-    if (!(is_null($value)
-      || (is_string($value) && preg_match(self::UUID_REGEX, $value) === 1))) {
-      throw new InvalidArgumentException(
-        'value must be null, or a string in UUID format'
-      );
-    }
+  public function setUserId(?string $value): void
+  {
+    if (!(\is_null($value) || (\is_string($value) && \preg_match(self::UUID_REGEX, $value) === 1)))
+      throw new InvalidArgumentException('value must be null or a string in UUID format');
 
     $this->user_id = $value;
   }

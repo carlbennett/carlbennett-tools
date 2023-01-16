@@ -2,43 +2,35 @@
 
 namespace CarlBennett\Tools\Libraries\Utility;
 
-use \InvalidArgumentException;
+class HTTPForm
+{
+  protected array $form;
 
-class HTTPForm {
-
-  protected $form;
-
-  public function __construct($form) {
-    if (!is_null($form) && !is_array($form)) {
-      throw new InvalidArgumentException();
-    }
-    if (is_null($form)) {
-      $this->form = array();
-    } else {
-      $this->form = $form;
-    }
+  public function __construct(?array $form = null)
+  {
+    $this->form = $form ?? [];
   }
 
-  public function delete($key) {
-    if (isset($this->form[$key])) {
-      unset($this->form[$key]);
-    }
+  public function delete(string $key): void
+  {
+    if (isset($this->form[$key])) unset($this->form[$key]);
   }
 
-  public function getAll() {
+  public function getAll(): array
+  {
     return $this->form;
   }
 
-  public function get($key, $default = null) {
-    $value = (isset($this->form[$key]) ? $this->form[$key] : $default);
+  public function get(string $key, mixed $default = null): mixed
+  {
+    $value =  $this->form[$key] ?? $default;
 
-    if (is_string($value) && is_numeric($value)) {
-      if (strpos($value, '.') !== false) {
-        return (double) $value;
-      } else {
-        return (int) $value;
-      }
-    } else {
+    if (\is_string($value) && \is_numeric($value))
+    {
+      return \strpos($value, '.') !== false ? (double) $value : (int) $value;
+    }
+    else
+    {
       return $value;
     }
   }
@@ -46,12 +38,13 @@ class HTTPForm {
   /**
    * alias of delete()
    */
-  public function remove($key) {
-    return $this->delete($key);
+  public function remove(string $key): void
+  {
+    $this->delete($key);
   }
 
-  public function set($key, $value) {
+  public function set(string $key, mixed $value): void
+  {
     $this->form[$key] = $value;
   }
-
 }

@@ -1,7 +1,8 @@
 <?php
+
 namespace CarlBennett\Tools\Models;
-use \CarlBennett\MVC\Libraries\Model;
-class UrlEncodeDecode extends Model
+
+class UrlEncodeDecode extends Base
 {
   public $decode;
   public $input;

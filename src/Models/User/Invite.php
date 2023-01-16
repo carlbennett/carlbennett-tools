@@ -2,23 +2,20 @@
 
 namespace CarlBennett\Tools\Models\User;
 
-use \CarlBennett\Tools\Models\ActiveUser as ActiveUserModel;
-
-class Invite extends ActiveUserModel {
-
-  const ERROR_SUCCESS = 0;
-  const ERROR_INTERNAL_ERROR = 1;
-  const ERROR_ID_MALFORMED = 2;
-  const ERROR_ID_NOT_FOUND = 3;
-  const ERROR_EMAIL_INVALID = 4;
-  const ERROR_EMAIL_ALREADY_INVITED = 5;
-  const ERROR_INVITES_AVAILABLE_ZERO = 6;
+class Invite extends \CarlBennett\Tools\Models\ActiveUser
+{
+  public const ERROR_EMAIL_ALREADY_INVITED = 'EMAIL_ALREADY_INVITED';
+  public const ERROR_EMAIL_INVALID = 'EMAIL_INVALID';
+  public const ERROR_ID_MALFORMED = 'ID_MALFORMED';
+  public const ERROR_ID_NOT_FOUND = 'ID_NOT_FOUND';
+  public const ERROR_INTERNAL_ERROR = 'INTERNAL_ERROR';
+  public const ERROR_INVITES_AVAILABLE_ZERO = 'INVITES_AVAILABLE_ZERO';
+  public const ERROR_SUCCESS = 'SUCCESS';
 
   public $date_accepted;
   public $date_invited;
   public $date_revoked;
   public $email;
-  public $error;
   public $feedback;
   public $id;
   public $invited_by;
@@ -30,5 +27,4 @@ class Invite extends ActiveUserModel {
   public $password_desired;
   public $record_updated;
   public $return;
-
 }

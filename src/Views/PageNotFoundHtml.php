@@ -2,22 +2,14 @@
 
 namespace CarlBennett\Tools\Views;
 
-use \CarlBennett\MVC\Libraries\Exceptions\IncorrectModelException;
-use \CarlBennett\MVC\Libraries\Model;
-use \CarlBennett\MVC\Libraries\View;
-use \CarlBennett\Tools\Libraries\Template;
-use \CarlBennett\Tools\Models\PageNotFound as PageNotFoundModel;
+class PageNotFoundHtml extends \CarlBennett\Tools\Views\Base\Html
+{
+  public static function invoke(\CarlBennett\Tools\Interfaces\Model $model): void
+  {
+    if (!$model instanceof \CarlBennett\Tools\Models\PageNotFound)
+      throw new \CarlBennett\MVC\Libraries\Exceptions\IncorrectModelException();
 
-class PageNotFoundHtml extends View {
-  public function getMimeType() {
-    return 'text/html;charset=utf-8';
-  }
-
-  public function render(Model &$model) {
-    if (!$model instanceof PageNotFoundModel) {
-      throw new IncorrectModelException();
-    }
-    (new Template($model, 'PageNotFound'))->render();
-    $model->_responseHeaders['Content-Type'] = $this->getMimeType();
+    (new \CarlBennett\Tools\Libraries\Template($model, 'PageNotFound'))->render();
+    $model->_responseHeaders['Content-Type'] = self::mimeType();
   }
 }

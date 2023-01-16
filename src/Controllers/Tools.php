@@ -2,19 +2,19 @@
 
 namespace CarlBennett\Tools\Controllers;
 
-use \CarlBennett\MVC\Libraries\Controller;
-use \CarlBennett\MVC\Libraries\Router;
-use \CarlBennett\MVC\Libraries\View;
-use \CarlBennett\Tools\Libraries\Authentication;
-use \CarlBennett\Tools\Models\Tools as ToolsModel;
+class Tools extends Base
+{
+  public function __construct()
+  {
+    $this->model = new \CarlBennett\Tools\Models\Tools();
+  }
 
-class Tools extends Controller {
-  public function &run(Router &$router, View &$view, array &$args) {
-    $model = new ToolsModel();
-    $model->active_user = Authentication::$user;
-    $model->routes = $router->getRoutes();
-    $view->render($model);
-    $model->_responseCode = 200;
-    return $model;
+  public function invoke(?array $args): bool
+  {
+    if (!\is_null($args) && \count($args) > 0) throw new \InvalidArgumentException();
+
+    $this->model->routes = \CarlBennett\Tools\Libraries\Router::$routes;
+    $this->model->_responseCode = 200;
+    return true;
   }
 }

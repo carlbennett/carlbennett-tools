@@ -2,26 +2,14 @@
 
 namespace CarlBennett\Tools\Views;
 
-use \CarlBennett\MVC\Libraries\Exceptions\IncorrectModelException;
-use \CarlBennett\MVC\Libraries\Model;
-use \CarlBennett\MVC\Libraries\View;
-use \CarlBennett\Tools\Libraries\Template;
-use \CarlBennett\Tools\Models\WhoisService as WhoisServiceModel;
-
-class WhoisServiceHtml extends View
+class WhoisServiceHtml extends \CarlBennett\Tools\Views\Base\Html
 {
-  public function getMimeType()
+  public static function invoke(\CarlBennett\Tools\Interfaces\Model $model): void
   {
-    return 'text/html;charset=utf-8';
-  }
+    if (!$model instanceof \CarlBennett\Tools\Models\WhoisService)
+      throw new \CarlBennett\MVC\Libraries\Exceptions\IncorrectModelException();
 
-  public function render(Model &$model)
-  {
-    if (!$model instanceof WhoisServiceModel)
-    {
-      throw new IncorrectModelException();
-    }
-    (new Template($model, 'WhoisService'))->render();
-    $model->_responseHeaders['Content-Type'] = $this->getMimeType();
+    (new \CarlBennett\Tools\Libraries\Template($model, 'WhoisService'))->render();
+    $model->_responseHeaders['Content-Type'] = self::mimeType();
   }
 }

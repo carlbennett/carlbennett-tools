@@ -2,21 +2,22 @@
 
 namespace CarlBennett\Tools\Controllers;
 
-use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\MVC\Libraries\Controller;
-use \CarlBennett\MVC\Libraries\Router;
-use \CarlBennett\MVC\Libraries\View;
-use \CarlBennett\Tools\Libraries\Authentication;
-use \CarlBennett\Tools\Models\PrivacyNotice as PrivacyNoticeModel;
+class PrivacyNotice extends Base
+{
+  public function __construct()
+  {
+    $this->model = new \CarlBennett\Tools\Models\PrivacyNotice();
+  }
 
-class PrivacyNotice extends Controller {
-  public function &run(Router &$router, View &$view, array &$args) {
-    $model = new PrivacyNoticeModel();
-    $model->active_user = Authentication::$user;
-    $model->data_location = Common::$config->privacy->data_location;
-    $model->email_domain = Common::$config->privacy->contact->email_domain;
-    $view->render($model);
-    $model->_responseCode = 200;
-    return $model;
+  public function invoke(?array $args): bool
+  {
+    if (!\is_null($args) && \count($args) > 0) throw new \InvalidArgumentException();
+
+    $privacy = \CarlBennett\MVC\Libraries\Common::$config->privacy;
+    $this->model->data_location = $privacy->data_location;
+    $this->model->email_domain = $privacy->contact->email_domain;
+
+    $this->model->_responseCode = 200;
+    return true;
   }
 }

@@ -37,7 +37,7 @@ class Acl implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSerializ
     if (!$this->allocate()) throw new UnexpectedValueException();
   }
 
-  public function allocate() : bool
+  public function allocate(): bool
   {
     $this->setAcls([]);
 
@@ -57,13 +57,13 @@ class Acl implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSerializ
     return true;
   }
 
-  protected function allocateObject(StdClass $value) : void
+  protected function allocateObject(StdClass $value): void
   {
     $this->setAcls($value->acls);
     $this->setUserId($value->user_id);
   }
 
-  public function commit() : bool
+  public function commit(): bool
   {
     if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
     $q1 = Common::$database->prepare('DELETE FROM `user_acls` WHERE `user_id` = UuidToBin(:uid);');
@@ -94,9 +94,9 @@ class Acl implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSerializ
 
   /**
    * @param string $value The Access Control List identifier.
-   * @return string Whether the Access Control List identifier is set.
+   * @return boolean Whether the Access Control List identifier is set.
    */
-  public function getAcl(string $value)
+  public function getAcl(string $value): bool
   {
     return isset($this->acls[$value]) && $this->acls[$value] == true;
   }
@@ -104,7 +104,7 @@ class Acl implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSerializ
   /**
    * @return string The Access Control List identifiers.
    */
-  public function getAcls() : array
+  public function getAcls(): array
   {
     $acls = [];
 
@@ -117,7 +117,7 @@ class Acl implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSerializ
     return $acls;
   }
 
-  public function getUser() : ?User
+  public function getUser(): ?User
   {
     return is_null($this->user_id) ? null : new User($this->user_id);
   }
@@ -125,7 +125,7 @@ class Acl implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSerializ
   /**
    * @return string The UUID in hexadecimal string format (with dashes).
    */
-  public function getUserId() : ?string
+  public function getUserId(): ?string
   {
     return $this->user_id;
   }
@@ -140,9 +140,9 @@ class Acl implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSerializ
 
   /**
    * @param string $value The Access Control List identifier.
-   * @param bool $enable Whether to enable or disable the Access Control.
+   * @param boolean $enable Whether to enable or disable the Access Control.
    */
-  public function setAcl(string $value, bool $enable) : void
+  public function setAcl(string $value, bool $enable): void
   {
     if (strlen($value) > self::MAX_ACL_ID)
     {
@@ -164,7 +164,7 @@ class Acl implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSerializ
   /**
    * @param array $value The Access Control List identifiers.
    */
-  public function setAcls(array $value) : void
+  public function setAcls(array $value): void
   {
     $this->acls = [];
 
@@ -178,7 +178,7 @@ class Acl implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSerializ
    * @param string $value The UUID in hexadecimal format (with dashes) to set.
    *                      Example: "31952e1c-d05a-44a0-b749-6d892cc96d3a"
    */
-  public function setUserId(string $value) : void
+  public function setUserId(string $value): void
   {
     if (preg_match(self::UUID_REGEX, $value) !== 1)
     {
@@ -190,5 +190,4 @@ class Acl implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSerializ
 
     $this->user_id = $value;
   }
-
 }

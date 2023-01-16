@@ -2,65 +2,58 @@
 
 namespace CarlBennett\Tools\Controllers;
 
-use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\MVC\Libraries\Controller;
-use \CarlBennett\MVC\Libraries\Router;
-use \CarlBennett\MVC\Libraries\View;
-use \CarlBennett\Tools\Libraries\Utility\HTTPForm;
-use \CarlBennett\Tools\Models\Task as TaskModel;
-use \CarlBennett\Tools\Tasks\Task as TaskLib;
-use \UnexpectedValueException;
-
-class Task extends Controller
+class Task extends \CarlBennett\Tools\Controllers\Base
 {
-  public function &run(Router &$router, View &$view, array &$args)
+  public function __construct()
   {
-    $model = new TaskModel();
-    $model->_responseCode = 500;
-    $model->task_name = array_shift($args);
+    $this->model = new \CarlBennett\Tools\Models\Task();
+  }
 
-    self::auth($router, $model);
-    if (!$model->auth_token_valid)
+  public function invoke(?array $args): bool
+  {
+    if (\is_null($args) || \count($args) < 1) throw new \InvalidArgumentException();
+
+    $this->model->_responseCode = 500;
+    $this->model->task_name = \array_shift($args);
+
+    self::auth($this->model);
+    if (!$this->model->auth_token_valid)
     {
-      $model->_responseCode = 401;
-      $model->task_result = '401 Bad Auth Token';
-      $view->render($model);
-      return $model;
+      $this->model->_responseCode = 401;
+      $this->model->task_result = '401 Bad Auth Token';
+      return true;
     }
 
     try
     {
-      $task = TaskLib::create($model);
+      $task = \CarlBennett\Tools\Tasks\Task::create($this->model);
     }
-    catch (UnexpectedValueException $e) // invalid task name
+    catch (\UnexpectedValueException) // invalid task name
     {
       $task = null;
     }
 
     if (!$task)
     {
-      $model->_responseCode = 404;
-      $model->task_result = '404 Task Not Found';
+      $this->model->_responseCode = 404;
+      $this->model->task_result = '404 Task Not Found';
     }
     else
     {
       $task->run();
     }
 
-    $view->render($model);
-    return $model;
+    return true;
   }
 
-  protected static function auth($router, $model)
+  protected static function auth($model): void
   {
-    $g = new HTTPForm($router->getRequestQueryArray());
-    $p = new HTTPForm($router->getRequestBodyArray());
-    $h = getenv('HTTP_X_AUTH_TOKEN');
+    $q = new \CarlBennett\Tools\Libraries\Utility\HTTPForm(\CarlBennett\Tools\Libraries\Router::query());
+    $h = \getenv('HTTP_X_AUTH_TOKEN');
 
-    $model->auth_token = $p->get('auth_token') ??
-      $g->get('auth_token') ?? $h ?? null;
+    $model->auth_token = $q->get('auth_token') ?? $h ?? null;
 
-    $cnf_auth_token = Common::$config->tasks->auth_token;
+    $cnf_auth_token = \CarlBennett\MVC\Libraries\Common::$config->tasks->auth_token;
     $model->auth_token_valid = ($model->auth_token === $cnf_auth_token);
   }
 }

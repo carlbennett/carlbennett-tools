@@ -2,49 +2,47 @@
 
 namespace CarlBennett\Tools\Controllers\Paste;
 
-use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\MVC\Libraries\Controller;
-use \CarlBennett\MVC\Libraries\Router;
-use \CarlBennett\MVC\Libraries\View as BaseView;
-use \CarlBennett\Tools\Libraries\PasteObject;
-use \CarlBennett\Tools\Models\Paste as PasteModel;
 use \InvalidArgumentException;
-use \UnexpectedValueException;
 
-class View extends Controller {
-  public function &run(Router &$router, BaseView &$view, array &$args) {
-    $model = new PasteModel();
-    $model->id = array_shift($args);
+class View extends \CarlBennett\Tools\Controllers\Base
+{
+  public function __construct()
+  {
+    $this->model = new \CarlBennett\Tools\Models\Paste();
+  }
+
+  public function invoke(?array $args): bool
+  {
+    if (\is_null($args) || \count($args) != 1) throw new InvalidArgumentException();
+
+    $this->model->id = \array_shift($args);
 
     try {
-      $model->paste_object = new PasteObject($model->id);
+      $this->model->paste_object = new \CarlBennett\Tools\Libraries\PasteObject($this->model->id);
     } catch (InvalidArgumentException $e) { // Badly parsed id
-      $model->paste_object = null;
-    } catch (UnexpectedValueException $e) { // Id not found
-      $model->paste_object = null;
+      $this->model->paste_object = null;
+    } catch (\UnexpectedValueException $e) { // Id not found
+      $this->model->paste_object = null;
     }
 
-    $paste =& $model->paste_object;
+    $paste =& $this->model->paste_object;
 
-    $query = $router->getRequestQueryArray();
-    $dl = (isset($query['dl']) ? $query['dl'] : null);
+    $q = \CarlBennett\Tools\Libraries\Router::query();
+    $dl = (isset($q['dl']) ? $q['dl'] : null);
 
-    if ($paste && $dl) {
-      $dl_filename = Common::sanitizeForUrl($paste->getTitle());
+    if ($paste && $dl)
+    {
+      $dl_filename = \CarlBennett\MVC\Libraries\Common::sanitizeForUrl($paste->getTitle());
       $dl_filename .= '.txt';
-      $model->_responseHeaders['Content-Disposition'] = sprintf(
+      $this->model->_responseHeaders['Content-Disposition'] = sprintf(
         'attachment;filename="%s"', $dl_filename
       );
-      $model->_responseHeaders['Content-Length'] = (string) strlen($paste->getContent());
-      $model->_responseHeaders['Content-Type'] = $paste->getMimetype();
+      $this->model->_responseHeaders['Content-Length'] = (string) strlen($paste->getContent());
+      $this->model->_responseHeaders['Content-Type'] = $paste->getMimetype();
       echo $paste->getContent();
-    } else {
-      $view->render($model);
     }
 
-    $model->_responseCode = (
-      $model->paste_object instanceof PasteObject ? 200 : 404
-    );
-    return $model;
+    $this->model->_responseCode = $this->model->paste_object ? 200 : 404;
+    return true;
   }
 }

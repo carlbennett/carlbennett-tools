@@ -2,19 +2,21 @@
 
 namespace CarlBennett\Tools\Controllers;
 
-use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\MVC\Libraries\Controller;
-use \CarlBennett\MVC\Libraries\Router;
-use \CarlBennett\MVC\Libraries\View;
-use \CarlBennett\Tools\Models\RedirectSoft as RedirectSoftModel;
+class RedirectSoft extends Base
+{
+  public function __construct()
+  {
+    $this->model = new \CarlBennett\Tools\Models\RedirectSoft();
+  }
 
-class RedirectSoft extends Controller {
-  public function &run(Router &$router, View &$view, array &$args) {
-    $model = new RedirectSoftModel();
-    $model->location = Common::relativeUrlToAbsolute(array_shift($args));
-    $view->render($model);
-    $model->_responseCode = 302;
-    $model->_responseHeaders['Location'] = $model->location;
-    return $model;
+  public function invoke(?array $args): bool
+  {
+    if (\is_null($args) || \count($args) != 1) throw new \InvalidArgumentException();
+
+    $this->model->location = \CarlBennett\MVC\Libraries\Common::relativeUrlToAbsolute(\array_shift($args));
+    if (!empty($this->model->location)) $this->model->_responseHeaders['Location'] = $this->model->location;
+
+    $this->model->_responseCode = 302;
+    return true;
   }
 }

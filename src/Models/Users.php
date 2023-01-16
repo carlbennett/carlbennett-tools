@@ -2,12 +2,9 @@
 
 namespace CarlBennett\Tools\Models;
 
-use \CarlBennett\Tools\Models\ActiveUser as ActiveUserModel;
-
-class Users extends ActiveUserModel {
-
+class Users extends ActiveUser
+{
   public $hl; // highlight
   public $id;
   public $users;
-
 }

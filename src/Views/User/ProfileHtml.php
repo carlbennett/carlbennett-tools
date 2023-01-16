@@ -2,22 +2,14 @@
 
 namespace CarlBennett\Tools\Views\User;
 
-use \CarlBennett\MVC\Libraries\Exceptions\IncorrectModelException;
-use \CarlBennett\MVC\Libraries\Model;
-use \CarlBennett\MVC\Libraries\View;
-use \CarlBennett\Tools\Libraries\Template;
-use \CarlBennett\Tools\Models\User\Profile as ProfileModel;
+class ProfileHtml extends \CarlBennett\Tools\Views\Base\Html
+{
+  public static function invoke(\CarlBennett\Tools\Interfaces\Model $model): void
+  {
+    if (!$model instanceof \CarlBennett\Tools\Models\User\Profile)
+      throw new \CarlBennett\MVC\Libraries\Exceptions\IncorrectModelException();
 
-class ProfileHtml extends View {
-  public function getMimeType() {
-    return 'text/html;charset=utf-8';
-  }
-
-  public function render(Model &$model) {
-    if (!$model instanceof ProfileModel) {
-      throw new IncorrectModelException();
-    }
-    (new Template($model, 'User/Profile'))->render();
-    $model->_responseHeaders['Content-Type'] = $this->getMimeType();
+    (new \CarlBennett\Tools\Libraries\Template($model, 'User/Profile'))->render();
+    $model->_responseHeaders['Content-Type'] = self::mimeType();
   }
 }

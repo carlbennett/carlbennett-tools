@@ -12,21 +12,21 @@ use \PDO;
 use \StdClass;
 use \UnexpectedValueException;
 
-class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject
+class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSerializable
 {
   # Maximum SQL field lengths, alter as appropriate.
   public const MAX_EMAIL = 0xFF;
 
-  protected $date_accepted;
-  protected $date_invited;
-  protected $date_revoked;
-  protected $email;
-  protected $id;
-  protected $invited_by;
-  protected $invited_user;
-  protected $record_updated;
+  protected ?DateTimeImmutable $date_accepted;
+  protected DateTimeImmutable $date_invited;
+  protected ?DateTimeImmutable $date_revoked;
+  protected string $email;
+  protected ?string $id;
+  protected ?string $invited_by;
+  protected ?string $invited_user;
+  protected DateTimeImmutable $record_updated;
 
-  public function __construct(StdClass|string $value)
+  public function __construct(StdClass|string|null $value)
   {
     if ($value instanceof StdClass)
     {
@@ -192,19 +192,39 @@ class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject
     return $this->record_updated;
   }
 
+  public function jsonSerialize(): mixed
+  {
+    return [
+      'date_accepted' => $this->getDateAccepted(),
+      'date_invited' => $this->getDateInvited(),
+      'date_revoked' => $this->getDateRevoked(),
+      'email' => $this->getEmail(),
+      'id' => $this->getId(),
+      'invited_by' => $this->getInvitedBy(),
+      'invited_user' => $this->getInvitedUser(),
+      'record_updated' => $this->getRecordUpdated(),
+    ];
+  }
+
   public function setDateAccepted(DateTimeInterface|string|null $value) : void
   {
-    $this->date_accepted = (is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : $value);
+    $this->date_accepted = (\is_null($value) ? null : (\is_string($value) ?
+      new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : DateTimeImmutable::createFromInterface($value)
+    ));
   }
 
   public function setDateInvited(DateTimeInterface|string $value) : void
   {
-    $this->date_invited = (is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : $value);
+    $this->date_invited = (\is_null($value) ? null : (\is_string($value) ?
+      new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : DateTimeImmutable::createFromInterface($value)
+    ));
   }
 
   public function setDateRevoked(DateTimeInterface|string|null $value) : void
   {
-    $this->date_revoked = (is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : $value);
+    $this->date_revoked = (\is_null($value) ? null : (\is_string($value) ?
+      new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : DateTimeImmutable::createFromInterface($value)
+    ));
   }
 
   /**
@@ -260,6 +280,8 @@ class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject
 
   public function setRecordUpdated(DateTimeInterface|string $value) : void
   {
-    $this->record_updated = (is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : $value);
+    $this->record_updated = (\is_null($value) ? null : (\is_string($value) ?
+      new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : DateTimeImmutable::createFromInterface($value)
+    ));
   }
 }

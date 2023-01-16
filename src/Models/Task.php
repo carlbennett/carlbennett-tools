@@ -2,9 +2,7 @@
 
 namespace CarlBennett\Tools\Models;
 
-use \CarlBennett\MVC\Libraries\Model;
-
-class Task extends Model
+class Task extends Base
 {
   public $auth_token;
   public $auth_token_valid;

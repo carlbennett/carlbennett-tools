@@ -2,10 +2,29 @@
 
 namespace CarlBennett\Tools\Models;
 
-use \CarlBennett\MVC\Libraries\Model;
+class ActiveUser extends Errorable implements \JsonSerializable
+{
+  /**
+   * The current user that is logged in to the site, or null if not logged in.
+   *
+   * @var \CarlBennett\Tools\Libraries\User|null
+   */
+  public ?\CarlBennett\Tools\Libraries\User $active_user = null;
 
-class ActiveUser extends Model {
+  /**
+   * When constructed, sets the $active_user to that of the Authentication::$user value.
+   * Child classes that override __construct() must call parent::__construct().
+   */
+  public function __construct()
+  {
+    $this->active_user = &\CarlBennett\Tools\Libraries\Authentication::$user;
+  }
 
-  public $active_user;
-
+  /**
+   * Implements the JSON serialization function from the JsonSerializable interface.
+   */
+  public function jsonSerialize() : mixed
+  {
+    return \array_merge(['active_user' => $this->active_user], parent::jsonSerialize());
+  }
 }

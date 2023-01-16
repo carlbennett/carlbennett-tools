@@ -2,38 +2,29 @@
 
 namespace CarlBennett\Tools\Controllers\Plex;
 
-use \CarlBennett\MVC\Libraries\Controller;
-use \CarlBennett\MVC\Libraries\Router;
-use \CarlBennett\MVC\Libraries\View;
+class Users extends \CarlBennett\Tools\Controllers\Base
+{
+  public function __construct()
+  {
+    $this->model = new \CarlBennett\Tools\Models\Plex\Users();
+  }
 
-use \CarlBennett\Tools\Libraries\Authentication;
-use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
-use \CarlBennett\Tools\Libraries\User;
-use \CarlBennett\Tools\Libraries\User\Acl;
-use \CarlBennett\Tools\Libraries\Utility\HTTPForm;
-use \CarlBennett\Tools\Models\Plex\Users as UsersModel;
+  public function invoke(?array $args): bool
+  {
+    if (!\is_null($args) && \count($args) > 0) throw new \InvalidArgumentException();
 
-class Users extends Controller {
-  public function &run(Router &$router, View &$view, array &$args) {
-    $model = new UsersModel();
-    $model->active_user = Authentication::$user;
+    $this->model->users = !$this->model->active_user
+      || !$this->model->active_user->getAclObject()->getAcl(\CarlBennett\Tools\Libraries\User\Acl::ACL_PLEX_USERS)
+      ? false : \CarlBennett\Tools\Libraries\Plex\User::getAll();
 
-    if (!$model->active_user
-      || !$model->active_user->getAclObject()->getAcl(Acl::ACL_PLEX_USERS)) {
-      $model->users = false;
-    } else {
-      $model->users = PlexUser::getAll();
-    }
+    $query = \CarlBennett\Tools\Libraries\Router::query();
+    $query = new \CarlBennett\Tools\Libraries\Utility\HTTPForm($query);
 
-    $query = $router->getRequestQueryArray();
-    $query = new HTTPForm($query);
+    $this->model->show_hidden = $query->get('sh');
+    $this->model->id = $query->get('id');
+    $this->model->hl = $query->get('hl');
 
-    $model->show_hidden = $query->get('sh');
-    $model->id = $query->get('id');
-    $model->hl = $query->get('hl');
-
-    $view->render($model);
-    $model->_responseCode = ($model->users ? 200 : 401);
-    return $model;
+    $this->model->_responseCode = $this->model->users ? 200 : 401;
+    return true;
   }
 }

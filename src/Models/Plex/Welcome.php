@@ -2,7 +2,4 @@
 
 namespace CarlBennett\Tools\Models\Plex;
 
-use \CarlBennett\Tools\Models\ActiveUser as ActiveUserModel;
-
-class Welcome extends ActiveUserModel {
-}
+class Welcome extends \CarlBennett\Tools\Models\ActiveUser {}
