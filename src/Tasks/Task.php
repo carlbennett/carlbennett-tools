@@ -2,20 +2,23 @@
 
 namespace CarlBennett\Tools\Tasks;
 
-use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\Tools\Models\Task as TaskModel;
-use \UnexpectedValueException;
 
 abstract class Task
 {
-  public static function create(TaskModel $model)
+  public TaskModel $model;
+
+  /**
+   * Creates a Task subclass from the provided task name string in the model object.
+   */
+  public static function create(TaskModel $model): self
   {
     switch (strtolower($model->task_name))
     {
       case 'prune_user_sessions': return new PruneUserSessionsTask($model);
       case 'sync_plex_users': return new SyncPlexUsersTask($model);
       case 'test': return new TestTask($model);
-      default: throw new UnexpectedValueException('invalid task name');
+      default: throw new \UnexpectedValueException('Invalid task name');
     }
   }
 
@@ -24,5 +27,5 @@ abstract class Task
     $this->model = &$model;
   }
 
-  public abstract function run();
+  public abstract function run(): void;
 }

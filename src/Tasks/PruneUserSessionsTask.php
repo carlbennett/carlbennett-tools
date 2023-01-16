@@ -1,10 +1,12 @@
-<?php namespace CarlBennett\Tools\Tasks;
-use \CarlBennett\Tools\Libraries\Authentication;
+<?php
+
+namespace CarlBennett\Tools\Tasks;
+
 class PruneUserSessionsTask extends Task
 {
-  public function run()
+  public function run(): void
   {
-    $success = Authentication::discard();
+    $success = \CarlBennett\Tools\Libraries\Authentication::discard();
     $this->model->task_result = array('success' => $success);
     $this->model->_responseCode = ($success ? 200 : 500);
   }

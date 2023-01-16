@@ -11,7 +11,7 @@ use \Throwable;
 
 class SyncPlexUsersTask extends Task
 {
-    public function run()
+    public function run(): void
     {
         $create_unmapped_users = Common::$config->tasks->plex_create_unmapped_users;
         $plex_token = Common::$config->tasks->plex_auth_token;
