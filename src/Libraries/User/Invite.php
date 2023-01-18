@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace CarlBennett\Tools\Libraries\User;
 
 use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\MVC\Libraries\DatabaseDriver;
+use \CarlBennett\Tools\Libraries\Database;
 use \CarlBennett\Tools\Libraries\DateTimeImmutable;
 use \CarlBennett\Tools\Libraries\User;
 use \DateTimeInterface;
@@ -51,8 +51,7 @@ class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeria
     $id = $this->getId();
     if (is_null($id)) return true;
 
-    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
-    $q = Common::$database->prepare('
+    $q = Database::instance()->prepare('
       SELECT
         `date_accepted`, `date_invited`, `date_revoked`, `email`,
         UuidFromBin(`id`) AS `id`, UuidFromBin(`invited_by`) AS `invited_by`,
@@ -79,8 +78,7 @@ class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeria
 
   public function commit() : bool
   {
-    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
-    $q = Common::$database->prepare(
+    $q = Database::instance()->prepare(
       'INSERT INTO `user_invites` (
         `date_accepted`, `date_invited`, `date_revoked`, `email`,
         `id`, `invited_by`, `invited_user`, `record_updated`
@@ -115,8 +113,7 @@ class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeria
   {
     $id = $this->getId();
     if (is_null($id)) return false;
-    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
-    $q = Common::$database->prepare('DELETE FROM `user_invites` WHERE `id` = ? LIMIT 1;');
+    $q = Database::instance()->prepare('DELETE FROM `user_invites` WHERE `id` = ? LIMIT 1;');
     try { return $q && $q->execute([$id]); }
     finally { if ($q) $q->closeCursor(); }
   }
@@ -127,12 +124,7 @@ class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeria
    */
   public static function getByEmail(string $value)
   {
-    if (!isset(Common::$database))
-    {
-      Common::$database = DatabaseDriver::getDatabaseObject();
-    }
-
-    $q = Common::$database->prepare(
+    $q = Database::instance()->prepare(
       'SELECT UuidFromBin(`id`) AS `id` FROM `user_invites`
       WHERE `email` = :email LIMIT 1;'
     );

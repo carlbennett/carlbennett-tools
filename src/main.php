@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace CarlBennett\Tools;
 
 use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\MVC\Libraries\DatabaseDriver;
 use \CarlBennett\MVC\Libraries\GlobalErrorHandler;
 use \CarlBennett\Tools\Libraries\Authentication;
 use \CarlBennett\Tools\Libraries\Router;
@@ -33,14 +32,6 @@ function main(int $argc, Iterable $argv)
     Common::$config = \json_decode(\file_get_contents(
         __DIR__ . '/../etc/config.json'
     ));
-
-    DatabaseDriver::$character_set = Common::$config->mysql->character_set;
-    DatabaseDriver::$database_name = Common::$config->mysql->database;
-    DatabaseDriver::$password      = Common::$config->mysql->password;
-    DatabaseDriver::$servers       = Common::$config->mysql->servers;
-    DatabaseDriver::$timeout       = Common::$config->mysql->timeout;
-    DatabaseDriver::$timezone      = Common::$config->mysql->timezone;
-    DatabaseDriver::$username      = Common::$config->mysql->username;
 
     Authentication::verify();
 

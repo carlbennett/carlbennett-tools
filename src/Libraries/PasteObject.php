@@ -3,7 +3,7 @@
 namespace CarlBennett\Tools\Libraries;
 
 use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\MVC\Libraries\DatabaseDriver;
+use \CarlBennett\Tools\Libraries\Database;
 use \CarlBennett\Tools\Libraries\User;
 use \DateTime;
 use \DateTimeInterface;
@@ -56,32 +56,26 @@ class PasteObject implements \CarlBennett\Tools\Interfaces\DatabaseObject
     $id = $this->getId();
     if (empty($id)) return true;
 
-    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
-    $q = Common::$database->prepare('
+    $q = Database::instance()->prepare('
       SELECT
         `content`, `date_added`, `date_expires`, UuidFromBin(`id`) AS `id`,
         `mimetype`, `options_bitmask`, `password_hash`, `title`,
         UuidFromBin(`user_id`) AS `user_id`
       FROM `pastebin` WHERE `id` = UuidToBin(:id) LIMIT 1;
     ');
-    $q->bindParam(':id', $id, PDO::PARAM_STR);
 
-    $r = $q->execute();
-    if (!$r) {
-      throw new UnexpectedValueException('an error occurred finding the paste');
+    try
+    {
+      if (!$q || !$q->execute([':id' => $id]))
+        throw new UnexpectedValueException('an error occurred finding the paste');
+
+      if ($q->rowCount() != 1)
+        throw new UnexpectedValueException(sprintf('paste id: %s not found', $id));
+
+      $this->allocateObject($q->fetchObject());
+      return true;
     }
-
-    if ($q->rowCount() != 1) {
-      throw new UnexpectedValueException(sprintf(
-        'paste id: %s not found', $id
-      ));
-    }
-
-    $r = $q->fetchObject();
-    $q->closeCursor();
-
-    $this->allocateObject($r);
-    return true;
+    finally { if ($q) $q->closeCursor(); }
   }
 
   protected function allocateObject(StdClass $value): void
@@ -117,8 +111,7 @@ class PasteObject implements \CarlBennett\Tools\Interfaces\DatabaseObject
   {
     if (empty($this->id)) $this->id = \Ramsey\Uuid\Uuid::uuid4();
 
-    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
-    $q = Common::$database->prepare('
+    $q = Database::instance()->prepare('
       INSERT INTO `pastebin` (
         `content`, `date_added`, `date_expires`, `id`, `mimetype`,
         `options_bitmask`, `password_hash`, `title`, `user_id`
@@ -186,8 +179,7 @@ class PasteObject implements \CarlBennett\Tools\Interfaces\DatabaseObject
   {
     $id = $this->getId();
     if (\is_null($id)) return false;
-    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
-    $q = Common::$database->prepare('DELETE FROM `pastebin` WHERE `id` = UuidToBin(?) LIMIT 1;');
+    $q = Database::instance()->prepare('DELETE FROM `pastebin` WHERE `id` = UuidToBin(?) LIMIT 1;');
     try { return $q && $q->execute([$id]); }
     finally { if ($q) $q->closeCursor(); }
   }
@@ -232,25 +224,22 @@ class PasteObject implements \CarlBennett\Tools\Interfaces\DatabaseObject
     if (\is_null($bitmask) || !\is_numeric($bitmask))
       $bitmask = (self::OPTION_QUARANTINE | self::OPTION_UNLISTED);
 
-    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
-    $q = Common::$database->prepare(sprintf('
+    $q = Database::instance()->prepare(sprintf('
       SELECT UuidFromBin(`id`) AS `id` FROM `pastebin`
       WHERE %s NOT (`options_bitmask` & %d)
       ORDER BY `date_added` DESC LIMIT %d;
     ', (!$passworded ? '`password_hash` IS NULL AND' : ''), $bitmask, $limit));
 
-    $r = $q->execute();
-    if (!$r) {
-      throw new UnexpectedValueException(
-        'an error occurred finding public pastes'
-      );
+    try
+    {
+      if (!$q || !$q->execute())
+        throw new UnexpectedValueException('an error occurred finding public pastes');
+
+      $pastes = [];
+      while ($r = $q->fetchObject()) $pastes[] = new self($r->id);
+      return $pastes;
     }
-
-    $pastes = [];
-    while ($r = $q->fetchObject()) $pastes[] = new self($r->id);
-    $q->closeCursor();
-
-    return $pastes;
+    finally { if ($q) $q->closeCursor(); }
   }
 
   public function getTitle(): string

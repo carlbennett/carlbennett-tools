@@ -3,8 +3,8 @@
 namespace CarlBennett\Tools\Libraries\Plex;
 
 use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\MVC\Libraries\DatabaseDriver;
 use \CarlBennett\MVC\Libraries\Gravatar;
+use \CarlBennett\Tools\Libraries\Database;
 use \CarlBennett\Tools\Libraries\DateTimeImmutable;
 use \CarlBennett\Tools\Libraries\User as BaseUser;
 use \DateTimeInterface;
@@ -82,8 +82,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     $id = $this->getId();
     if (is_null($id)) return true;
 
-    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
-    $q = Common::$database->prepare('
+    $q = Database::instance()->prepare('
       SELECT `date_added`, `date_disabled`, `date_expired`,
              UuidFromBin(`id`) AS `id`, `notes`, `options`, `plex_email`,
              `plex_id`, `plex_thumb`, `plex_title`, `plex_username`,
@@ -119,8 +118,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     $id = $this->getId();
     if (is_null($id)) $id = Uuid::uuid4();
 
-    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
-    $q = Common::$database->prepare('
+    $q = Database::instance()->prepare('
       INSERT INTO `plex_users` (
         `date_added`, `date_disabled`, `date_expired`, `id`, `notes`, `options`,
         `plex_email`, `plex_id`, `plex_thumb`, `plex_title`, `plex_username`,
@@ -171,16 +169,14 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
   {
     $id = $this->getId();
     if (is_null($id)) return false;
-    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
-    $q = Common::$database->prepare('DELETE FROM `plex_users` WHERE `id` = UuidToBin(?) LIMIT 1;');
+    $q = Database::instance()->prepare('DELETE FROM `plex_users` WHERE `id` = UuidToBin(?) LIMIT 1;');
     try { return $q && $q->execute([$id]); }
     finally { if ($q) $q->closeCursor(); }
   }
 
   public static function getAll() : ?array
   {
-    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
-    $q = Common::$database->prepare('
+    $q = Database::instance()->prepare('
       SELECT `date_added`, `date_disabled`, `date_expired`,
              UuidFromBin(`id`) AS `id`, `notes`, `options`, `plex_email`,
              `plex_id`, `plex_thumb`, `plex_title`, `plex_username`,

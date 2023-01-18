@@ -1,15 +1,15 @@
 <?php /* vim: set colorcolumn= expandtab shiftwidth=2 softtabstop=2 tabstop=4 smarttab: */
 namespace CarlBennett\Tools\Libraries;
 
-use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\MVC\Libraries\DatabaseDriver;
+use \CarlBennett\Tools\Interfaces\DatabaseObject;
+use \CarlBennett\Tools\Libraries\Database;
+use \CarlBennett\Tools\Libraries\DateTimeImmutable;
 use \CarlBennett\Tools\Libraries\User;
-use \DateTime;
+use \DateTimeInterface;
 use \DateTimeZone;
 use \Exception;
 use \InvalidArgumentException;
 use \PDO;
-use \RuntimeException;
 use \UnexpectedValueException;
 
 /**
@@ -18,11 +18,11 @@ use \UnexpectedValueException;
  */
 class Authentication
 {
-  const COOKIE_NAME    = 'sid';
-  const DATE_SQL       = 'Y-m-d H:i:s';
-  const MAX_USER_AGENT = 255;
-  const TTL            = 2592000; // 1 month
-  const TZ             = 'Etc/UTC';
+  public const COOKIE_NAME    = 'sid';
+  public const DATE_SQL       = DatabaseObject::DATE_SQL;
+  public const MAX_USER_AGENT = 255;
+  public const TTL            = 2592000; // 1 month
+  public const TZ             = DatabaseObject::DATE_TZ;
 
   /**
    * @var string $key
@@ -55,11 +55,7 @@ class Authentication
    */
   public static function discard()
   {
-    if (!isset(Common::$database))
-    {
-      Common::$database = DatabaseDriver::getDatabaseObject();
-    }
-    $q = Common::$database->prepare('
+    $q = Database::instance()->prepare('
       DELETE FROM `user_sessions` WHERE `expires_datetime` >= :now LIMIT 1;
     ');
     if (!self::$timezone) self::setTimezone();
@@ -77,21 +73,13 @@ class Authentication
    *
    * @return bool Indicates if the operation succeeded.
    */
-  protected static function discardKey(string $key) {
-    if (!isset(Common::$database)) {
-      Common::$database = DatabaseDriver::getDatabaseObject();
-    }
-
-    $stmt = Common::$database->prepare('
-      DELETE FROM `user_sessions` WHERE `id` = UNHEX(:id) LIMIT 1;
+  protected static function discardKey(string $key): bool
+  {
+    $q = Database::instance()->prepare('
+      DELETE FROM `user_sessions` WHERE `id` = UNHEX(?) LIMIT 1;
     ');
-
-    $stmt->bindParam(':id', $key, PDO::PARAM_STR);
-
-    $r = $stmt->execute();
-    $stmt->closeCursor();
-
-    return $r;
+    try { return $q && $q->execute([$key]); }
+    finally { if ($q) $q->closeCursor(); }
   }
 
   /**
@@ -103,7 +91,8 @@ class Authentication
    * @throws InvalidArgumentException when user id must be a non-empty string
    * @return bool Indicates if the operation succeeded.
    */
-  public static function expireUser(User &$user) {
+  public static function expireUser(User &$user): bool
+  {
     $id = $user->getId();
 
     if (!is_string($id) || empty($id)) {
@@ -111,24 +100,15 @@ class Authentication
     }
 
     if (!self::$timezone) self::setTimezone();
-    $now = (new DateTime('now', self::$timezone))->format(self::DATE_SQL);
+    $now = (new DateTimeImmutable('now', self::$timezone))->format(self::DATE_SQL);
 
-    if (!isset(Common::$database)) {
-      Common::$database = DatabaseDriver::getDatabaseObject();
-    }
-
-    $stmt = Common::$database->prepare('
+    $q = Database::instance()->prepare('
       UPDATE `user_sessions` SET `expires_datetime` = :dt
       WHERE `user_id` = UuidToBin(:id) AND `expires_datetime` > :dt;
     ');
 
-    $stmt->bindParam(':id', $id, PDO::PARAM_STR);
-    $stmt->bindParam(':dt', $now, PDO::PARAM_STR);
-
-    $r = $stmt->execute();
-    $stmt->closeCursor();
-
-    return $r;
+    try { return $q && $q->execute([':id' => $id, ':dt' => $now]); }
+    finally { if ($q) $q->closeCursor(); }
   }
 
   /**
@@ -139,8 +119,9 @@ class Authentication
    *
    * @return array The fingerprint details.
    */
-  protected static function getFingerprint(User &$user) {
-    $fingerprint = array();
+  protected static function getFingerprint(User &$user): array
+  {
+    $fingerprint = [];
 
     $fingerprint['ip_address'] = getenv('REMOTE_ADDR');
     $fingerprint['user_id']    = (is_null($user) ? null : $user->getId());
@@ -155,9 +136,10 @@ class Authentication
    * getPartialIP()
    * Gets the first /24 or /64 for IPv4 or IPv6 addresses respectively.
    *
-   * @return string The partial IP address.
+   * @return string|false The partial IP address, or false on failure.
    */
-  protected static function getPartialIP(string $ip) {
+  protected static function getPartialIP(string $ip): string|false
+  {
     if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
       return long2ip(ip2long($ip) & 0xFFFFFF00);
     } else if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
@@ -256,17 +238,12 @@ class Authentication
    *
    * @return array The fingerprint details, or false if not found.
    */
-  protected static function lookup(string $key) {
+  protected static function lookup(string $key)
+  {
     if (!self::$timezone) self::setTimezone();
-    $now = (new DateTime('now', self::$timezone))->format(self::DATE_SQL);
+    $now = (new DateTimeImmutable('now', self::$timezone))->format(self::DATE_SQL);
 
-    if (!isset(Common::$database)) {
-      Common::$database = DatabaseDriver::getDatabaseObject();
-    }
-
-    $fingerprint = false;
-
-    $stmt = Common::$database->prepare('
+    $q = Database::instance()->prepare('
       SELECT UuidFromBin(`user_id`) AS `user_id`, `ip_address`, `user_agent`
       FROM `user_sessions`
       WHERE `id` = UNHEX(:id) AND (
@@ -275,18 +252,12 @@ class Authentication
       ) LIMIT 1;
     ');
 
-    $stmt->bindParam(':id', $key, PDO::PARAM_STR);
-    $stmt->bindParam(':dt', $now, PDO::PARAM_STR);
-
-    $r = $stmt->execute();
-
-    if ($r) {
-      $fingerprint = $stmt->fetch(PDO::FETCH_ASSOC);
+    try
+    {
+      if (!$q || !$q->execute([':id' => $key, ':dt' => $now])) return false;
+      return $q->fetch(PDO::FETCH_ASSOC);
     }
-
-    $stmt->closeCursor();
-
-    return $fingerprint;
+    finally { if ($q) $q->closeCursor(); }
   }
 
   /**
@@ -305,9 +276,9 @@ class Authentication
 
     try {
       $tz = new DateTimeZone($value);
-      if (!$tz) throw new RuntimeException();
+      if (!$tz) throw new \RuntimeException();
     } catch (Exception $e) {
-      throw new UnexpectedValueException('value must be a valid timezone', $e);
+      throw new UnexpectedValueException('value must be a valid timezone', 0, $e);
     } finally {
       self::$timezone = $tz;
     }
@@ -324,26 +295,19 @@ class Authentication
    *
    * @return bool Indicates if the operation succeeded.
    */
-  protected static function store(string $key, array &$fingerprint) {
+  protected static function store(string $key, array &$fingerprint): bool
+  {
     if (!self::$timezone) self::setTimezone();
 
-    $user_id     = $fingerprint['user_id'];
-    $ip_address  = $fingerprint['ip_address'];
-    $user_agent  = $fingerprint['user_agent'];
-    $created_dt  = new DateTime('now', self::$timezone);
-    $created_str = $created_dt->format(self::DATE_SQL);
-    $expires_dt = new DateTime(
+    $user_id    = $fingerprint['user_id'];
+    $ip_address = $fingerprint['ip_address'];
+    $user_agent = $fingerprint['user_agent'];
+    $created_dt = new DateTimeImmutable('now', self::$timezone);
+    $expires_dt = new DateTimeImmutable(
       '@' . ($created_dt->getTimestamp() + self::TTL), self::$timezone
     );
-    $expires_str = $expires_dt->format(self::DATE_SQL);
 
-    $r = false;
-
-    if (!isset(Common::$database)) {
-      Common::$database = DatabaseDriver::getDatabaseObject();
-    }
-
-    $stmt = Common::$database->prepare('
+    $q = Database::instance()->prepare('
       INSERT INTO `user_sessions` (
         `id`, `user_id`, `ip_address`, `user_agent`,
         `created_datetime`, `expires_datetime`
@@ -355,17 +319,20 @@ class Authentication
       ;
     ');
 
-    $stmt->bindParam(':id', $key, PDO::PARAM_STR);
-    $stmt->bindParam(':user_id', $user_id, PDO::PARAM_STR);
-    $stmt->bindParam(':ip_address', $ip_address, PDO::PARAM_STR);
-    $stmt->bindParam(':user_agent', $user_agent, PDO::PARAM_STR);
-    $stmt->bindParam(':created_dt', $created_str, PDO::PARAM_STR);
-    $stmt->bindParam(':expires_dt', $expires_str, PDO::PARAM_STR);
+    $p = [
+      ':id' => $key,
+      ':user_id' => $user_id,
+      ':ip_address' => $ip_address,
+      ':user_agent' => $user_agent,
+      ':created_dt' => $created_dt,
+      ':expires_dt' => $expires_dt,
+    ];
 
-    $r = $stmt->execute();
-    $stmt->closeCursor();
+    foreach ($p as $k => &$v)
+      if ($v instanceof DateTimeInterface) $v = $v->format(self::DATE_SQL);
 
-    return $r;
+    try { return $q && $q->execute($p); }
+    finally { if ($q) $q->closeCursor(); }
   }
 
   /**

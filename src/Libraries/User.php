@@ -3,7 +3,7 @@
 namespace CarlBennett\Tools\Libraries;
 
 use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\MVC\Libraries\DatabaseDriver;
+use \CarlBennett\Tools\Libraries\Database;
 use \CarlBennett\Tools\Libraries\DateTimeImmutable;
 use \CarlBennett\Tools\Libraries\User\Acl;
 use \CarlBennett\Tools\Libraries\User\Invite as Invitation;
@@ -11,7 +11,6 @@ use \DateTimeInterface;
 use \DateTimeZone;
 use \Ramsey\Uuid\Uuid;
 use \StdClass;
-use \Throwable;
 use \UnexpectedValueException;
 
 class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSerializable
@@ -26,6 +25,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
   public const MAX_INTERNAL_NOTES    = 0xFFFF;
   public const MAX_INVITES_AVAILABLE = 0xFFFF;
   public const MAX_OPTIONS           = 0xFFFFFFFFFFFFFFFF;
+  public const MAX_PASSWORD_HASH     = 0xFF;
   public const MAX_TIMEZONE          = 0xFF;
 
   public const OPTION_DISABLED = 0x00000001;
@@ -35,9 +35,9 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
   public const PASSWORD_CHECK_UPGRADE  = 2;
 
   protected string $biography;
-  protected DateTimeInterface $date_added;
-  protected ?DateTimeInterface $date_banned;
-  protected ?DateTimeInterface $date_disabled;
+  protected DateTimeImmutable $date_added;
+  protected ?DateTimeImmutable $date_banned;
+  protected ?DateTimeImmutable $date_disabled;
   protected string $display_name;
   protected string $email;
   protected ?string $id;
@@ -45,7 +45,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
   protected int $invites_available;
   protected int $options;
   protected string $password_hash;
-  protected DateTimeInterface $record_updated;
+  protected DateTimeImmutable $record_updated;
   protected string $timezone;
 
   public function __construct(StdClass|string|null $value)
@@ -60,7 +60,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     if (!$this->allocate()) throw new UnexpectedValueException();
   }
 
-  public function allocate() : bool
+  public function allocate(): bool
   {
     $now = new DateTimeImmutable('now');
 
@@ -80,8 +80,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     $id = $this->getId();
     if (is_null($id)) return true;
 
-    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
-    $q = Common::$database->prepare('
+    $q = Database::instance()->prepare('
       SELECT
         `biography`, `date_added`, `date_banned`, `date_disabled`,
         `display_name`, `email`, UuidFromBin(`id`) AS `id`, `internal_notes`,
@@ -95,7 +94,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     return true;
   }
 
-  protected function allocateObject(StdClass $value) : void
+  protected function allocateObject(StdClass $value): void
   {
     $this->setBiography($value->biography);
     $this->setDateAdded($value->date_added);
@@ -112,7 +111,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     $this->setTimezone($value->timezone);
   }
 
-  public function checkPassword(string $password) : int
+  public function checkPassword(string $password): int
   {
     $cost = Common::$config->users->crypt_cost;
     $hash = $this->getPasswordHash();
@@ -129,13 +128,12 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     return $r;
   }
 
-  public function commit() : bool
+  public function commit(): bool
   {
     $id = $this->getId();
     if (is_null($id)) $id = Uuid::uuid4();
 
-    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
-    $q = Common::$database->prepare('
+    $q = Database::instance()->prepare('
       INSERT INTO `users` (
         `biography`, `date_added`, `date_banned`, `date_disabled`,
         `display_name`, `email`, `id`, `internal_notes`, `invites_available`,
@@ -177,27 +175,25 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     return true;
   }
 
-  public static function createPassword(string $password) : string
+  public static function createPassword(string $password): string
   {
     if (empty($password)) throw new UnexpectedValueException('value must not be empty');
     $cost = Common::$config->users->crypt_cost;
     return password_hash($password, PASSWORD_BCRYPT, array('cost' => $cost));
   }
 
-  public function deallocate() : bool
+  public function deallocate(): bool
   {
     $id = $this->getId();
     if (is_null($id)) return false;
-    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
-    $q = Common::$database->prepare('DELETE FROM `users` WHERE `id` = ? LIMIT 1;');
+    $q = Database::instance()->prepare('DELETE FROM `users` WHERE `id` = ? LIMIT 1;');
     try { return $q && $q->execute([$id]); }
     finally { if ($q) $q->closeCursor(); }
   }
 
-  public static function getAll() : ?array
+  public static function getAll(): ?array
   {
-    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
-    $q = Common::$database->prepare('
+    $q = Database::instance()->prepare('
       SELECT
         `biography`, `date_added`, `date_banned`, `date_disabled`,
         `display_name`, `email`, UuidFromBin(`id`) AS `id`, `internal_notes`,
@@ -213,10 +209,9 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     return $r;
   }
 
-  public static function getByEmail(string $value) : self|bool
+  public static function getByEmail(string $value): self|bool
   {
-    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
-    $q = Common::$database->prepare('
+    $q = Database::instance()->prepare('
       SELECT
         `biography`, `date_added`, `date_banned`, `date_disabled`,
         `display_name`, `email`, UuidFromBin(`id`) AS `id`, `internal_notes`,
@@ -230,57 +225,56 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     return $r;
   }
 
-  public function getAclObject() : Acl
+  public function getAclObject(): Acl
   {
     return new Acl($this->id);
   }
 
-  public function getBiography() : string
+  public function getBiography(): string
   {
     return $this->biography;
   }
 
-  public function getDateAdded() : DateTimeInterface
+  public function getDateAdded(): DateTimeInterface
   {
     return $this->date_added;
   }
 
-  public function getDateBanned() : ?DateTimeInterface
+  public function getDateBanned(): ?DateTimeInterface
   {
     return $this->date_banned;
   }
 
-  public function getDateDisabled() : ?DateTimeInterface
+  public function getDateDisabled(): ?DateTimeInterface
   {
     return $this->date_disabled;
   }
 
-  public function getEmail() : string
+  public function getEmail(): string
   {
     return $this->email;
   }
 
-  public function getId() : ?string
+  public function getId(): ?string
   {
     return $this->id;
   }
 
-  public function getInternalNotes() : string
+  public function getInternalNotes(): string
   {
     return $this->internal_notes;
   }
 
-  public function getInvitesAvailable() : int
+  public function getInvitesAvailable(): int
   {
     return $this->invites_available;
   }
 
-  public function getInvitesSent() : ?array
+  public function getInvitesSent(): ?array
   {
     $id = $this->getId();
     if (is_null($id)) throw new UnexpectedValueException('id must be set prior to call');
-    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
-    $q = Common::$database->prepare(
+    $q = Database::instance()->prepare(
       'SELECT UuidFromBin(`id`) AS `id` FROM `user_invites` WHERE `invited_by` = UuidToBin(?);'
     );
     if (!$q || !$q->execute([$id])) return null;
@@ -290,12 +284,11 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     return $r;
   }
 
-  public function getInvitesUsed() : ?int
+  public function getInvitesUsed(): ?int
   {
     $id = $this->getId();
     if (is_null($id)) throw new UnexpectedValueException('id must be set prior to call');
-    if (!isset(Common::$database)) Common::$database = DatabaseDriver::getDatabaseObject();
-    $q = Common::$database->prepare(
+    $q = Database::instance()->prepare(
       'SELECT COUNT(*) AS `count` FROM `user_invites` WHERE `invited_by` = UuidToBin(?);'
     );
     if (!$q || !$q->execute([$id])) return null;
@@ -304,42 +297,42 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     return $r;
   }
 
-  public function getName() : string
+  public function getName(): string
   {
     return $this->display_name;
   }
 
-  public function getOption(int $option) : bool
+  public function getOption(int $option): bool
   {
     return ($this->options & $option) === $option;
   }
 
-  public function getOptions() : int
+  public function getOptions(): int
   {
     return $this->options;
   }
 
-  public function getPasswordHash() : string
+  public function getPasswordHash(): string
   {
     return $this->password_hash;
   }
 
-  public function getRecordUpdated() : DateTimeInterface
+  public function getRecordUpdated(): DateTimeInterface
   {
     return $this->record_updated;
   }
 
-  public function getTimezone() : string
+  public function getTimezone(): string
   {
     return $this->timezone;
   }
 
-  public function getTimezoneObject() : ?DateTimeZone
+  public function getTimezoneObject(): ?DateTimeZone
   {
     return empty($this->timezone) ? null : new DateTimeZone($this->timezone);
   }
 
-  public function getUrl(string $subcontroller = '') : string
+  public function getUrl(string $subcontroller = ''): string
   {
     return Common::relativeUrlToAbsolute(sprintf(
       '/user/%s%s', (
@@ -348,17 +341,17 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     ));
   }
 
-  public function isBanned() : bool
+  public function isBanned(): bool
   {
     return $this->getOption(self::OPTION_BANNED);
   }
 
-  public function isDisabled() : bool
+  public function isDisabled(): bool
   {
     return $this->getOption(self::OPTION_DISABLED);
   }
 
-  public function jsonSerialize() : mixed
+  public function jsonSerialize(): mixed
   {
     return [
       'biography' => $this->getBiography(),
@@ -376,7 +369,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     ];
   }
 
-  public function setBiography(string $value) : void
+  public function setBiography(string $value): void
   {
     if (strlen($value) > self::MAX_BIOGRAPHY)
       throw new UnexpectedValueException(sprintf(
@@ -386,22 +379,28 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     $this->biography = $value;
   }
 
-  public function setDateAdded(DateTimeInterface|string $value) : void
+  public function setDateAdded(DateTimeInterface|string $value): void
   {
-    $this->date_added = (is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : $value);
+    $this->date_added = (is_null($value) ? null : (
+      is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : DateTimeImmutable::createFromInterface($value))
+    );
   }
 
-  public function setDateBanned(DateTimeInterface|string|null $value) : void
+  public function setDateBanned(DateTimeInterface|string|null $value): void
   {
-    $this->date_banned = (is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : $value);
+    $this->date_banned = (is_null($value) ? null : (
+      is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : DateTimeImmutable::createFromInterface($value))
+    );
   }
 
-  public function setDateDisabled(DateTimeInterface|string|null $value) : void
+  public function setDateDisabled(DateTimeInterface|string|null $value): void
   {
-    $this->date_disabled = (is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : $value);
+    $this->date_disabled = (is_null($value) ? null : (
+      is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : DateTimeImmutable::createFromInterface($value))
+    );
   }
 
-  public function setEmail(?string $value) : void
+  public function setEmail(?string $value): void
   {
     if (is_string($value) && strlen($value) > self::MAX_EMAIL)
       throw new UnexpectedValueException(sprintf(
@@ -422,43 +421,37 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     $this->id = $value;
   }
 
-  public function setInternalNotes(string $value) : void
+  public function setInternalNotes(string $value): void
   {
     if (strlen($value) > self::MAX_INTERNAL_NOTES)
-      throw new UnexpectedValueException(sprintf(
-        'value must be between 0-%d characters', self::MAX_INTERNAL_NOTES
-      ));
+      throw new UnexpectedValueException(sprintf('value must be between 0-%d characters', self::MAX_INTERNAL_NOTES));
 
     $this->internal_notes = $value;
   }
 
-  public function setInvitesAvailable(int $value) : void
+  public function setInvitesAvailable(int $value): void
   {
     if ($value < 0 || $value > self::MAX_INVITES_AVAILABLE)
-      throw new UnexpectedValueException(sprintf(
-        'value must be an integer between range 0-%d', self::MAX_INVITES_AVAILABLE
-      ));
+      throw new UnexpectedValueException(sprintf('value must be an integer between range 0-%d', self::MAX_INVITES_AVAILABLE));
 
     $this->invites_available = $value;
   }
 
-  public function setName(string $value) : void
+  public function setName(string $value): void
   {
     if (strlen($value) > self::MAX_DISPLAY_NAME)
-      throw new UnexpectedValueException(sprintf(
-        'value must be between 0-%d characters', self::MAX_DISPLAY_NAME
-      ));
+      throw new UnexpectedValueException(sprintf('value must be between 0-%d characters', self::MAX_DISPLAY_NAME));
 
     $this->display_name = $value;
   }
 
-  public function setOption(int $option, bool $value) : void
+  public function setOption(int $option, bool $value): void
   {
     if ($value) $this->options |= $option;
     else $this->options &= ~$option;
   }
 
-  public function setOptions(int $value) : void
+  public function setOptions(int $value): void
   {
     if ($value < 0 || $value > self::MAX_OPTIONS)
       throw new UnexpectedValueException(sprintf('value must be an integer between range 0-%d', self::MAX_OPTIONS));
@@ -466,28 +459,31 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     $this->options = $value;
   }
 
-  public function setPasswordHash(string $value) : void
+  public function setPasswordHash(string $value): void
   {
+    if (strlen($value) > self::MAX_PASSWORD_HASH)
+      throw new UnexpectedValueException(sprintf('value must be between 0-%d characters', self::MAX_PASSWORD_HASH));
+
     $this->password_hash = $value;
   }
 
-  public function setRecordUpdated(DateTimeInterface|string $value) : void
+  public function setRecordUpdated(DateTimeInterface|string $value): void
   {
-    $this->record_updated = (is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : $value);
+    $this->record_updated = (is_null($value) ? null : (
+      is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : DateTimeImmutable::createFromInterface($value))
+    );
   }
 
-  public function setTimezone(DateTimeZone|string $value) : void
+  public function setTimezone(DateTimeZone|string $value): void
   {
     if (is_string($value) && strlen($value) > self::MAX_TIMEZONE)
-      throw new UnexpectedValueException(sprintf(
-        'value must be between 0-%d characters', self::MAX_TIMEZONE
-      ));
+      throw new UnexpectedValueException(sprintf('value must be between 0-%d characters', self::MAX_TIMEZONE));
 
     try
     {
       if (is_string($value) && !empty($value)) new DateTimeZone($value);
     }
-    catch (Throwable $e)
+    catch (\Throwable $e)
     {
       throw new UnexpectedValueException('value must be a valid timezone', 0, $e);
     }
