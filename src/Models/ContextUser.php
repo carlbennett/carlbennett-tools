@@ -8,9 +8,9 @@ class ContextUser extends ActiveUser implements \JsonSerializable
    * The contextual user that is being operated upon by the upstream Controller.
    * This could be null, could match the $active_user, or another user reference.
    *
-   * @var \CarlBennett\Tools\Libraries\User|null
+   * @var \CarlBennett\Tools\Libraries\User\User|null
    */
-  public ?\CarlBennett\Tools\Libraries\User $context_user = null;
+  public ?\CarlBennett\Tools\Libraries\User\User $context_user = null;
 
   /**
    * Implements the JSON serialization function from the JsonSerializable interface.

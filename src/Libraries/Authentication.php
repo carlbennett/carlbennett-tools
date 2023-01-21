@@ -4,7 +4,7 @@ namespace CarlBennett\Tools\Libraries;
 use \CarlBennett\Tools\Interfaces\DatabaseObject;
 use \CarlBennett\Tools\Libraries\Database;
 use \CarlBennett\Tools\Libraries\DateTimeImmutable;
-use \CarlBennett\Tools\Libraries\User;
+use \CarlBennett\Tools\Libraries\User\User;
 use \DateTimeInterface;
 use \DateTimeZone;
 use \Exception;

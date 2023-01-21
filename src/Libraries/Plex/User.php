@@ -6,7 +6,7 @@ use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\MVC\Libraries\Gravatar;
 use \CarlBennett\Tools\Libraries\Database;
 use \CarlBennett\Tools\Libraries\DateTimeImmutable;
-use \CarlBennett\Tools\Libraries\User as BaseUser;
+use \CarlBennett\Tools\Libraries\User\User as BaseUser;
 use \DateTimeInterface;
 use \DateTimeZone;
 use \Ramsey\Uuid\Uuid;
@@ -61,7 +61,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     if (!$this->allocate()) throw new UnexpectedValueException();
   }
 
-  public function allocate() : bool
+  public function allocate(): bool
   {
     $now = new DateTimeImmutable('now');
 
@@ -82,20 +82,23 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     $id = $this->getId();
     if (is_null($id)) return true;
 
-    $q = Database::instance()->prepare('
-      SELECT `date_added`, `date_disabled`, `date_expired`,
-             UuidFromBin(`id`) AS `id`, `notes`, `options`, `plex_email`,
-             `plex_id`, `plex_thumb`, `plex_title`, `plex_username`,
-             `record_updated`, `risk`, UuidFromBin(`user_id`) AS `user_id`
-      FROM `plex_users` WHERE `id` = UuidToBin(?) LIMIT 1;
-    ');
-    if (!$q || !$q->execute([$id]) || $q->rowCount() != 1) return false;
-    $this->allocateObject($q->fetchObject());
-    $q->closeCursor();
-    return true;
+    try
+    {
+      $q = Database::instance()->prepare('
+        SELECT `date_added`, `date_disabled`, `date_expired`,
+              UuidFromBin(`id`) AS `id`, `notes`, `options`, `plex_email`,
+              `plex_id`, `plex_thumb`, `plex_title`, `plex_username`,
+              `record_updated`, `risk`, UuidFromBin(`user_id`) AS `user_id`
+        FROM `plex_users` WHERE `id` = UuidToBin(?) LIMIT 1;
+      ');
+      if (!$q || !$q->execute([$id]) || $q->rowCount() != 1) return false;
+      $this->allocateObject($q->fetchObject());
+      return true;
+    }
+    finally { if ($q) $q->closeCursor(); }
   }
 
-  private function allocateObject(StdClass $value) : void
+  private function allocateObject(StdClass $value): void
   {
     $this->setDateAdded($value->date_added);
     $this->setDateDisabled($value->date_disabled);
@@ -113,59 +116,62 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     $this->setUserId($value->user_id);
   }
 
-  public function commit() : bool
+  public function commit(): bool
   {
     $id = $this->getId();
     if (is_null($id)) $id = Uuid::uuid4();
 
-    $q = Database::instance()->prepare('
-      INSERT INTO `plex_users` (
-        `date_added`, `date_disabled`, `date_expired`, `id`, `notes`, `options`,
-        `plex_email`, `plex_id`, `plex_thumb`, `plex_title`, `plex_username`,
-        `record_updated`, `risk`, `user_id`
-      ) VALUES (
-        :added, :disabled, :expired, UuidToBin(:id), :notes, :options,
-        :plex_email, :plex_id, :plex_thumb, :plex_title, :plex_username,
-        :record_updated, :risk, UuidToBin(:user_id)
-      ) ON DUPLICATE KEY UPDATE
-        `date_added` = :added, `date_disabled` = :disabled,
-        `date_expired` = :expired, `notes` = :notes, `options` = :options,
-        `plex_email` = :plex_email, `plex_id` = :plex_id,
-        `plex_thumb` = :plex_thumb, `plex_title` = :plex_title,
-        `plex_username` = :plex_username,
-        `record_updated` = :record_updated, `risk` = :risk,
-        `user_id` = UuidToBin(:user_id)
-      ;
-    ');
+    try
+    {
+      $q = Database::instance()->prepare('
+        INSERT INTO `plex_users` (
+          `date_added`, `date_disabled`, `date_expired`, `id`, `notes`, `options`,
+          `plex_email`, `plex_id`, `plex_thumb`, `plex_title`, `plex_username`,
+          `record_updated`, `risk`, `user_id`
+        ) VALUES (
+          :added, :disabled, :expired, UuidToBin(:id), :notes, :options,
+          :plex_email, :plex_id, :plex_thumb, :plex_title, :plex_username,
+          :record_updated, :risk, UuidToBin(:user_id)
+        ) ON DUPLICATE KEY UPDATE
+          `date_added` = :added, `date_disabled` = :disabled,
+          `date_expired` = :expired, `notes` = :notes, `options` = :options,
+          `plex_email` = :plex_email, `plex_id` = :plex_id,
+          `plex_thumb` = :plex_thumb, `plex_title` = :plex_title,
+          `plex_username` = :plex_username,
+          `record_updated` = :record_updated, `risk` = :risk,
+          `user_id` = UuidToBin(:user_id)
+        ;
+      ');
 
-    $p = [
-      ':added' => $this->getDateAdded(),
-      ':disabled' => $this->getDateDisabled(),
-      ':expired' => $this->getDateExpired(),
-      ':id' => $id,
-      ':notes' => $this->getNotes(),
-      ':options' => $this->getOptions(),
-      ':plex_email' => $this->getPlexEmail(),
-      ':plex_id' => $this->getPlexId(),
-      ':plex_thumb' => $this->getPlexThumb(),
-      ':plex_title' => $this->getPlexTitle(),
-      ':plex_username' => $this->getPlexUsername(),
-      ':record_updated' => $this->getRecordUpdated(),
-      ':risk' => $this->getRisk(),
-      ':user_id' => $this->getUserId(),
-    ];
+      $p = [
+        ':added' => $this->getDateAdded(),
+        ':disabled' => $this->getDateDisabled(),
+        ':expired' => $this->getDateExpired(),
+        ':id' => $id,
+        ':notes' => $this->getNotes(),
+        ':options' => $this->getOptions(),
+        ':plex_email' => $this->getPlexEmail(),
+        ':plex_id' => $this->getPlexId(),
+        ':plex_thumb' => $this->getPlexThumb(),
+        ':plex_title' => $this->getPlexTitle(),
+        ':plex_username' => $this->getPlexUsername(),
+        ':record_updated' => $this->getRecordUpdated(),
+        ':risk' => $this->getRisk(),
+        ':user_id' => $this->getUserId(),
+      ];
 
-    foreach ($p as $k => $v)
-      if ($v instanceof DateTimeInterface)
-        $p[$k] = $v->format(self::DATE_SQL);
+      foreach ($p as $k => $v)
+        if ($v instanceof DateTimeInterface)
+          $p[$k] = $v->format(self::DATE_SQL);
 
-    if (!$q || !$q->execute($p)) return false;
-    $this->setId($id);
-    $q->closeCursor();
-    return true;
+      if (!$q || !$q->execute($p)) return false;
+      $this->setId($id);
+      return true;
+    }
+    finally { if ($q) $q->closeCursor(); }
   }
 
-  public function deallocate() : bool
+  public function deallocate(): bool
   {
     $id = $this->getId();
     if (is_null($id)) return false;
@@ -174,21 +180,24 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     finally { if ($q) $q->closeCursor(); }
   }
 
-  public static function getAll() : ?array
+  public static function getAll(): ?array
   {
-    $q = Database::instance()->prepare('
-      SELECT `date_added`, `date_disabled`, `date_expired`,
-             UuidFromBin(`id`) AS `id`, `notes`, `options`, `plex_email`,
-             `plex_id`, `plex_thumb`, `plex_title`, `plex_username`,
-             `record_updated`, `risk`, UuidFromBin(`user_id`) AS `user_id`
-      FROM `plex_users`
-      ORDER BY `date_added`, `plex_title`, `plex_username`, `plex_email`;
-    ');
-    if (!$q || !$q->execute()) return null;
-    $r = [];
-    while ($row = $q->fetchObject()) $r[] = new self($row);
-    $q->closeCursor();
-    return $r;
+    try
+    {
+      $q = Database::instance()->prepare('
+        SELECT `date_added`, `date_disabled`, `date_expired`,
+              UuidFromBin(`id`) AS `id`, `notes`, `options`, `plex_email`,
+              `plex_id`, `plex_thumb`, `plex_title`, `plex_username`,
+              `record_updated`, `risk`, UuidFromBin(`user_id`) AS `user_id`
+        FROM `plex_users`
+        ORDER BY `date_added`, `plex_title`, `plex_username`, `plex_email`;
+      ');
+      if (!$q || !$q->execute()) return null;
+      $r = [];
+      while ($row = $q->fetchObject()) $r[] = new self($row);
+      return $r;
+    }
+    finally { if ($q) $q->closeCursor(); }
   }
 
   /**
@@ -197,7 +206,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
    * @param integer|null $size The Size parameter to pass to the Gravatar service, ignored if the property $plex_thumb is non-empty.
    * @return string The $plex_thumb property if non-empty, otherwise the Gravatar url based on email.
    */
-  public function getAvatar(?int $size = null) : string
+  public function getAvatar(?int $size = null): string
   {
     if (!empty($this->plex_thumb)) return $this->plex_thumb;
 
@@ -213,67 +222,67 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     return (new Gravatar($email))->getUrl($size, 'mp');
   }
 
-  public function getDateAdded() : DateTimeInterface
+  public function getDateAdded(): DateTimeInterface
   {
     return $this->date_added;
   }
 
-  public function getDateDisabled() : ?DateTimeInterface
+  public function getDateDisabled(): ?DateTimeInterface
   {
     return $this->date_disabled;
   }
 
-  public function getDateExpired() : ?DateTimeInterface
+  public function getDateExpired(): ?DateTimeInterface
   {
     return $this->date_expired;
   }
 
-  public function getId() : ?string
+  public function getId(): ?string
   {
     return $this->id;
   }
 
-  public function getNotes() : string
+  public function getNotes(): string
   {
     return $this->notes;
   }
 
-  public function getOption(int $option) : bool
+  public function getOption(int $option): bool
   {
     return ($this->options & $option) === $option;
   }
 
-  public function getOptions() : int
+  public function getOptions(): int
   {
     return $this->options;
   }
 
-  public function getPlexEmail() : ?string
+  public function getPlexEmail(): ?string
   {
     return $this->plex_email;
   }
 
-  public function getPlexId() : ?int
+  public function getPlexId(): ?int
   {
     return $this->plex_id;
   }
 
-  public function getPlexThumb() : ?string
+  public function getPlexThumb(): ?string
   {
     return $this->plex_thumb;
   }
 
-  public function getPlexTitle() : ?string
+  public function getPlexTitle(): ?string
   {
     return $this->plex_title;
   }
 
-  public function getPlexUsername() : ?string
+  public function getPlexUsername(): ?string
   {
     return $this->plex_username;
   }
 
-  public function getRecordUpdated() : DateTimeInterface
+  public function getRecordUpdated(): DateTimeInterface
   {
     return $this->record_updated;
   }
@@ -283,57 +292,57 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     return $this->risk;
   }
 
-  public function getUser() : ?BaseUser
+  public function getUser(): ?BaseUser
   {
     return is_null($this->user_id) ? null : new BaseUser($this->user_id);
   }
 
-  public function getUserId() : ?string
+  public function getUserId(): ?string
   {
     return $this->user_id;
   }
 
-  public function isDisabled() : bool
+  public function isDisabled(): bool
   {
     return $this->getOption(self::OPTION_DISABLED);
   }
 
-  public function isExpired() : bool
+  public function isExpired(): bool
   {
     return !is_null($this->getDateExpired());
   }
 
-  public function isHidden() : bool
+  public function isHidden(): bool
   {
     return $this->getOption(self::OPTION_HIDDEN);
   }
 
-  public function isHighRisk() : bool
+  public function isHighRisk(): bool
   {
     return $this->risk == self::RISK_HIGH;
   }
 
-  public function isHomeUser() : bool
+  public function isHomeUser(): bool
   {
     return $this->getOption(self::OPTION_HOMEUSER);
   }
 
-  public function isMediumRisk() : bool
+  public function isMediumRisk(): bool
   {
     return $this->risk == self::RISK_MEDIUM;
   }
 
-  public function isLowRisk() : bool
+  public function isLowRisk(): bool
   {
     return $this->risk == self::RISK_LOW;
   }
 
-  public function isUnassessedRisk() : bool
+  public function isUnassessedRisk(): bool
   {
     return $this->risk == self::RISK_UNASSESSED;
   }
 
-  public function jsonSerialize() : mixed
+  public function jsonSerialize(): mixed
   {
     return [
       'date_added' => $this->date_added,
@@ -353,22 +362,22 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     ];
   }
 
-  public function setDateAdded(DateTimeInterface|string $value) : void
+  public function setDateAdded(DateTimeInterface|string $value): void
   {
     $this->date_added = (is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : $value);
   }
 
-  public function setDateDisabled(DateTimeInterface|string|null $value) : void
+  public function setDateDisabled(DateTimeInterface|string|null $value): void
   {
     $this->date_disabled = (is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : $value);
   }
 
-  public function setDateExpired(DateTimeInterface|string|null $value) : void
+  public function setDateExpired(DateTimeInterface|string|null $value): void
   {
     $this->date_expired = (is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : $value);
   }
 
-  public function setId(?string $value) : void
+  public function setId(?string $value): void
   {
     if (!(is_null($value) || (is_string($value) && preg_match(self::UUID_REGEX, $value) === 1)))
       throw new UnexpectedValueException('value must be null or a string in UUID format');
@@ -376,7 +385,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     $this->id = $value;
   }
 
-  public function setNotes(string $value) : void
+  public function setNotes(string $value): void
   {
     if (strlen($value) > self::MAX_NOTES)
       throw new UnexpectedValueException(sprintf('value must be between 0-%d characters', self::MAX_NOTES));
@@ -384,13 +393,13 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     $this->notes = $value;
   }
 
-  public function setOption(int $option, bool $value) : void
+  public function setOption(int $option, bool $value): void
   {
     if ($value) $this->options |= $option;
     else $this->options &= ~$option;
   }
 
-  public function setOptions(int $value) : void
+  public function setOptions(int $value): void
   {
     if ($value < 0 || $value > self::MAX_OPTIONS)
       throw new UnexpectedValueException(sprintf('value must be an integer between range 0-%d', self::MAX_OPTIONS));
@@ -398,7 +407,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     $this->options = $value;
   }
 
-  public function setPlexEmail(?string $value, bool $auto_null = true) : void
+  public function setPlexEmail(?string $value, bool $auto_null = true): void
   {
     if ($auto_null && is_string($value) && empty($value)) $value = null;
 
@@ -408,7 +417,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     $this->plex_email = $value;
   }
 
-  public function setPlexId(?int $value) : void
+  public function setPlexId(?int $value): void
   {
     if (!is_null($value) && ($value < 0 || $value > self::MAX_PLEX_ID))
       throw new UnexpectedValueException(sprintf('value must be null or an integer between 0-%d', self::MAX_PLEX_ID));
@@ -416,7 +425,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     $this->plex_id = $value;
   }
 
-  public function setPlexThumb(?string $value, bool $auto_null = true) : void
+  public function setPlexThumb(?string $value, bool $auto_null = true): void
   {
     if ($auto_null && is_string($value) && empty($value)) $value = null;
   
@@ -426,7 +435,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     $this->plex_thumb = $value;
   }
 
-  public function setPlexTitle(?string $value, bool $auto_null = true) : void
+  public function setPlexTitle(?string $value, bool $auto_null = true): void
   {
     if ($auto_null && is_string($value) && empty($value)) $value = null;
 
@@ -436,7 +445,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     $this->plex_title = $value;
   }
 
-  public function setPlexUsername(?string $value, bool $auto_null = true) : void
+  public function setPlexUsername(?string $value, bool $auto_null = true): void
   {
     if ($auto_null && is_string($value) && empty($value)) $value = null;
 
@@ -446,12 +455,12 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     $this->plex_username = $value;
   }
 
-  public function setRecordUpdated(DateTimeInterface|string $value) : void
+  public function setRecordUpdated(DateTimeInterface|string $value): void
   {
     $this->record_updated = (is_string($value) ? new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : $value);
   }
 
-  public function setRisk(int $value) : void
+  public function setRisk(int $value): void
   {
     if ($value < self::RISK_UNASSESSED || $value > self::RISK_HIGH)
       throw new UnexpectedValueException(sprintf('value must be an integer between range %d-%d', self::RISK_UNASSESSED, self::RISK_HIGH));
@@ -459,16 +468,16 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     $this->risk = $value;
   }
 
-  public function setUser(BaseUser|null $value) : void
+  public function setUser(BaseUser|null $value): void
   {
-    $this->setUserId(!is_null($value) ? $value->getId() : $value);
+    $this->setUserId(is_null($value) ? null : $value->getId());
   }
 
-  public function setUserId(string|null $value, bool $auto_null = true) : void
+  public function setUserId(string|null $value, bool $auto_null = true): void
   {
     if ($auto_null && is_string($value) && empty($value)) $value = null;
 
-    if (!is_null($value) && preg_match(self::UUID_REGEX, $value) !== 1)
+    if (is_string($value) && preg_match(self::UUID_REGEX, $value) !== 1)
       throw new UnexpectedValueException('value must be null or a string in UUID format');
 
     $this->user_id = $value;

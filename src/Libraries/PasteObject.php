@@ -4,7 +4,7 @@ namespace CarlBennett\Tools\Libraries;
 
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\Tools\Libraries\Database;
-use \CarlBennett\Tools\Libraries\User;
+use \CarlBennett\Tools\Libraries\User\User;
 use \DateTime;
 use \DateTimeInterface;
 use \DateTimeZone;

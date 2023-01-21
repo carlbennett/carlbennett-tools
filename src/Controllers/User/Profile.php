@@ -3,10 +3,10 @@ namespace CarlBennett\Tools\Controllers\User;
 
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\MVC\Libraries\Gravatar;
-use \CarlBennett\Tools\Libraries\Router;
 use \CarlBennett\Tools\Libraries\Authentication;
-use \CarlBennett\Tools\Libraries\User;
+use \CarlBennett\Tools\Libraries\Router;
 use \CarlBennett\Tools\Libraries\User\Acl;
+use \CarlBennett\Tools\Libraries\User\User;
 use \CarlBennett\Tools\Models\User\Profile as ProfileModel;
 use \InvalidArgumentException;
 use \LengthException;

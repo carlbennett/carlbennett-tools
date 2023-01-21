@@ -3,7 +3,7 @@
 namespace CarlBennett\Tools\Controllers\User;
 
 use \CarlBennett\Tools\Libraries\Router;
-use \CarlBennett\Tools\Libraries\User;
+use \CarlBennett\Tools\Libraries\User\User;
 
 class Login extends \CarlBennett\Tools\Controllers\Base
 {

@@ -3,8 +3,8 @@
 namespace CarlBennett\Tools\Controllers\User;
 
 use \CarlBennett\Tools\Libraries\Router;
-use \CarlBennett\Tools\Libraries\User;
 use \CarlBennett\Tools\Libraries\User\Invite as Invitation;
+use \CarlBennett\Tools\Libraries\User\User;
 use \CarlBennett\Tools\Models\User\Invite as InviteModel;
 use \InvalidArgumentException;
 use \Throwable;

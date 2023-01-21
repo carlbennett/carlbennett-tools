@@ -7,9 +7,9 @@ class ActiveUser extends Errorable implements \JsonSerializable
   /**
    * The current user that is logged in to the site, or null if not logged in.
    *
-   * @var \CarlBennett\Tools\Libraries\User|null
+   * @var \CarlBennett\Tools\Libraries\User\User|null
    */
-  public ?\CarlBennett\Tools\Libraries\User $active_user = null;
+  public ?\CarlBennett\Tools\Libraries\User\User $active_user = null;
 
   /**
    * When constructed, sets the $active_user to that of the Authentication::$user value.

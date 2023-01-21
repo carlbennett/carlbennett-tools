@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace CarlBennett\Tools\Libraries\User;
 
 use \CarlBennett\Tools\Libraries\Database;
-use \CarlBennett\Tools\Libraries\User;
+use \CarlBennett\Tools\Libraries\User\User;
 use \InvalidArgumentException;
 use \PDO;
 use \StdClass;

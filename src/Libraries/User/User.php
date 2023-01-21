@@ -1,6 +1,6 @@
 <?php
 
-namespace CarlBennett\Tools\Libraries;
+namespace CarlBennett\Tools\Libraries\User;
 
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\Tools\Libraries\Database;

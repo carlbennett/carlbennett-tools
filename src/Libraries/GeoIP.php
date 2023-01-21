@@ -3,17 +3,14 @@ namespace CarlBennett\Tools\Libraries;
 
 use \CarlBennett\MVC\Libraries\Common;
 use \GeoIp2\Database\Reader;
-use \GeoIp2\Exception\AddressNotFoundException;
-use \MaxMind\Db\InvalidDatabaseException;
-use \UnexpectedValueException;
 
 class GeoIP
 {
-  private static $reader;
+  private static ?Reader $reader = null;
 
   private function __construct() {}
 
-  protected static function getReader()
+  protected static function getReader(): Reader
   {
     if (self::$reader) return self::$reader;
 
@@ -21,7 +18,7 @@ class GeoIP
     {
       self::$reader = new Reader(Common::$config->geoip->database_file);
     }
-    catch (InvalidDatabaseException $e)
+    catch (\MaxMind\Db\Reader\InvalidDatabaseException)
     {
       // database is invalid or corrupt
       self::$reader = null;
@@ -30,11 +27,11 @@ class GeoIP
     return self::$reader;
   }
 
-  public static function getRecord(string $address)
+  public static function getRecord(string $address): mixed
   {
     if (!filter_var($address, FILTER_VALIDATE_IP))
     {
-      throw new UnexpectedValueException('not a valid IP address');
+      throw new \UnexpectedValueException('not a valid IP address');
     }
 
     $mmdb = self::getReader();
@@ -44,7 +41,7 @@ class GeoIP
     {
       $record = $mmdb->$type($address);
     }
-    catch (AddressNotFoundException $e)
+    catch (\GeoIp2\Exception\AddressNotFoundException $e)
     {
       $record = null;
     }

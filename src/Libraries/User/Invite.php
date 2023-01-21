@@ -5,7 +5,7 @@ namespace CarlBennett\Tools\Libraries\User;
 use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\Tools\Libraries\Database;
 use \CarlBennett\Tools\Libraries\DateTimeImmutable;
-use \CarlBennett\Tools\Libraries\User;
+use \CarlBennett\Tools\Libraries\User\User;
 use \DateTimeInterface;
 use \DateTimeZone;
 use \PDO;

@@ -16,11 +16,11 @@ use \CarlBennett\MVC\Libraries\GlobalErrorHandler;
 use \CarlBennett\Tools\Libraries\Authentication;
 use \CarlBennett\Tools\Libraries\Router;
 
-function main(int $argc, Iterable $argv)
+function main(int $argc, array $argv)
 {
-    if (!file_exists(__DIR__ . '/../lib/autoload.php'))
+    if (!\file_exists(__DIR__ . '/../lib/autoload.php'))
     {
-        \http_response_code(500);
+        if (\function_exists('http_response_code')) http_response_code(500);
         exit('Server misconfigured. Please run `composer install`.');
     }
     require(__DIR__ . '/../lib/autoload.php');
@@ -35,7 +35,7 @@ function main(int $argc, Iterable $argv)
 
     Authentication::verify();
 
-    if (Common::$config->maintenance[0])
+    if (isset(Common::$config->maintenance[0]) && Common::$config->maintenance[0])
     {
         Router::$routes = [
           ['#.*#', 'Maintenance', ['MaintenanceHtml'], Common::$config->bnetdocs->maintenance[1]],
