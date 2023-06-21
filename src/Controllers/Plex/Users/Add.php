@@ -51,7 +51,7 @@ class Add extends \CarlBennett\Tools\Controllers\Base
         $this->model->_responseHeaders['Location'] = \CarlBennett\MVC\Libraries\Common::relativeUrlToAbsolute(
           \sprintf('/plex/users?id=%s&hl=add', \rawurlencode($this->model->id))
         );
-        return $this->model;
+        return true;
       }
     }
 
