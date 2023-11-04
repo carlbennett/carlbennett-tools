@@ -24,7 +24,7 @@ class Users extends Base
     $this->model->hl = $q->get('hl');
     $this->model->id = $q->get('id');
     $this->model->show_hidden = $q->get('sh');
-    $this->model->users = \CarlBennett\Tools\Libraries\User::getAll();
+    $this->model->users = \CarlBennett\Tools\Libraries\User\User::getAll();
 
     $this->model->_responseCode = 200;
     return true;
