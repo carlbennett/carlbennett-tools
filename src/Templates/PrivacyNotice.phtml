@@ -4,90 +4,72 @@ $title = 'Privacy Notice';
 $active_user = $this->getContext()->active_user;
 $data_location = $this->getContext()->data_location;
 $email_domain = $this->getContext()->email_domain;
-$org = 'Carl\'s Toolbox';
+$web_domain = $this->getContext()->web_domain;
+$org = $this->getContext()->org;
 require('./header.inc.phtml'); ?>
 <div class="container">
-  <div class="card">
-    <h4 class="card-header"><?=$title?></h4>
-    <div class="card-body">
-      <p class="card-text"><?=$org?> is committed to privacy and security for all of its Users. This privacy notice will explain how <?=$org?> uses the personal data collected from you when you use the site.</p>
-      <p class="card-text"><strong>Topics:</strong><ul>
-        <li><a href="#what-data-is-collected">What data is collected?</a></li>
-        <li><a href="#how-is-your-data-collected">How is your data collected?</a></li>
-        <li><a href="#how-will-your-data-be-used">How will your data be used?</a></li>
-        <li><a href="#how-is-your-data-stored">How is your data stored?</a></li>
-        <li><a href="#what-are-your-data-protection-rights">What are your data protection rights?</a></li>
-        <li><a href="#what-are-cookies">What are cookies?</a></li>
-        <li><a href="#how-are-cookies-used">How are cookies used?</a></li>
-        <li><a href="#what-types-of-cookies-are-used">What types of cookies are used?</a></li>
-        <li><a href="#how-to-manage-your-cookies">How to manage your cookies</a></li>
-        <li><a href="#privacy-policies-of-other-websites">Privacy policies of other websites</a></li>
-        <li><a href="#changes-to-the-privacy-notice">Changes to the privacy notice</a></li>
-        <li><a href="#how-to-contact">How to contact</a></li>
-      </ul></p>
 
-      <h5 class="card-text"><a id="what-data-is-collected"><strong>What data is collected?</strong></a></h5>
-      <p class="card-text">The following private data is collected:<ul>
-        <li>The IP address, user agent, and requested Url of all clients accessing the site, used for logging and tracking of actions on the site.</li>
-        <li>A person's email address, used for User account identification on the site and for authentication.</li>
-        <li>A User account password, used for authentication.</li>
-      </ul></p>
+  <nav id="table-of-contents">
+    <h2>Table of Contents</h2>
+    <ul>
+      <li><a href="#information-we-collect">Information We Collect</a></li>
+      <li><a href="#legal-basis">Legal Basis for Processing Personal Data</a></li>
+      <li><a href="#how-we-use">How We Use Your Information</a></li>
+      <li><a href="#disclosure">Disclosure of Your Information</a></li>
+      <li><a href="#data-subject-rights">Data Subject Rights</a></li>
+      <li><a href="#cookies">Cookies</a></li>
+      <li><a href="#security">Security</a></li>
+      <li><a href="#changes">Changes to This Privacy Notice</a></li>
+      <li><a href="#contact-us">Contact Us</a></li>
+    </ul>
+  </nav>
 
-      <h5 class="card-text"><a id="how-is-your-data-collected"><strong>How is your data collected?</strong></a></h5>
-      <p class="card-text">You directly provide <?=$org?> with most of the data that is collected. <?=$org?> collects data and processes data when you:</p>
-      <p class="card-text"><ul>
-        <li>Create a User account on the site, or modify your User profile on the site.</li>
-        <li>Submit or post content to the site, or upload images to the site.</li>
-      </ul></p>
+  <h1>Privacy Notice</h1>
+  <p>This Privacy Notice explains how we ("<?=filter_var($org, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>") collect, use, disclose, and safeguard your personal information when you visit our website <code><?=filter_var($web_domain, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></code> ("Website").</p>
 
-      <h5 class="card-text"><a id="how-will-your-data-be-used"><strong>How will your data be used?</strong></a></h5>
-      <p class="card-text"><?=$org?> collects your data for the following purposes:</p>
-      <p class="card-text"><ul>
-        <li>To process your requests in tools on the site.</li>
-        <li>To track actions taken on the site by a User.</li>
-      </ul></p>
+  <h2 id="information-we-collect">Information We Collect</h2>
+  <p>We may collect personal information that you voluntarily provide to us when you interact with the Website. This may include, but is not limited to, your name, email address, IP address, and any other information you choose to provide.</p>
 
-      <h5 class="card-text"><a id="how-is-your-data-stored"><strong>How is your data stored?</strong></a></h5>
-      <p class="card-text"><?=$org?> uses a relational database schema hosted at <?=filter_var($data_location, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>. The data is stored redundantly in case of hardware failure, and the data is not accessible without authentication. A firewall exists between the database and the rest of the Internet, including a NAT layer on IPv4 addressing, and virtual LANs (vLANs), which by its nature prevents any unknown traffic from reaching the data. Database backups are created at regular intervals via cronjob or similar automated processes, and the backups are stored in a nearby redundant location.</p>
+  <h2 id="legal-basis">Legal Basis for Processing Personal Data</h2>
+  <p>We will only process your personal data when we have a legal basis for doing so. Common legal bases include the performance of a contract, compliance with a legal obligation, protection of vital interests, consent, the performance of a task carried out in the public interest or the exercise of official authority, and legitimate interests pursued by the data controller or a third party.</p>
+  <p>The processing of personal data on this Website is based on the legal framework applicable in the <?=filter_var($data_location, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>. As the Website is located in the <?=filter_var($data_location, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>, data processing activities are subject to relevant <?=filter_var($data_location, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?> laws and regulations.</p>
 
-      <h5 class="card-text"><a id="what-are-your-data-protection-rights"><strong>What are your data protection rights?</strong></a></h5>
-      <p class="card-text"><?=$org?> would like to make sure you are fully aware of all of your data protection rights. Every user is entitled to the following:</p>
-      <p class="card-text"><ul>
-        <li>The right to access – You have the right to request <?=$org?> for copies of your personal data.</li>
-        <li>The right to rectification – You have the right to request that <?=$org?> correct any information you believe is inaccurate. You also have the right to request <?=$org?> to complete the information you believe is incomplete.</li>
-        <li>The right to erasure – You have the right to request that <?=$org?> erase your personal data, under certain conditions.</li>
-        <li>The right to restrict processing – You have the right to request that <?=$org?> restrict the processing of your personal data, under certain conditions.</li>
-        <li>The right to object to processing – You have the right to object to <?=$org?>'s processing of your personal data, under certain conditions.</li>
-        <li>The right to data portability – You have the right to request that <?=$org?> transfer the data that we have collected to another organization, or directly to you, under certain conditions.</li>
-      </ul></p>
-      <p class="card-text">If you make a request, we have one month to respond to you. If you would like to exercise any of these rights, please <a href="#how-to-contact">make contact</a> using the information below.</p>
+  <h2 id="how-we-use">How We Use Your Information</h2>
+  <p>We may use the information we collect for various purposes, including:</p>
+  <ul>
+    <li>To personalize your experience on the Website.</li>
+    <li>To improve our Website based on your feedback.</li>
+    <li>To send periodic emails regarding our products and services.</li>
+    <li>To respond to your inquiries or requests.</li>
+  </ul>
 
-      <h5 class="card-text"><a id="what-are-cookies"><strong>What are cookies?</strong></a></h5>
-      <p class="card-text">Cookies are text files placed on your computer to collect standard Internet log information and visitor behavior information. When you visit the site, some information from you may be collected automatically through cookies or similar technology.</p>
-      <p class="card-text">For further information, visit <a href="https://allaboutcookies.org/">allaboutcookies.org</a>.</p>
+  <h2 id="disclosure">Disclosure of Your Information</h2>
+  <p>We do not sell, trade, or otherwise transfer your personal information to outside parties. This does not include trusted third parties who assist us in operating our website, conducting our business, or servicing you, as long as those parties agree to keep this information confidential.</p>
 
-      <h5 class="card-text"><a id="how-are-cookies-used"><strong>How are cookies used?</strong></a></h5>
-      <p class="card-text"><?=$org?> uses cookies for the following purposes:</p>
-      <p class="card-text"><ul>
-        <li>To record cookie preferences for the site.</li>
-        <li>To keep you logged in as a returning User of the site.</li>
-      </ul></p>
+  <h2 id="data-subject-rights">Data Subject Rights</h2>
+  <p>Under the GDPR, you have the right to access, rectify, or erase your personal data, as well as the right to restrict or object to certain processing activities. You also have the right to data portability. To exercise these rights, please feel free to contact us. You can email any mailbox at <code><?=filter_var($email_domain, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></code>, and it will be directed to the correct person.</p>
 
-      <h5 class="card-text"><a id="what-types-of-cookies-are-used"><strong>What types of cookies are used?</strong></a></h5>
-      <p class="card-text"><?=$org?> uses functional cookies so that the site will recognize you and remember your previously selected preferences. All cookies are first-party cookies, no third-party cookies are used.</p>
+  <h2 id="cookies">Cookies</h2>
+  <p>Our Website may use cookies to enhance your experience. Cookies are small files that a site or its service provider transfers to your computer's hard drive through your web browser (if you allow) that enables the site's or service provider's systems to recognize your browser and capture and remember certain information.</p>
+  <p>If you prefer, you can choose to have your computer warn you each time a cookie is being sent, or you can choose to turn off all cookies via your browser settings. However, some features of our Website may not function properly without the aid of cookies.</p>
 
-      <h5 class="card-text"><a id="how-to-manage-your-cookies"><strong>How to manage your cookies</strong></a></h5>
-      <p class="card-text">You can set your browser not to accept cookies, and the website <a href="https://allaboutcookies.org/">allaboutcookies.org</a> tells you how to remove cookies from your browser. However, some of the site features may not function as a result.</p>
+  <h2 id="security">Security</h2>
+  <p>We employ the following measures to secure your data:</p>
+  <ol>
+    <li><strong>Relational Database:</strong> Data is stored in a relational database.</li>
+    <li><strong>Redundancy:</strong> Data redundancy safeguards against hardware failure.</li>
+    <li><strong>Access Control:</strong> Data access is restricted to authorized personnel.</li>
+    <li><strong>Firewall Protection:</strong> A firewall separates the database from the Internet, preventing unauthorized access.</li>
+    <li><strong>Network Isolation:</strong> VLANs isolate the network, preventing unknown traffic from reaching the data.</li>
+    <li><strong>Regular Backups:</strong> Scheduled backups are automated to ensure data backup at regular intervals.</li>
+    <li><strong>Offsite Redundant Storage:</strong> Database backups are securely stored in a nearby redundant location.</li>
+  </ol>
 
-      <h5 class="card-text"><a id="privacy-policies-of-other-websites"><strong>Privacy policies of other websites</strong></a></h5>
-      <p class="card-text">The website may contain links to other websites. This privacy notice applies only to this site, so if you click on a link to another website, you should read their privacy policy or notice.</p>
+  <h2 id="changes">Changes to This Privacy Notice</h2>
+  <p>We may update this Privacy Notice from time to time by posting a new version on this page. You are advised to review this Privacy Notice periodically for any changes.</p>
 
-      <h5 class="card-text"><a id="changes-to-the-privacy-notice"><strong>Changes to the privacy notice</strong></a></h5>
-      <p class="card-text">If you have any questions about this privacy notice, the data held on you, or you would like to exercise one of your data protection rights, please do not hesitate to get in contact.</p>
+  <h2 id="contact-us">Contact Us</h2>
+  <p>If you have any questions or concerns about this Privacy Notice or our data practices, please feel free to contact us. You can email any mailbox at <code><?=filter_var($email_domain, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></code>, and it will be directed to the correct person.</p>
 
-      <h5 class="card-text"><a id="how-to-contact"><strong>How to contact</strong></a></h5>
-      <p class="card-text">You may send an email message to the site owner. Please write to any mailbox at <code><?=filter_var($email_domain, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></code>, it will reach the appropriate person.</p>
-    </div>
-  </div>
 </div>
 <?php require('./footer.inc.phtml'); ?>

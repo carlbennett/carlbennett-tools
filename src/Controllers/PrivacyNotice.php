@@ -16,6 +16,8 @@ class PrivacyNotice extends Base
     $privacy = \CarlBennett\MVC\Libraries\Common::$config->privacy;
     $this->model->data_location = $privacy->data_location;
     $this->model->email_domain = $privacy->contact->email_domain;
+    $this->model->org = $privacy->contact->org;
+    $this->model->web_domain = getenv('HTTP_HOST') ?? '';
 
     $this->model->_responseCode = 200;
     return true;

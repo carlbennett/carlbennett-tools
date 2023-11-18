@@ -26,7 +26,8 @@
   },
   "privacy": {
     "contact": {
-      "email_domain": "example.com"
+      "email_domain": "example.com",
+      "org": "Example's Toolbox"
     },
     "data_location": "Hello World"
   },
