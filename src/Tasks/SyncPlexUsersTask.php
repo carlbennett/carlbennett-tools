@@ -3,7 +3,6 @@
 namespace CarlBennett\Tools\Tasks;
 
 use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\MVC\Libraries\DateTime;
 use \CarlBennett\PlexTvAPI\Exceptions\PlexTvAPIException;
 use \CarlBennett\PlexTvAPI\User as PlexTvUser;
 use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
@@ -23,7 +22,6 @@ class SyncPlexUsersTask extends Task
             $users = PlexUser::getAll();
 
             $this->model->task_result['mapped_plex_users'] = [];
-            $this->model->task_result['skipped_plex_users'] = [];
             $this->model->task_result['unmapped_plex_users'] = [];
             $this->model->task_result['unmapped_plextv_users'] = [];
 
@@ -36,18 +34,13 @@ class SyncPlexUsersTask extends Task
             {
                 $synced = false;
 
-                if ($user->getOption(PlexUser::OPTION_DISABLED))
-                {
-                    $this->model->task_result['skipped_plex_users'][] = $user;
-                    continue;
-                }
-
                 $_plex_email = $user->getPlexEmail();
                 $_plex_id = $user->getPlexId();
                 $_plex_thumb = $user->getPlexThumb();
                 $_plex_title = $user->getPlexTitle();
                 $_plex_username = $user->getPlexUsername();
                 $_home = $user->getOption(PlexUser::OPTION_HOMEUSER);
+                $_disabled = $user->getOption(PlexUser::OPTION_DISABLED);
 
                 foreach ($plex_users as $__plex_id => $plex_user)
                 {
@@ -63,6 +56,7 @@ class SyncPlexUsersTask extends Task
                         $__plex_title = $plex_user->getTitle();
                         $__plex_username = $plex_user->getUsername();
                         $__home = $plex_user->getHome();
+                        $__disabled = !self::hasLibraryAccess($plex_user);
 
                         $user->setPlexEmail($__plex_email);
                         $user->setPlexId($__plex_id);
@@ -70,23 +64,41 @@ class SyncPlexUsersTask extends Task
                         $user->setPlexTitle($__plex_title);
                         $user->setPlexUsername($__plex_username);
                         $user->setOption(PlexUser::OPTION_HOMEUSER, $__home);
+                        $user->setOption(PlexUser::OPTION_DISABLED, $__disabled);
+                        if ($_disabled != $__disabled) $user->setDateDisabled($__disabled ? 'now' : null);
 
                         if ($_plex_email !== $__plex_email
                             || $_plex_id !== $__plex_id
                             || $_plex_thumb !== $__plex_thumb
                             || $_plex_title !== $__plex_title
                             || $_plex_username !== $__plex_username
-                            || $_home != $__home)
+                            || $_home != $__home
+                            || $_disabled != $__disabled)
                         {
                             // one of the fields has been modified
-                            $user->setRecordUpdated(new DateTime('now'));
+                            $user->setRecordUpdated('now');
+                        }
+
+                        $what_changed = [
+                            'email' => $_plex_email !== $__plex_email,
+                            'id' => $_plex_id !== $__plex_id,
+                            'thumb' => $_plex_thumb !== $__plex_thumb,
+                            'title' => $_plex_title !== $__plex_title,
+                            'username' => $_plex_username !== $__plex_username,
+                            'home' => $_home != $__home,
+                            'disabled' => $_disabled != $__disabled,
+                        ];
+                        if ([false, false, false, false, false, false, false] == \array_values($what_changed))
+                        {
+                            $what_changed = false;
                         }
 
                         $user->commit();
                         $synced = true;
                         $this->model->task_result['mapped_plex_users'][] = [
                             'plex_user' => $user,
-                            'plextv_user' => $plex_user
+                            'plextv_user' => $plex_user,
+                            'what_changed' => $what_changed,
                         ];
                         unset($plex_users[$__plex_id]);
                         continue 2;
@@ -113,7 +125,7 @@ class SyncPlexUsersTask extends Task
                     $__plex_title = $unmapped_plextv_user->getTitle();
                     $__plex_username = $unmapped_plextv_user->getUsername();
                     $__home = $unmapped_plextv_user->getHome();
-                    $__restricted = $unmapped_plextv_user->getRestricted();
+                    $__disabled = !self::hasLibraryAccess($unmapped_plextv_user);
 
                     $new_plex_user = new PlexUser(null);
 
@@ -124,6 +136,8 @@ class SyncPlexUsersTask extends Task
                     $new_plex_user->setPlexUsername($__plex_username);
 
                     $new_plex_user->setOption(PlexUser::OPTION_HOMEUSER, $__home);
+                    $new_plex_user->setOption(PlexUser::OPTION_DISABLED, $__disabled);
+                    $new_plex_user->setDateDisabled($__disabled ? 'now' : null);
 
                     $new_plex_user->setNotes('Created automatically by sync task.');
 
@@ -161,18 +175,44 @@ class SyncPlexUsersTask extends Task
         }
     }
 
-    protected static function match(PlexUser $our_user, PlexTvUser $api_user) : bool
+    /**
+     * Determines if the PlexUser object (from our DB) matches the PlevTvUser object (from plex.tv API).
+     * Compares Id, Email, Username, Title, in that order, case-insensitive.
+     *
+     * @param PlexUser $our_user The object from our database.
+     * @param PlexTvUser $api_user The object from the plex.tv API.
+     * @return bool Whether the objects match (true) or do not match (false).
+     */
+    protected static function match(PlexUser $our_user, PlexTvUser $api_user): bool
     {
-        if (!is_null($our_user->getPlexId()) && $our_user->getPlexId() === $api_user->getId()) return true;
+        if (!\is_null($our_user->getPlexId()) && $our_user->getPlexId() === $api_user->getId()) return true;
 
-        if (is_string($our_user->getPlexEmail()) && is_string($api_user->getEmail())
+        if (\is_string($our_user->getPlexEmail()) && \is_string($api_user->getEmail())
             && \strtolower($our_user->getPlexEmail()) == \strtolower($api_user->getEmail())) return true;
 
-        if (is_string($our_user->getPlexUsername()) && is_string($api_user->getUsername())
+        if (\is_string($our_user->getPlexUsername()) && \is_string($api_user->getUsername())
             && \strtolower($our_user->getPlexUsername()) == \strtolower($api_user->getUsername())) return true;
 
-        if (is_string($our_user->getPlexTitle()) && is_string($api_user->getTitle())
+        if (\is_string($our_user->getPlexTitle()) && \is_string($api_user->getTitle())
             && \strtolower($our_user->getPlexTitle()) == \strtolower($api_user->getTitle())) return true;
+
+        return false;
+    }
+
+    protected static function hasLibraryAccess(PlexTvUser $api_user): bool
+    {
+        $servers = $api_user->getServers();
+        if (\count($servers) == 0) return false;
+
+        foreach ($servers as $server)
+        {
+            $server_json = $server->jsonSerialize();
+
+            $allLibraries = $server_json['allLibraries'];
+            $numLibraries = $server_json['numLibraries'];
+
+            if ($allLibraries || $numLibraries > 0) return true;
+        }
 
         return false;
     }
