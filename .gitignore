@@ -28,5 +28,6 @@
 /composer.phar
 /etc/config.json
 /lib/
+/tmp/
 Desktop.ini
 Thumbs.db
