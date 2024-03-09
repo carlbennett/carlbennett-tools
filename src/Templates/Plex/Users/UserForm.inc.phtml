@@ -64,7 +64,7 @@ if (!empty($error)) { ?>
 <?php } ?>
   <form method="POST">
     <div class="row">
-      <div class="col-md-1">
+      <div class="col-md-2">
         <!-- Avatar -->
 
         <div class="text-center">
@@ -73,31 +73,31 @@ if (!empty($error)) { ?>
         </div>
 
       </div>
-      <div class="col-lg-6">
+      <div class="col-lg-5">
         <!-- Title, Username, Email address, Thumb, Linked user, Risk, Options -->
 
         <table class="table table-borderless">
           <thead></thead><tbody>
             <tr>
               <th scope="row" class="align-middle text-right"><label class="m-0" for="plex_title">Title</label></th>
-              <td><input class="form-control form-control-sm" type="text" id="plex_title" name="plex_title" placeholder="Enter the Plex title here" value="<?=$plex_title?>"/></td>
+              <td><input class="bg-primary border-secondary form-control form-control-sm text-white" type="text" id="plex_title" name="plex_title" placeholder="Enter the Plex title here" value="<?=$plex_title?>"/></td>
             </tr>
             <tr>
               <th scope="row" class="align-middle text-right"><label class="m-0" for="plex_username">Username</label></th>
-              <td><input class="form-control form-control-sm" type="text" id="plex_username" name="plex_username" placeholder="Enter the Plex username here" value="<?=$plex_username?>"/></td>
+              <td><input class="bg-primary border-secondary form-control form-control-sm text-white" type="text" id="plex_username" name="plex_username" placeholder="Enter the Plex username here" value="<?=$plex_username?>"/></td>
             </tr>
             <tr>
               <th scope="row" class="align-middle text-right"><label class="m-0" for="plex_email">Email address</label></th>
-              <td><input class="form-control form-control-sm" type="email" id="plex_email" name="plex_email" placeholder="Enter the Plex email address here" value="<?=$plex_email?>"/></td>
+              <td><input class="bg-primary border-secondary form-control form-control-sm text-white" type="email" id="plex_email" name="plex_email" placeholder="Enter the Plex email address here" value="<?=$plex_email?>"/></td>
             </tr>
             <tr>
               <th scope="row" class="align-middle text-right"><label class="m-0" for="plex_thumb">Thumbnail</label></th>
-              <td><input class="form-control form-control-sm" type="text" id="plex_thumb" name="plex_thumb" placeholder="Enter the Plex thumbnail url or blank for Gravatar" value="<?=$plex_thumb?>"/></td>
+              <td><input class="bg-primary border-secondary form-control form-control-sm text-white" type="text" id="plex_thumb" name="plex_thumb" placeholder="Enter the Plex thumbnail url or blank for Gravatar" value="<?=$plex_thumb?>"/></td>
             </tr>
             <tr>
               <th scope="row" class="align-middle text-right"><label class="m-0" for="user_id">Linked user</label></th>
               <td>
-                <select class="custom-select custom-select-sm" id="user_id" name="user_id">
+                <select class="bg-primary border-secondary custom-select custom-select-sm text-white" id="user_id" name="user_id">
                   <option value=""<?=(!$user_id ? ' selected' : '')?>>&ndash;</option>
 <?php foreach ($users as $user) { ?>
                   <option value="<?=$user->getId()?>"<?=($user_id == $user->getId() ? ' selected' : '')?>><?=filter_var($user->getName(), FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></option>
@@ -108,7 +108,7 @@ if (!empty($error)) { ?>
             <tr>
               <th scope="row" class="align-middle text-right"><label class="m-0" for="risk">Risk</label></th>
               <td>
-                <select class="custom-select custom-select-sm" id="risk" name="risk">
+                <select class="bg-primary border-secondary custom-select custom-select-sm text-white" id="risk" name="risk">
                   <option value="<?=PlexUser::RISK_UNASSESSED?>"<?=($risk === PlexUser::RISK_UNASSESSED ? ' selected' : '')?> class="bg-secondary text-dark">Unassessed</option>
                   <option value="<?=PlexUser::RISK_LOW?>"<?=($risk === PlexUser::RISK_LOW ? ' selected' : '')?> class="bg-success text-dark">Low</option>
                   <option value="<?=PlexUser::RISK_MEDIUM?>"<?=($risk === PlexUser::RISK_MEDIUM ? ' selected' : '')?> class="bg-warning text-dark">Medium</option>
@@ -121,15 +121,19 @@ if (!empty($error)) { ?>
               <td>
                 <div class="custom-control custom-switch m-2 text-danger">
                   <input class="custom-control-input" type="checkbox" name="disabled" id="is_disabled" value="1"<?=$is_disabled?>> <label class="custom-control-label" for="is_disabled">Disabled</label>
+                  <p class="text-muted small">User becomes disabled automatically if they do not have access to libraries on any server.</p>
                 </div>
                 <div class="custom-control custom-switch m-2 text-warning">
                   <input class="custom-control-input" type="checkbox" name="expired" id="is_expired" value="1"<?=$is_expired?>> <label class="custom-control-label" for="is_expired">Expired</label>
+                  <p class="text-muted small">User expires when their server invite has been rescinded and they did not previously have access.</p>
                 </div>
                 <div class="custom-control custom-switch m-2 text-secondary">
                   <input class="custom-control-input" type="checkbox" name="hidden" id="is_hidden" value="1"<?=$is_hidden?>> <label class="custom-control-label" for="is_hidden">Hidden</label>
+                  <p class="text-muted small">Hides this user from the interface by default.</p>
                 </div>
                 <div class="custom-control custom-switch m-2 text-info">
                   <input class="custom-control-input" type="checkbox" name="homeuser" id="is_homeuser" value="1"<?=$is_homeuser?>> <label class="custom-control-label" for="is_homeuser">Home User</label>
+                  <p class="text-muted small">Whether this user is a Plex Home user. Plex Home users might have missing profile information.</p>
                 </div>
               </td>
             </tr>
@@ -186,7 +190,7 @@ if (!empty($error)) { ?>
         <!-- Notes -->
 
         <label class="font-weight-bold" for="notes">Notes</label><br/>
-        <textarea class="form-control form-control-sm" style="min-height:90px;" id="notes" name="notes" placeholder="Enter notes here"><?=$notes?></textarea>
+        <textarea class="bg-primary border-secondary form-control form-control-sm text-white" style="min-height:90px;" id="notes" name="notes" placeholder="Enter notes here"><?=$notes?></textarea>
 
       </div>
     </div>
