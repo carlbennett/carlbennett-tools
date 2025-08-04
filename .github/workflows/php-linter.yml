@@ -4,7 +4,7 @@ name: php-linter
 on: [push, pull_request]
 
 env:
-  PHP_VERSION: '8.1'
+  PHP_VERSION: '8.3'
 
 permissions:
   contents: read
