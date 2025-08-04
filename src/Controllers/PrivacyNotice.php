@@ -14,9 +14,9 @@ class PrivacyNotice extends Base
     if (!\is_null($args) && \count($args) > 0) throw new \InvalidArgumentException();
 
     $privacy = \CarlBennett\Tools\Libraries\Core\Config::instance()->root['privacy'];
-    $this->model->data_location = $privacy->data_location;
-    $this->model->email_domain = $privacy->contact->email_domain;
-    $this->model->org = $privacy->contact->org;
+    $this->model->data_location = $privacy['data_location'];
+    $this->model->email_domain = $privacy['contact']['email_domain'];
+    $this->model->org = $privacy['contact']['org'];
     $this->model->web_domain = \CarlBennett\Tools\Libraries\Core\Router::serverName();
 
     $this->model->_responseCode = 200;
