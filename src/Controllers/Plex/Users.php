@@ -17,7 +17,7 @@ class Users extends \CarlBennett\Tools\Controllers\Base
       || !$this->model->active_user->getAclObject()->getAcl(\CarlBennett\Tools\Libraries\User\Acl::ACL_PLEX_USERS)
       ? false : \CarlBennett\Tools\Libraries\Plex\User::getAll();
 
-    $query = \CarlBennett\Tools\Libraries\Router::query();
+    $query = \CarlBennett\Tools\Libraries\Core\Router::query();
     $query = new \CarlBennett\Tools\Libraries\Utility\HTTPForm($query);
 
     $this->model->show_hidden = $query->get('sh');

@@ -1,11 +1,10 @@
 <?php /* vim: set colorcolumn=0: */
 namespace CarlBennett\Tools\Templates;
-use \CarlBennett\Tools\Libraries\Authentication;
+use \CarlBennett\Tools\Libraries\Core\Authentication;
 use \CarlBennett\Tools\Libraries\User\User;
-use \DateTime;
 use \DateTimeInterface;
 $title = 'Pastebin';
-$now = new DateTime('now');
+$now = new \CarlBennett\Tools\Libraries\Core\DateTimeImmutable('now');
 $error = $this->getContext()->error;
 require('./header.inc.phtml'); ?>
 <div id="paste_page" class="container">

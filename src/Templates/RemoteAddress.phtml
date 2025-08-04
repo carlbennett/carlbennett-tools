@@ -1,5 +1,5 @@
 <?php namespace CarlBennett\Tools\Templates;
-use \CarlBennett\MVC\Libraries\Common;
+use \CarlBennett\Tools\Libraries\Core\UrlFormatter;
 $title = 'Remote Address';
 $geoip = $this->getContext()->geoip_info;
 $ip = $this->getContext()->ip_address;
@@ -10,8 +10,8 @@ require("./header.inc.phtml"); ?>
   <h1>Remote Address</h1>
   <div class="align-middle mb-2">
     <strong>Alternative formats:</strong>
-    <a class="btn btn-sm btn-primary" href="<?=Common::relativeUrlToAbsolute('/remoteaddress.json')?>">Json</a>
-    <a class="btn btn-sm btn-primary" href="<?=Common::relativeUrlToAbsolute('/remoteaddress.txt')?>">Plaintext</a>
+    <a class="btn btn-sm btn-primary" href="<?=UrlFormatter::format('/remoteaddress.json')?>">Json</a>
+    <a class="btn btn-sm btn-primary" href="<?=UrlFormatter::format('/remoteaddress.txt')?>">Plaintext</a>
   </div>
   <table class="table table-bordered table-sm">
     <thead></thead>

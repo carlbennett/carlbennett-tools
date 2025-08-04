@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
+
 namespace CarlBennett\Tools\Libraries\User;
 
-use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\Tools\Libraries\Database;
-use \CarlBennett\Tools\Libraries\DateTimeImmutable;
+use \CarlBennett\Tools\Libraries\Core\DateTimeImmutable;
+use \CarlBennett\Tools\Libraries\Db\MariaDb;
 use \CarlBennett\Tools\Libraries\User\User;
 use \DateTimeInterface;
 use \DateTimeZone;
@@ -38,7 +38,7 @@ class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeria
     if (!$this->allocate()) throw new UnexpectedValueException();
   }
 
-  public function allocate() : bool
+  public function allocate(): bool
   {
     $this->setDateAccepted(null);
     $this->setDateInvited('now');
@@ -51,7 +51,7 @@ class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeria
     $id = $this->getId();
     if (is_null($id)) return true;
 
-    $q = Database::instance()->prepare('
+    $q = MariaDb::instance()->prepare('
       SELECT
         `date_accepted`, `date_invited`, `date_revoked`, `email`,
         UuidFromBin(`id`) AS `id`, UuidFromBin(`invited_by`) AS `invited_by`,
@@ -64,7 +64,7 @@ class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeria
     return true;
   }
 
-  protected function allocateObject(StdClass $value) : void
+  protected function allocateObject(StdClass $value): void
   {
     $this->setDateAccepted($value->date_accepted);
     $this->setDateInvited($value->date_invited);
@@ -76,9 +76,9 @@ class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeria
     $this->setRecordUpdated($value->record_updated);
   }
 
-  public function commit() : bool
+  public function commit(): bool
   {
-    $q = Database::instance()->prepare(
+    $q = MariaDb::instance()->prepare(
       'INSERT INTO `user_invites` (
         `date_accepted`, `date_invited`, `date_revoked`, `email`,
         `id`, `invited_by`, `invited_user`, `record_updated`
@@ -109,11 +109,11 @@ class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeria
     return true;
   }
  
-  public function deallocate() : bool
+  public function deallocate(): bool
   {
     $id = $this->getId();
     if (is_null($id)) return false;
-    $q = Database::instance()->prepare('DELETE FROM `user_invites` WHERE `id` = ? LIMIT 1;');
+    $q = MariaDb::instance()->prepare('DELETE FROM `user_invites` WHERE `id` = ? LIMIT 1;');
     try { return $q && $q->execute([$id]); }
     finally { if ($q) $q->closeCursor(); }
   }
@@ -124,7 +124,7 @@ class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeria
    */
   public static function getByEmail(string $value)
   {
-    $q = Database::instance()->prepare(
+    $q = MariaDb::instance()->prepare(
       'SELECT UuidFromBin(`id`) AS `id` FROM `user_invites`
       WHERE `email` = :email LIMIT 1;'
     );
@@ -141,22 +141,22 @@ class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeria
     return new self($id);
   }
 
-  public function getDateAccepted() : ?DateTimeInterface
+  public function getDateAccepted(): ?DateTimeInterface
   {
     return $this->date_accepted;
   }
 
-  public function getDateInvited() : DateTimeInterface
+  public function getDateInvited(): DateTimeInterface
   {
     return $this->date_invited;
   }
 
-  public function getDateRevoked() : ?DateTimeInterface
+  public function getDateRevoked(): ?DateTimeInterface
   {
     return $this->date_revoked;
   }
 
-  public function getEmail() : string
+  public function getEmail(): string
   {
     return $this->email;
   }
@@ -164,22 +164,22 @@ class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeria
   /**
    * @return string The UUID in hexadecimal string format (with dashes).
    */
-  public function getId() : ?string
+  public function getId(): ?string
   {
     return $this->id;
   }
 
-  public function getInvitedBy() : ?User
+  public function getInvitedBy(): ?User
   {
     return $this->invited_by;
   }
 
-  public function getInvitedUser() : ?User
+  public function getInvitedUser(): ?User
   {
     return $this->invited_user;
   }
 
-  public function getRecordUpdated() : DateTimeInterface
+  public function getRecordUpdated(): DateTimeInterface
   {
     return $this->record_updated;
   }
@@ -198,21 +198,21 @@ class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeria
     ];
   }
 
-  public function setDateAccepted(DateTimeInterface|string|null $value) : void
+  public function setDateAccepted(DateTimeInterface|string|null $value): void
   {
     $this->date_accepted = (\is_null($value) ? null : (\is_string($value) ?
       new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : DateTimeImmutable::createFromInterface($value)
     ));
   }
 
-  public function setDateInvited(DateTimeInterface|string $value) : void
+  public function setDateInvited(DateTimeInterface|string $value): void
   {
     $this->date_invited = (\is_null($value) ? null : (\is_string($value) ?
       new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : DateTimeImmutable::createFromInterface($value)
     ));
   }
 
-  public function setDateRevoked(DateTimeInterface|string|null $value) : void
+  public function setDateRevoked(DateTimeInterface|string|null $value): void
   {
     $this->date_revoked = (\is_null($value) ? null : (\is_string($value) ?
       new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : DateTimeImmutable::createFromInterface($value)
@@ -223,7 +223,7 @@ class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeria
    * @param string $value The valid email address string to set.
    * @param bool $force If true, skips check with filter_var(). Default: false
    */
-  public function setEmail(string $value, bool $force = false) : void
+  public function setEmail(string $value, bool $force = false): void
   {
     if (strlen($value) > self::MAX_EMAIL)
     {
@@ -246,7 +246,7 @@ class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeria
    * @param string|null $value The UUID in hexadecimal format (with dashes) to set.
    *                           Example: "31952e1c-d05a-44a0-b749-6d892cc96d3a"
    */
-  public function setId(?string $value) : void
+  public function setId(?string $value): void
   {
     if (!(is_null($value) || (is_string($value) && preg_match(self::UUID_REGEX, $value) === 1)))
       throw new UnexpectedValueException('value must be null or a string in UUID format');
@@ -254,7 +254,7 @@ class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeria
     $this->id = $value;
   }
 
-  public function setInvitedBy(User|string|null $value) : void
+  public function setInvitedBy(User|string|null $value): void
   {
     if (is_string($value) && preg_match(self::UUID_REGEX, $value) !== 1)
       throw new UnexpectedValueException('value must be null, User, or a string in UUID format');
@@ -262,7 +262,7 @@ class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeria
     $this->invited_by = $value instanceof User ? $value->getId() : $value;
   }
 
-  public function setInvitedUser(User|string|null $value) : void
+  public function setInvitedUser(User|string|null $value): void
   {
     if (is_string($value) && preg_match(self::UUID_REGEX, $value) !== 1)
       throw new UnexpectedValueException('value must be null, User, or a string in UUID format');
@@ -270,7 +270,7 @@ class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeria
     $this->invited_user = $value instanceof User ? $value->getId() : $value;
   }
 
-  public function setRecordUpdated(DateTimeInterface|string $value) : void
+  public function setRecordUpdated(DateTimeInterface|string $value): void
   {
     $this->record_updated = (\is_null($value) ? null : (\is_string($value) ?
       new DateTimeImmutable($value, new DateTimeZone(self::DATE_TZ)) : DateTimeImmutable::createFromInterface($value)

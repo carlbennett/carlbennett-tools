@@ -1,7 +1,7 @@
 <?php
 namespace CarlBennett\Tools\Templates;
-use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\Tools\Libraries\Authentication;
+use \CarlBennett\Tools\Libraries\Core\Authentication;
+use \CarlBennett\Tools\Libraries\Core\UrlFormatter;
 use \LogicException;
 $_header_user = Authentication::$user;
 if (!isset($title)) {
@@ -43,27 +43,27 @@ function _header_active($url, $sr) {
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item<?=_header_active('/tools', false)?>">
-        <a class="nav-link" href="<?=Common::relativeUrlToAbsolute('/tools')?>">Tools<?=_header_active('/tools', true)?></a>
+        <a class="nav-link" href="<?=UrlFormatter::format('/tools')?>">Tools<?=_header_active('/tools', true)?></a>
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarOtherDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Other
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarOtherDropdown">
-          <a class="dropdown-item<?=_header_active('/gandalf', false)?>" href="<?=Common::relativeUrlToAbsolute('/gandalf')?>">Gandalf<?=_header_active('/gandalf', true)?></a>
+          <a class="dropdown-item<?=_header_active('/gandalf', false)?>" href="<?=UrlFormatter::format('/gandalf')?>">Gandalf<?=_header_active('/gandalf', true)?></a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item<?=_header_active('/remoteaddress', false)?>" href="<?=Common::relativeUrlToAbsolute('/remoteaddress')?>">Remote Address<?=_header_active('/remoteaddress', true)?></a>
-          <a class="dropdown-item<?=_header_active('/urlencodedecode', false)?>" href="<?=Common::relativeUrlToAbsolute('/urlencodedecode')?>">Url Encode &amp; Decode<?=_header_active('/urlencodedecode', true)?></a>
+          <a class="dropdown-item<?=_header_active('/remoteaddress', false)?>" href="<?=UrlFormatter::format('/remoteaddress')?>">Remote Address<?=_header_active('/remoteaddress', true)?></a>
+          <a class="dropdown-item<?=_header_active('/urlencodedecode', false)?>" href="<?=UrlFormatter::format('/urlencodedecode')?>">Url Encode &amp; Decode<?=_header_active('/urlencodedecode', true)?></a>
         </div>
       </li>
     </ul>
 <?php if (!$_header_user) {
   if (stripos(getenv('REQUEST_URI'), '/user/login') !== 0) { ?>
-    <a class="btn btn-sm btn-outline-success my-2 my-sm-0" tabindex="-1" href="<?=Common::relativeUrlToAbsolute('/user/login?return=' . rawurlencode((getenv('REQUEST_URI') == '/user/logout' ? '/tools' : getenv('REQUEST_URI'))))?>">Log in</a>
+    <a class="btn btn-sm btn-outline-success my-2 my-sm-0" tabindex="-1" href="<?=UrlFormatter::format('/user/login?return=' . rawurlencode((getenv('REQUEST_URI') == '/user/logout' ? '/tools' : getenv('REQUEST_URI'))))?>">Log in</a>
 <?php }
 } else { ?>
 <span class="nav-item navbar-text mx-3"><a href="<?=$_header_user->getUrl()?>"><?=$_header_user->getName()?></a><?=($_header_user->isBanned() ? ' <span class="font-weight-bold text-danger">(Banned)</span>' : '')?><?=($_header_user->isDisabled() ? ' <span class="font-weight-bold text-danger">(Disabled)</span>' : '')?></span>
-    <a class="btn btn-sm btn-outline my-2 my-sm-0" tabindex="-1" href="<?=Common::relativeUrlToAbsolute('/user/logout')?>">Log out</a>
+    <a class="btn btn-sm btn-outline my-2 my-sm-0" tabindex="-1" href="<?=UrlFormatter::format('/user/logout')?>">Log out</a>
 <?php } ?>
   </div>
 </nav>

@@ -2,7 +2,7 @@
 
 namespace CarlBennett\Tools\Controllers\Plex\Users;
 
-use \CarlBennett\Tools\Libraries\Router;
+use \CarlBennett\Tools\Libraries\Core\Router;
 use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
 use \CarlBennett\Tools\Libraries\Utility\HTTPForm;
 use \CarlBennett\Tools\Models\Plex\Users\UserForm as UserFormModel;
@@ -24,7 +24,7 @@ class Edit extends \CarlBennett\Tools\Controllers\Base
       || !$this->model->active_user->getAclObject()->getAcl(\CarlBennett\Tools\Libraries\User\Acl::ACL_PLEX_USERS))
     {
       $this->model->_responseCode = 401;
-      return $this->model;
+      return true;
     }
 
     $this->model->id = $form->get('id');
@@ -63,7 +63,7 @@ class Edit extends \CarlBennett\Tools\Controllers\Base
       if ($this->model->error === UserFormModel::ERROR_SUCCESS)
       {
         $this->model->_responseCode = 303;
-        $this->model->_responseHeaders['Location'] = \CarlBennett\MVC\Libraries\Common::relativeUrlToAbsolute(
+        $this->model->_responseHeaders['Location'] = \CarlBennett\Tools\Libraries\Core\UrlFormatter::format(
           \sprintf('/plex/users?id=%s&hl=edit', \rawurlencode($this->model->id))
         );
         return true;

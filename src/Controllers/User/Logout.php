@@ -13,10 +13,10 @@ class Logout extends \CarlBennett\Tools\Controllers\Base
   {
     $this->model->feedback = [];
 
-    $q = \CarlBennett\Tools\Libraries\Router::query();
+    $q = \CarlBennett\Tools\Libraries\Core\Router::query();
     $return = $q['return'] ?? null;
     if (!empty($return) && substr($return, 0, 1) != '/') $return = null;
-    if (!empty($return)) $return = \CarlBennett\MVC\Libraries\Common::relativeUrlToAbsolute($return);
+    if (!empty($return)) $return = \CarlBennett\Tools\Libraries\Core\UrlFormatter::format($return);
     $this->model->return = $return;
 
     $this->model->_responseCode = 200;
@@ -27,7 +27,7 @@ class Logout extends \CarlBennett\Tools\Controllers\Base
 
   protected function processLogout(): void
   {
-    if (!\CarlBennett\Tools\Libraries\Authentication::logout())
+    if (!\CarlBennett\Tools\Libraries\Core\Authentication::logout())
     {
       $this->model->feedback = 'An error occurred while processing the logout.';
       return;

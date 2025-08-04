@@ -2,7 +2,7 @@
 
 namespace CarlBennett\Tools\Controllers\User;
 
-use \CarlBennett\Tools\Libraries\Router;
+use \CarlBennett\Tools\Libraries\Core\Router;
 use \CarlBennett\Tools\Libraries\User\Invite as Invitation;
 use \CarlBennett\Tools\Libraries\User\User;
 use \CarlBennett\Tools\Models\User\Invite as InviteModel;
@@ -26,7 +26,7 @@ class Invite extends \CarlBennett\Tools\Controllers\Base
 
     $return = $q['return'] ?? null;
     if (!empty($return) && substr($return, 0, 1) != '/') $return = null;
-    if (!empty($return)) $return = \CarlBennett\MVC\Libraries\Common::relativeUrlToAbsolute($return);
+    if (!empty($return)) $return = \CarlBennett\Tools\Libraries\Core\UrlFormatter::format($return);
     $this->model->return = $return;
 
     $this->model->id = $q['id'] ?? null;

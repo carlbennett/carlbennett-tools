@@ -2,7 +2,7 @@
 
 namespace CarlBennett\Tools\Libraries\Errors;
 
-use \CarlBennett\Tools\Libraries\Template;
+use \CarlBennett\Tools\Libraries\Core\Template;
 use \ReflectionClass;
 
 abstract class BaseError

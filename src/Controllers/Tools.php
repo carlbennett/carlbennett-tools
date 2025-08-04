@@ -13,7 +13,7 @@ class Tools extends Base
   {
     if (!\is_null($args) && \count($args) > 0) throw new \InvalidArgumentException();
 
-    $this->model->routes = \CarlBennett\Tools\Libraries\Router::$routes;
+    $this->model->routes = \CarlBennett\Tools\Libraries\Core\Router::$routes;
     $this->model->_responseCode = 200;
     return true;
   }

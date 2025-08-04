@@ -1,7 +1,8 @@
 <?php
 
 namespace CarlBennett\Tools\Exceptions;
-use \CarlBennett\Tools\Libraries\Template;
+
+use \CarlBennett\Tools\Libraries\Core\Template;
 
 class TemplateNotFoundException extends \LogicException
 {

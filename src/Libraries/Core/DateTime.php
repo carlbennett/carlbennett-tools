@@ -1,6 +1,6 @@
 <?php
 
-namespace CarlBennett\Tools\Libraries;
+namespace CarlBennett\Tools\Libraries\Core;
 
 use \DateTimeInterface;
 

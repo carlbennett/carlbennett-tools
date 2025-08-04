@@ -11,10 +11,9 @@ declare(strict_types=1);
 
 namespace CarlBennett\Tools;
 
-use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\MVC\Libraries\GlobalErrorHandler;
-use \CarlBennett\Tools\Libraries\Authentication;
-use \CarlBennett\Tools\Libraries\Router;
+use \CarlBennett\Tools\Libraries\Core\Authentication;
+use \CarlBennett\Tools\Libraries\Core\Config;
+use \CarlBennett\Tools\Libraries\Core\Router;
 
 function main(int $argc, array $argv)
 {
@@ -25,20 +24,15 @@ function main(int $argc, array $argv)
     }
     require(__DIR__ . '/../lib/autoload.php');
 
-    GlobalErrorHandler::createOverrides();
-
+    \CarlBennett\Tools\Libraries\Core\Logger::registerAPMs();
+    \CarlBennett\Tools\Libraries\Core\GlobalErrorHandler::createOverrides();
     \date_default_timezone_set('Etc/UTC');
-
-    Common::$config = \json_decode(\file_get_contents(
-        __DIR__ . '/../etc/config.json'
-    ));
-
     Authentication::verify();
 
-    if (isset(Common::$config->maintenance[0]) && Common::$config->maintenance[0])
+    if (isset(Config::instance()->root['maintenance'][0]) && Config::instance()->root['maintenance'][0])
     {
         Router::$routes = [
-          ['#.*#', 'Maintenance', ['MaintenanceHtml'], Common::$config->bnetdocs->maintenance[1]],
+          ['#.*#', 'Maintenance', ['MaintenanceHtml'], Config::instance()->root['maintenance'][1]],
         ];
     }
     else

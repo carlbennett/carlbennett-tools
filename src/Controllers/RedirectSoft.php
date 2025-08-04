@@ -13,7 +13,7 @@ class RedirectSoft extends Base
   {
     if (\is_null($args) || \count($args) != 1) throw new \InvalidArgumentException();
 
-    $this->model->location = \CarlBennett\MVC\Libraries\Common::relativeUrlToAbsolute(\array_shift($args));
+    $this->model->location = \CarlBennett\Tools\Libraries\Core\UrlFormatter::format(\array_shift($args));
     if (!empty($this->model->location)) $this->model->_responseHeaders['Location'] = $this->model->location;
 
     $this->model->_responseCode = 302;

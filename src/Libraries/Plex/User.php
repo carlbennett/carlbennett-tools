@@ -2,10 +2,8 @@
 
 namespace CarlBennett\Tools\Libraries\Plex;
 
-use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\MVC\Libraries\Gravatar;
-use \CarlBennett\Tools\Libraries\Database;
-use \CarlBennett\Tools\Libraries\DateTimeImmutable;
+use \CarlBennett\Tools\Libraries\Core\DateTimeImmutable;
+use \CarlBennett\Tools\Libraries\Db\MariaDb;
 use \CarlBennett\Tools\Libraries\User\User as BaseUser;
 use \DateTimeInterface;
 use \DateTimeZone;
@@ -84,7 +82,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
 
     try
     {
-      $q = Database::instance()->prepare('
+      $q = MariaDb::instance()->prepare('
         SELECT `date_added`, `date_disabled`, `date_expired`,
               UuidFromBin(`id`) AS `id`, `notes`, `options`, `plex_email`,
               `plex_id`, `plex_thumb`, `plex_title`, `plex_username`,
@@ -123,7 +121,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
 
     try
     {
-      $q = Database::instance()->prepare('
+      $q = MariaDb::instance()->prepare('
         INSERT INTO `plex_users` (
           `date_added`, `date_disabled`, `date_expired`, `id`, `notes`, `options`,
           `plex_email`, `plex_id`, `plex_thumb`, `plex_title`, `plex_username`,
@@ -175,7 +173,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
   {
     $id = $this->getId();
     if (is_null($id)) return false;
-    $q = Database::instance()->prepare('DELETE FROM `plex_users` WHERE `id` = UuidToBin(?) LIMIT 1;');
+    $q = MariaDb::instance()->prepare('DELETE FROM `plex_users` WHERE `id` = UuidToBin(?) LIMIT 1;');
     try { return $q && $q->execute([$id]); }
     finally { if ($q) $q->closeCursor(); }
   }
@@ -184,7 +182,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
   {
     try
     {
-      $q = Database::instance()->prepare('
+      $q = MariaDb::instance()->prepare('
         SELECT `date_added`, `date_disabled`, `date_expired`,
               UuidFromBin(`id`) AS `id`, `notes`, `options`, `plex_email`,
               `plex_id`, `plex_thumb`, `plex_title`, `plex_username`,
@@ -219,7 +217,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
 
     if (empty($email)) $email = 'nobody@example.com'; // no email is set??
 
-    return (new Gravatar($email))->getUrl($size, 'mp');
+    return (new \CarlBennett\Tools\Libraries\User\Gravatar($email))->getUrl($size, 'mp');
   }
 
   public function getDateAdded(): DateTimeInterface

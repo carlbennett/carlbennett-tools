@@ -7,9 +7,9 @@ class PhpInfoHtml extends \CarlBennett\Tools\Views\Base\Html
   public static function invoke(\CarlBennett\Tools\Interfaces\Model $model): void
   {
     if (!$model instanceof \CarlBennett\Tools\Models\PhpInfo)
-      throw new \CarlBennett\MVC\Libraries\Exceptions\IncorrectModelException();
+      throw new \CarlBennett\Tools\Exceptions\InvalidModelException($model);
 
-    (new \CarlBennett\Tools\Libraries\Template($model, 'PhpInfo'))->render();
+    (new \CarlBennett\Tools\Libraries\Core\Template($model, 'PhpInfo'))->render();
     $model->_responseHeaders['Content-Type'] = self::mimeType();
   }
 }

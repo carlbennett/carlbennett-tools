@@ -2,12 +2,9 @@
 
 namespace CarlBennett\Tools\Libraries\Mail;
 
-use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\Tools\Libraries\Authentication;
-
+use \CarlBennett\Tools\Libraries\Core\Config;
 use \PHPMailer\PHPMailer\Exception as PHPMailerException;
 use \PHPMailer\PHPMailer\PHPMailer;
-use \PHPMailer\PHPMailer\SMTP;
 
 use \LogicException;
 
@@ -29,14 +26,14 @@ class EmailSender
         self::$instance = new PHPMailer(true);
         self::$instance->isSMTP();
 
-        self::$instance->Host = Common::$config->smtp->hostname;
-        self::$instance->Port = Common::$config->smtp->port;
-        self::$instance->SMTPSecure = Common::$config->smtp->tls;
-        self::$instance->SMTPKeepAlive = Common::$config->smtp->keepalive;
+        self::$instance->Host = Config::instance()->root['smtp']['hostname'];
+        self::$instance->Port = Config::instance()->root['smtp']['port'];
+        self::$instance->SMTPSecure = Config::instance()->root['smtp']['tls'];
+        self::$instance->SMTPKeepAlive = Config::instance()->root['smtp']['keepalive'];
 
-        self::$instance->SMTPAuth = !empty(Common::$config->smtp->password);
-        self::$instance->Username = Common::$config->smtp->username;
-        self::$instance->Password = Common::$config->smtp->password;
+        self::$instance->SMTPAuth = !empty(Config::instance()->root['smtp']['password']);
+        self::$instance->Username = Config::instance()->root['smtp']['username'];
+        self::$instance->Password = Config::instance()->root['smtp']['password'];
       }
       catch (PHPMailerException $e)
       {

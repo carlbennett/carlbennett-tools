@@ -2,10 +2,10 @@
 
 namespace CarlBennett\Tools\Libraries;
 
-use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\Tools\Libraries\Database;
+use \CarlBennett\Tools\Libraries\Core\Config;
+use \CarlBennett\Tools\Libraries\Core\DateTimeImmutable;
+use \CarlBennett\Tools\Libraries\Db\MariaDb;
 use \CarlBennett\Tools\Libraries\User\User;
-use \DateTime;
 use \DateTimeInterface;
 use \DateTimeZone;
 use \InvalidArgumentException;
@@ -50,13 +50,13 @@ class PasteObject implements \CarlBennett\Tools\Interfaces\DatabaseObject
 
   public function allocate(): bool
   {
-    $this->setDateAdded(new DateTime('now', new DateTimeZone('Etc/UTC')));
+    $this->setDateAdded(new DateTimeImmutable('now', new DateTimeZone('Etc/UTC')));
     $this->setDateExpires(null);
 
     $id = $this->getId();
     if (empty($id)) return true;
 
-    $q = Database::instance()->prepare('
+    $q = MariaDb::instance()->prepare('
       SELECT
         `content`, `date_added`, `date_expires`, UuidFromBin(`id`) AS `id`,
         `mimetype`, `options_bitmask`, `password_hash`, `title`,
@@ -95,7 +95,7 @@ class PasteObject implements \CarlBennett\Tools\Interfaces\DatabaseObject
   {
     $hash = $this->getPasswordHash();
     $rehash = password_needs_rehash($hash, PASSWORD_BCRYPT, array(
-      'cost' => Common::$config->pastes->bcrypt_cost,
+      'cost' => Config::instance()->root['pastes']['bcrypt_cost'],
     ));
     $verified = password_verify($password, $hash);
 
@@ -111,7 +111,7 @@ class PasteObject implements \CarlBennett\Tools\Interfaces\DatabaseObject
   {
     if (empty($this->id)) $this->id = \Ramsey\Uuid\Uuid::uuid4();
 
-    $q = Database::instance()->prepare('
+    $q = MariaDb::instance()->prepare('
       INSERT INTO `pastebin` (
         `content`, `date_added`, `date_expires`, `id`, `mimetype`,
         `options_bitmask`, `password_hash`, `title`, `user_id`
@@ -171,7 +171,7 @@ class PasteObject implements \CarlBennett\Tools\Interfaces\DatabaseObject
     }
 
     return password_hash($password, PASSWORD_BCRYPT, array(
-      'cost' => Common::$config->pastes->bcrypt_cost,
+      'cost' => Config::instance()->root['pastes']['bcrypt_cost'],
     ));
   }
 
@@ -179,7 +179,7 @@ class PasteObject implements \CarlBennett\Tools\Interfaces\DatabaseObject
   {
     $id = $this->getId();
     if (\is_null($id)) return false;
-    $q = Database::instance()->prepare('DELETE FROM `pastebin` WHERE `id` = UuidToBin(?) LIMIT 1;');
+    $q = MariaDb::instance()->prepare('DELETE FROM `pastebin` WHERE `id` = UuidToBin(?) LIMIT 1;');
     try { return $q && $q->execute([$id]); }
     finally { if ($q) $q->closeCursor(); }
   }
@@ -224,7 +224,7 @@ class PasteObject implements \CarlBennett\Tools\Interfaces\DatabaseObject
     if (\is_null($bitmask) || !\is_numeric($bitmask))
       $bitmask = (self::OPTION_QUARANTINE | self::OPTION_UNLISTED);
 
-    $q = Database::instance()->prepare(sprintf('
+    $q = MariaDb::instance()->prepare(sprintf('
       SELECT UuidFromBin(`id`) AS `id` FROM `pastebin`
       WHERE %s NOT (`options_bitmask` & %d)
       ORDER BY `date_added` DESC LIMIT %d;
@@ -249,7 +249,7 @@ class PasteObject implements \CarlBennett\Tools\Interfaces\DatabaseObject
 
   public function getURI(): string
   {
-    return Common::relativeUrlToAbsolute('/paste/' . $this->id);
+    return \CarlBennett\Tools\Libraries\Core\UrlFormatter::format('/paste/' . $this->id);
   }
 
   public function getUser(): ?User

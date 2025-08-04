@@ -17,7 +17,7 @@ class Users extends Base
           return true;
         }
 
-        $q = new \CarlBennett\Tools\Libraries\Utility\HTTPForm(\CarlBennett\Tools\Libraries\Router::query());
+        $q = new \CarlBennett\Tools\Libraries\Utility\HTTPForm(\CarlBennett\Tools\Libraries\Core\Router::query());
 
         $this->model->hl = $q->get('hl');
         $this->model->id = $q->get('id');

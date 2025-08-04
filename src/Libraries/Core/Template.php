@@ -1,9 +1,6 @@
 <?php
 
-namespace CarlBennett\Tools\Libraries;
-
-use \CarlBennett\Tools\Exceptions\TemplateNotFoundException;
-use \CarlBennett\MVC\Libraries\Logger;
+namespace CarlBennett\Tools\Libraries\Core;
 
 class Template
 {
@@ -46,7 +43,7 @@ class Template
             \chdir($cwd . \DIRECTORY_SEPARATOR . $this->template_directory);
             if (!\file_exists($this->template_file))
             {
-                $e = new TemplateNotFoundException($this);
+                $e = new \CarlBennett\Tools\Exceptions\TemplateNotFoundException($this);
                 throw $e;
             }
             require($this->template_file);

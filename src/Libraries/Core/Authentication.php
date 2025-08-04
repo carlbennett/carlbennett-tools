@@ -1,9 +1,10 @@
 <?php /* vim: set colorcolumn= expandtab shiftwidth=2 softtabstop=2 tabstop=4 smarttab: */
-namespace CarlBennett\Tools\Libraries;
+
+namespace CarlBennett\Tools\Libraries\Core;
 
 use \CarlBennett\Tools\Interfaces\DatabaseObject;
-use \CarlBennett\Tools\Libraries\Database;
-use \CarlBennett\Tools\Libraries\DateTimeImmutable;
+use \CarlBennett\Tools\Libraries\Core\DateTimeImmutable;
+use \CarlBennett\Tools\Libraries\Db\MariaDb;
 use \CarlBennett\Tools\Libraries\User\User;
 use \DateTimeInterface;
 use \DateTimeZone;
@@ -55,11 +56,11 @@ class Authentication
    */
   public static function discard()
   {
-    $q = Database::instance()->prepare('
+    $q = MariaDb::instance()->prepare('
       DELETE FROM `user_sessions` WHERE `expires_datetime` >= :now LIMIT 1;
     ');
     if (!self::$timezone) self::setTimezone();
-    $now = (new DateTime('now', self::$timezone))->format(self::DATE_SQL);
+    $now = (new DateTimeImmutable('now', self::$timezone))->format(self::DATE_SQL);
     $q->bindParam(':now', $now, PDO::PARAM_STR);
     $r = $q->execute();
     return $r;
@@ -75,7 +76,7 @@ class Authentication
    */
   protected static function discardKey(string $key): bool
   {
-    $q = Database::instance()->prepare('
+    $q = MariaDb::instance()->prepare('
       DELETE FROM `user_sessions` WHERE `id` = UNHEX(?) LIMIT 1;
     ');
     try { return $q && $q->execute([$key]); }
@@ -102,7 +103,7 @@ class Authentication
     if (!self::$timezone) self::setTimezone();
     $now = (new DateTimeImmutable('now', self::$timezone))->format(self::DATE_SQL);
 
-    $q = Database::instance()->prepare('
+    $q = MariaDb::instance()->prepare('
       UPDATE `user_sessions` SET `expires_datetime` = :dt
       WHERE `user_id` = UuidToBin(:id) AND `expires_datetime` > :dt;
     ');
@@ -243,7 +244,7 @@ class Authentication
     if (!self::$timezone) self::setTimezone();
     $now = (new DateTimeImmutable('now', self::$timezone))->format(self::DATE_SQL);
 
-    $q = Database::instance()->prepare('
+    $q = MariaDb::instance()->prepare('
       SELECT UuidFromBin(`user_id`) AS `user_id`, `ip_address`, `user_agent`
       FROM `user_sessions`
       WHERE `id` = UNHEX(:id) AND (
@@ -307,7 +308,7 @@ class Authentication
       '@' . ($created_dt->getTimestamp() + self::TTL), self::$timezone
     );
 
-    $q = Database::instance()->prepare('
+    $q = MariaDb::instance()->prepare('
       INSERT INTO `user_sessions` (
         `id`, `user_id`, `ip_address`, `user_agent`,
         `created_datetime`, `expires_datetime`

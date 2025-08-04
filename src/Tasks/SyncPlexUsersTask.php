@@ -2,9 +2,9 @@
 
 namespace CarlBennett\Tools\Tasks;
 
-use \CarlBennett\MVC\Libraries\Common;
 use \CarlBennett\PlexTvAPI\Exceptions\PlexTvAPIException;
 use \CarlBennett\PlexTvAPI\User as PlexTvUser;
+use \CarlBennett\Tools\Libraries\Core\Config;
 use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
 use \Throwable;
 
@@ -12,8 +12,8 @@ class SyncPlexUsersTask extends Task
 {
     public function run(): void
     {
-        $create_unmapped_users = Common::$config->tasks->plex_create_unmapped_users;
-        $plex_token = Common::$config->tasks->plex_auth_token;
+        $create_unmapped_users = Config::instance()->root['tasks']['plex_create_unmapped_users'];
+        $plex_token = Config::instance()->root['tasks']['plex_auth_token'];
         $this->model->task_result = array('success' => false);
 
         try

@@ -2,9 +2,9 @@
 
 namespace CarlBennett\Tools\Libraries\User;
 
-use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\Tools\Libraries\Database;
-use \CarlBennett\Tools\Libraries\DateTimeImmutable;
+use \CarlBennett\Tools\Libraries\Core\Config;
+use \CarlBennett\Tools\Libraries\Core\DateTimeImmutable;
+use \CarlBennett\Tools\Libraries\Db\MariaDb;
 use \CarlBennett\Tools\Libraries\User\Acl;
 use \CarlBennett\Tools\Libraries\User\Invite as Invitation;
 use \DateTimeInterface;
@@ -80,7 +80,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     $id = $this->getId();
     if (is_null($id)) return true;
 
-    $q = Database::instance()->prepare('
+    $q = MariaDb::instance()->prepare('
       SELECT
         `biography`, `date_added`, `date_banned`, `date_disabled`,
         `display_name`, `email`, UuidFromBin(`id`) AS `id`, `internal_notes`,
@@ -113,7 +113,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
 
   public function checkPassword(string $password): int
   {
-    $cost = Common::$config->users->crypt_cost;
+    $cost = Config::instance()->root['users']['crypt_cost'];
     $hash = $this->getPasswordHash();
     $rehash = password_needs_rehash(
       $hash, PASSWORD_BCRYPT, array('cost' => $cost)
@@ -133,7 +133,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
     $id = $this->getId();
     if (is_null($id)) $id = Uuid::uuid4();
 
-    $q = Database::instance()->prepare('
+    $q = MariaDb::instance()->prepare('
       INSERT INTO `users` (
         `biography`, `date_added`, `date_banned`, `date_disabled`,
         `display_name`, `email`, `id`, `internal_notes`, `invites_available`,
@@ -178,7 +178,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
   public static function createPassword(string $password): string
   {
     if (empty($password)) throw new UnexpectedValueException('value must not be empty');
-    $cost = Common::$config->users->crypt_cost;
+    $cost = Config::instance()->root['users']['crypt_cost'];
     return password_hash($password, PASSWORD_BCRYPT, array('cost' => $cost));
   }
 
@@ -186,14 +186,14 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
   {
     $id = $this->getId();
     if (is_null($id)) return false;
-    $q = Database::instance()->prepare('DELETE FROM `users` WHERE `id` = ? LIMIT 1;');
+    $q = MariaDb::instance()->prepare('DELETE FROM `users` WHERE `id` = ? LIMIT 1;');
     try { return $q && $q->execute([$id]); }
     finally { if ($q) $q->closeCursor(); }
   }
 
   public static function getAll(): ?array
   {
-    $q = Database::instance()->prepare('
+    $q = MariaDb::instance()->prepare('
       SELECT
         `biography`, `date_added`, `date_banned`, `date_disabled`,
         `display_name`, `email`, UuidFromBin(`id`) AS `id`, `internal_notes`,
@@ -211,7 +211,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
 
   public static function getByEmail(string $value): self|bool
   {
-    $q = Database::instance()->prepare('
+    $q = MariaDb::instance()->prepare('
       SELECT
         `biography`, `date_added`, `date_banned`, `date_disabled`,
         `display_name`, `email`, UuidFromBin(`id`) AS `id`, `internal_notes`,
@@ -274,7 +274,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
   {
     $id = $this->getId();
     if (is_null($id)) throw new UnexpectedValueException('id must be set prior to call');
-    $q = Database::instance()->prepare(
+    $q = MariaDb::instance()->prepare(
       'SELECT UuidFromBin(`id`) AS `id` FROM `user_invites` WHERE `invited_by` = UuidToBin(?);'
     );
     if (!$q || !$q->execute([$id])) return null;
@@ -288,7 +288,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
   {
     $id = $this->getId();
     if (is_null($id)) throw new UnexpectedValueException('id must be set prior to call');
-    $q = Database::instance()->prepare(
+    $q = MariaDb::instance()->prepare(
       'SELECT COUNT(*) AS `count` FROM `user_invites` WHERE `invited_by` = UuidToBin(?);'
     );
     if (!$q || !$q->execute([$id])) return null;
@@ -334,7 +334,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
 
   public function getUrl(string $subcontroller = ''): string
   {
-    return Common::relativeUrlToAbsolute(sprintf(
+    return \CarlBennett\Tools\Libraries\Core\UrlFormatter::format(sprintf(
       '/user/%s%s', (
         empty($subcontroller) ? '' : $subcontroller . '/'
       ), $this->getId()

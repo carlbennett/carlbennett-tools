@@ -2,9 +2,9 @@
 
 namespace CarlBennett\Tools\Controllers;
 
-use \CarlBennett\Tools\Libraries\Authentication;
+use \CarlBennett\Tools\Libraries\Core\Authentication;
+use \CarlBennett\Tools\Libraries\Core\Router;
 use \CarlBennett\Tools\Libraries\PasteObject;
-use \CarlBennett\Tools\Libraries\Router;
 use \CarlBennett\Tools\Libraries\User\Acl;
 use \DateInterval;
 use \DateTime;

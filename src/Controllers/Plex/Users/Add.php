@@ -2,8 +2,8 @@
 
 namespace CarlBennett\Tools\Controllers\Plex\Users;
 
+use \CarlBennett\Tools\Libraries\Core\Router;
 use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
-use \CarlBennett\Tools\Libraries\Router;
 use \CarlBennett\Tools\Libraries\Utility\HTTPForm;
 use \CarlBennett\Tools\Models\Plex\Users\UserForm as UserFormModel;
 
@@ -48,7 +48,7 @@ class Add extends \CarlBennett\Tools\Controllers\Base
       if ($this->model->error === UserFormModel::ERROR_SUCCESS)
       {
         $this->model->_responseCode = 303;
-        $this->model->_responseHeaders['Location'] = \CarlBennett\MVC\Libraries\Common::relativeUrlToAbsolute(
+        $this->model->_responseHeaders['Location'] = \CarlBennett\Tools\Libraries\Core\UrlFormatter::format(
           \sprintf('/plex/users?id=%s&hl=add', \rawurlencode($this->model->id))
         );
         return true;

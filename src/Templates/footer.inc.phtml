@@ -1,18 +1,18 @@
-<?php namespace CarlBennett\Tools\Templates; use \CarlBennett\MVC\Libraries\Common; ?>
+<?php namespace CarlBennett\Tools\Templates; ?>
 </main>
 
 <footer class="footer mt-auto py-3">
   <div class="container text-center">
     <span class="small text-muted">
-      Copyright &copy; <?=date('Y')?> <a href="https://carlbennett.me/">Carl Bennett</a>, All Rights Reserved. <a href="<?=Common::relativeUrlToAbsolute('/privacy')?>">Privacy Notice</a>
+      Copyright &copy; <?=date('Y')?> <a href="https://carlbennett.me/">Carl Bennett</a>, All Rights Reserved. <a href="<?=\CarlBennett\Tools\Libraries\Core\UrlFormatter::format('/privacy')?>">Privacy Notice</a>
     </span>
   </div>
 </footer>
 
-<script src="/a/jquery-3.7.0.slim.min.js" type="text/javascript" integrity="sha384-w5y/xIeYixWvfM+A1cEbmHPURnvyqmVg5eVENruEdDjcyRLUSNej7512JQGspFUr" crossorigin="anonymous"><![CDATA[]]></script>
-<script src="/a/popper-1.16.0.min.js" type="text/javascript" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"><![CDATA[]]></script>
-<script src="/a/bootstrap-4.4.1.min.js" type="text/javascript" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"><![CDATA[]]></script>
-<script src="/a/datatables.min.js" type="text/javascript" crossorigin="anonymous" charset="utf8"><![CDATA[]]></script>
-<script src="/a/moment-2.29.4.min.js" type="text/javascript" crossorigin="anonymous" charset="utf8"><![CDATA[]]></script>
+<script src="/a/jquery-3.7.0.slim.min.js" type="text/javascript" integrity="sha384-w5y/xIeYixWvfM+A1cEbmHPURnvyqmVg5eVENruEdDjcyRLUSNej7512JQGspFUr" crossorigin="anonymous"></script>
+<script src="/a/popper-1.16.0.min.js" type="text/javascript" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="/a/bootstrap-4.4.1.min.js" type="text/javascript" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<script src="/a/datatables.min.js" type="text/javascript" crossorigin="anonymous" charset="utf8"></script>
+<script src="/a/moment-2.29.4.min.js" type="text/javascript" crossorigin="anonymous" charset="utf8"></script>
 <?php if (!empty($_footer_script)) { echo $_footer_script; } ?>
 </body></html>

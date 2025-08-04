@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace CarlBennett\Tools\Libraries\User;
 
-use \CarlBennett\Tools\Libraries\Database;
+use \CarlBennett\Tools\Libraries\Db\MariaDb;
 use \CarlBennett\Tools\Libraries\User\User;
 use \InvalidArgumentException;
 use \PDO;
@@ -44,7 +44,7 @@ class Acl implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSerializ
     $id = $this->getUserId();
     if (is_null($id)) return true;
 
-    $q = Database::instance()->prepare('SELECT `acl_id` FROM `user_acls` WHERE `user_id` = UuidToBin(?);');
+    $q = MariaDb::instance()->prepare('SELECT `acl_id` FROM `user_acls` WHERE `user_id` = UuidToBin(?);');
     if (!$q || !$q->execute([$id])) return false;
 
     $r = new StdClass();
@@ -64,8 +64,8 @@ class Acl implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSerializ
 
   public function commit(): bool
   {
-    $q1 = Database::instance()->prepare('DELETE FROM `user_acls` WHERE `user_id` = UuidToBin(:uid);');
-    $q2 = Database::instance()->prepare('INSERT INTO `user_acls` (`user_id`, `acl_id`) VALUES (UuidToBin(:uid), :aid);');
+    $q1 = MariaDb::instance()->prepare('DELETE FROM `user_acls` WHERE `user_id` = UuidToBin(:uid);');
+    $q2 = MariaDb::instance()->prepare('INSERT INTO `user_acls` (`user_id`, `acl_id`) VALUES (UuidToBin(:uid), :aid);');
 
     $user_id = $this->getUserId();
     if (!$q1 || !$q1->execute([':uid' => $user_id])) return false;
@@ -85,7 +85,7 @@ class Acl implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSerializ
   {
     $id = $this->getUserId();
     if (is_null($id)) return false;
-    $q = Database::instance()->prepare('DELETE FROM `user_acls` WHERE `user_id` = UuidToBin(?);');
+    $q = MariaDb::instance()->prepare('DELETE FROM `user_acls` WHERE `user_id` = UuidToBin(?);');
     try { return $q && $q->execute([$id]); }
     finally { if ($q) $q->closeCursor(); }
   }

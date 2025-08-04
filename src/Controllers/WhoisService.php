@@ -20,7 +20,7 @@ class WhoisService extends Base
       return true;
     }
 
-    $q = new \CarlBennett\Tools\Libraries\Utility\HTTPForm(\CarlBennett\Tools\Libraries\Router::query());
+    $q = new \CarlBennett\Tools\Libraries\Utility\HTTPForm(\CarlBennett\Tools\Libraries\Core\Router::query());
     $this->model->query = $q->get('q');
 
     if (!empty($this->model->query))

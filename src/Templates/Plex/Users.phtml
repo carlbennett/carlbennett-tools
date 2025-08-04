@@ -1,9 +1,7 @@
 <?php
-namespace CarlBennett\Tools\Templates;
-use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\MVC\Libraries\Gravatar;
+namespace CarlBennett\Tools\Templates\Plex;
+use \CarlBennett\Tools\Libraries\Core\UrlFormatter;
 use \CarlBennett\Tools\Libraries\Plex\User as PlexUser;
-use \DateTimeZone;
 $show_hidden = $this->getContext()->show_hidden;
 $highlight_id = $this->getContext()->id;
 $highlight_act = $this->getContext()->hl;
@@ -51,9 +49,9 @@ require('./header.inc.phtml'); ?>
       <a class="btn btn-sm btn-secondary" href="?sh=0">Re-Hide</a>
 <?php } ?>
     </span>
-    <a class="btn btn-lg btn-success" href="<?=Common::relativeUrlToAbsolute('/plex/users/add')?>">Add User</a>
+    <a class="btn btn-lg btn-success" href="<?=UrlFormatter::format('/plex/users/add')?>">Add User</a>
   </div>
-  <h1><a href="<?=Common::relativeUrlToAbsolute('/plex/users')?>"><?=$title;?></a></h1>
+  <h1><a href="<?=UrlFormatter::format('/plex/users')?>"><?=$title;?></a></h1>
   <p>The following is a list of the registered Plex users and associated data.</p>
   <table id="plex_users" class="nowrap table table-hover table-striped w-100">
     <thead class="thead-dark"><tr>
@@ -97,7 +95,7 @@ require('./header.inc.phtml'); ?>
         <td class="align-middle"><time datetime="<?=$user->getDateAdded()->format(DATE_W3C)?>"><?=$date_added[0]?><br/><span class="text-secondary"><?=$date_added[1]?></span></time></td>
         <td class="align-middle text-center"><?=$risk?><?=$disabled?><?=$expired?><?=$homeuser?></td>
         <td class="align-middle"><?=$notes?></td>
-        <td class="align-middle text-right"><a class="btn btn-sm btn-primary" href="<?=Common::relativeUrlToAbsolute('/plex/users/edit?id=' . $id)?>">Edit</a></td>
+        <td class="align-middle text-right"><a class="btn btn-sm btn-primary" href="<?=UrlFormatter::format('/plex/users/edit?id=' . $id)?>">Edit</a></td>
       </tr>
 <?php } ?>
     </tbody>

@@ -27,12 +27,12 @@ class View extends \CarlBennett\Tools\Controllers\Base
 
     $paste =& $this->model->paste_object;
 
-    $q = \CarlBennett\Tools\Libraries\Router::query();
+    $q = \CarlBennett\Tools\Libraries\Core\Router::query();
     $dl = (isset($q['dl']) ? $q['dl'] : null);
 
     if ($paste && $dl)
     {
-      $dl_filename = \CarlBennett\MVC\Libraries\Common::sanitizeForUrl($paste->getTitle());
+      $dl_filename = \CarlBennett\Tools\Libraries\Core\StringProcessor::sanitizeForUrl($paste->getTitle());
       $dl_filename .= '.txt';
       $this->model->_responseHeaders['Content-Disposition'] = sprintf(
         'attachment;filename="%s"', $dl_filename

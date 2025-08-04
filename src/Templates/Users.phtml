@@ -1,7 +1,6 @@
 <?php
 namespace CarlBennett\Tools\Templates;
-use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\MVC\Libraries\Gravatar;
+use \CarlBennett\Tools\Libraries\Core\UrlFormatter;
 use \CarlBennett\Tools\Libraries\User\User;
 $highlight_id = $this->getContext()->id;
 $highlight_act = $this->getContext()->hl;
@@ -41,7 +40,7 @@ require('./header.inc.phtml'); ?>
   </div>
 <?php } ?>
   <div class="float-right">
-    <a class="btn btn-lg btn-success" href="<?=Common::relativeUrlToAbsolute('/users/add')?>">Add User</a>
+    <a class="btn btn-lg btn-success" href="<?=UrlFormatter::format('/users/add')?>">Add User</a>
   </div>
   <h1><?=$title;?></h1>
   <p>The following is a list of the registered users and associated data.</p>
@@ -55,7 +54,7 @@ require('./header.inc.phtml'); ?>
     </tr></thead>
     <tbody>
 <?php foreach ($this->getContext()->users as $user) {
-        $avatar = filter_var((new Gravatar($user->getEmail()))->getUrl(32, 'mp'), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $avatar = filter_var((new \CarlBennett\Tools\Libraries\User\Gravatar($user->getEmail()))->getUrl(32, 'mp'), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $date_added = array($user->getDateAdded()->format('D, M jS, Y'), $user->getDateAdded()->format('g:i A T'));
         $email = filter_var($user->getEmail(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $id = filter_var($user->getId(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -80,7 +79,7 @@ require('./header.inc.phtml'); ?>
         <td class="align-middle"><time datetime="<?=$user->getDateAdded()->format(DATE_W3C)?>"><?=$date_added[0]?><br/><span class="text-secondary"><?=$date_added[1]?></span></time></td>
         <td class="align-middle text-center"><?=$banned?><?=$disabled?></td>
         <td class="align-middle"><?=$internal_notes?></td>
-        <td class="align-middle text-right"><a class="btn btn-sm btn-primary" href="<?=Common::relativeUrlToAbsolute('/user/' . $id)?>">Edit</a></td>
+        <td class="align-middle text-right"><a class="btn btn-sm btn-primary" href="<?=UrlFormatter::format('/user/' . $id)?>">Edit</a></td>
       </tr>
 <?php } ?>
     </tbody>

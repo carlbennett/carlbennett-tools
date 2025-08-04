@@ -2,7 +2,7 @@
 
 namespace CarlBennett\Tools\Controllers;
 
-use \CarlBennett\Tools\Libraries\Router;
+use \CarlBennett\Tools\Libraries\Core\Router;
 
 class UrlEncodeDecode extends Base
 {

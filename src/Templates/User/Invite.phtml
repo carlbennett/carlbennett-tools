@@ -1,5 +1,5 @@
 <?php namespace CarlBennett\Tools\Templates\User;
-use \CarlBennett\MVC\Libraries\Common;
+use \CarlBennett\Tools\Libraries\Core\UrlFormatter;
 use \CarlBennett\Tools\Models\User\Invite as InviteModel;
 use \DateTimeZone;
 $active_user = $this->getContext()->active_user;
@@ -13,10 +13,10 @@ $id = $this->getContext()->id;
 $invited_by = $this->getContext()->invited_by;
 $invited_user = $this->getContext()->invited_user;
 $invites_available = $this->getContext()->invites_available;
-$invites_available_str = number_format($invites_available) . ' invite' . ($invites_available !== 1 ? 's' : '');
+$invites_available_str = number_format($invites_available ?? 0.0) . ' invite' . ($invites_available !== 1 ? 's' : '');
 $invites_sent = $this->getContext()->invites_sent;
 $invites_used = $this->getContext()->invites_used;
-$invites_used_str = number_format($invites_used) . ' invite' . ($invites_used !== 1 ? 's' : '');
+$invites_used_str = number_format($invites_used ?? 0.0) . ' invite' . ($invites_used !== 1 ? 's' : '');
 $password_confirm = $this->getContext()->password_confirm;
 $password_desired = $this->getContext()->password_desired;
 $record_updated = $this->getContext()->record_updated;
@@ -67,7 +67,7 @@ require('./header.inc.phtml'); ?>
       <p class="card-text"><strong>Terms:</strong></p>
       <p class="card-text"><ul>
         <li><strong>Invited User</strong> &ndash; the User that will be extended an email invitation letter, and thus gains the privilege of creating a User.</li>
-        <li><strong>the Site</strong> &ndash; the Internet website at the Url: &lt;<a href="<?=Common::relativeUrlToAbsolute('/')?>"><?=Common::relativeUrlToAbsolute('/')?></a>&gt;.</li>
+        <li><strong>the Site</strong> &ndash; the Internet website at the Url: &lt;<a href="<?=UrlFormatter::format('/')?>"><?=UrlFormatter::format('/')?></a>&gt;.</li>
         <li><strong>User</strong> &ndash; the account that a person controls from their web browser, tied to a unique email address, used to authenticate on the Site.</li>
       </ul></p>
       <p class="card-text"><strong>Conditions:</strong></p>
@@ -123,7 +123,7 @@ require('./header.inc.phtml'); ?>
         <td class="<?=$inv_date_accepted_class?>"><?=$inv_date_accepted_str?></td>
         <td class="<?=$inv_date_revoked_class?>"><?=$inv_date_revoked_str?></td>
         <td>
-          <a title="Revoke" href="<?=Common::relativeUrlToAbsolute('/user/invite/revoke?id=' . rawurlencode($inv->getId()))?>">❌</a>
+          <a title="Revoke" href="<?=UrlFormatter::format('/user/invite/revoke?id=' . rawurlencode($inv->getId()))?>">❌</a>
         </td>
       </tr>
 <?php   }

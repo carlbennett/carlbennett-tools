@@ -1,4 +1,5 @@
 {
+  "asset_versioning": true,
   "geoip": {
     "database_file": "/usr/share/GeoIP/GeoLite2-City.mmdb",
     "database_type": "city"

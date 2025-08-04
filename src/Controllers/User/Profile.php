@@ -1,11 +1,10 @@
 <?php /* vim: set colorcolumn=: */
 namespace CarlBennett\Tools\Controllers\User;
 
-use \CarlBennett\MVC\Libraries\Common;
-use \CarlBennett\MVC\Libraries\Gravatar;
-use \CarlBennett\Tools\Libraries\Authentication;
-use \CarlBennett\Tools\Libraries\Router;
+use \CarlBennett\Tools\Libraries\Core\Authentication;
+use \CarlBennett\Tools\Libraries\Core\Router;
 use \CarlBennett\Tools\Libraries\User\Acl;
+use \CarlBennett\Tools\Libraries\User\Gravatar;
 use \CarlBennett\Tools\Libraries\User\User;
 use \CarlBennett\Tools\Models\User\Profile as ProfileModel;
 use \InvalidArgumentException;
@@ -68,7 +67,7 @@ class Profile extends \CarlBennett\Tools\Controllers\Base
 
     $return = $q['return'] ?? null;
     if (!empty($return) && substr($return, 0, 1) != '/') $return = null;
-    if (!empty($return)) $return = Common::relativeUrlToAbsolute($return);
+    if (!empty($return)) $return = \CarlBennett\Tools\Libraries\Core\UrlFormatter::format($return);
     $this->model->return = $return;
 
     if (Router::requestMethod() == Router::METHOD_POST && ($this->model->manage || $this->model->self_manage))

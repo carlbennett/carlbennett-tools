@@ -1,7 +1,8 @@
 <?php
-namespace CarlBennett\Tools\Libraries;
 
-use \CarlBennett\MVC\Libraries\Common;
+namespace CarlBennett\Tools\Libraries\Core;
+
+use \CarlBennett\Tools\Libraries\Core\Config;
 use \GeoIp2\Database\Reader;
 
 class GeoIP
@@ -16,7 +17,7 @@ class GeoIP
 
     try
     {
-      self::$reader = new Reader(Common::$config->geoip->database_file);
+      self::$reader = new Reader(Config::instance()->root['geoip']['database_file']);
     }
     catch (\MaxMind\Db\Reader\InvalidDatabaseException)
     {
@@ -35,7 +36,7 @@ class GeoIP
     }
 
     $mmdb = self::getReader();
-    $type = Common::$config->geoip->database_type;
+    $type = Config::instance()->root['geoip']['database_type'];
 
     try
     {
