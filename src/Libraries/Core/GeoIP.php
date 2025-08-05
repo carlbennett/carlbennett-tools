@@ -7,46 +7,46 @@ use \GeoIp2\Database\Reader;
 
 class GeoIP
 {
-  private static ?Reader $reader = null;
+    private static ?Reader $reader = null;
 
-  private function __construct() {}
+    private function __construct() {}
 
-  protected static function getReader(): Reader
-  {
-    if (self::$reader) return self::$reader;
-
-    try
+    protected static function getReader(): Reader
     {
-      self::$reader = new Reader(Config::instance()->root['geoip']['database_file']);
-    }
-    catch (\MaxMind\Db\Reader\InvalidDatabaseException)
-    {
-      // database is invalid or corrupt
-      self::$reader = null;
-    }
+        if (self::$reader) return self::$reader;
 
-    return self::$reader;
-  }
+        try
+        {
+            self::$reader = new Reader(Config::instance()->root['geoip']['database_file']);
+        }
+        catch (\MaxMind\Db\Reader\InvalidDatabaseException)
+        {
+            // database is invalid or corrupt
+            self::$reader = null;
+        }
 
-  public static function getRecord(string $address): mixed
-  {
-    if (!filter_var($address, FILTER_VALIDATE_IP))
-    {
-      throw new \UnexpectedValueException('not a valid IP address');
+        return self::$reader;
     }
 
-    $mmdb = self::getReader();
-    $type = Config::instance()->root['geoip']['database_type'];
-
-    try
+    public static function getRecord(string $address): mixed
     {
-      $record = $mmdb->$type($address);
-    }
-    catch (\GeoIp2\Exception\AddressNotFoundException $e)
-    {
-      $record = null;
-    }
+        if (!filter_var($address, FILTER_VALIDATE_IP))
+        {
+            throw new \UnexpectedValueException('not a valid IP address');
+        }
 
-    return $record;
-  }
+        $mmdb = self::getReader();
+        $type = Config::instance()->root['geoip']['database_type'];
+
+        try
+        {
+            $record = $mmdb->$type($address);
+        }
+        catch (\GeoIp2\Exception\AddressNotFoundException $e)
+        {
+            $record = null;
+        }
+
+        return $record;
+    }
 }

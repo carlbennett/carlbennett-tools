@@ -4,8 +4,8 @@ namespace CarlBennett\Tools\Models;
 
 class PrivacyNotice extends ActiveUser
 {
-  public $data_location;
-  public $email_domain;
-  public $org;
-  public $web_domain;
+    public string $data_location;
+    public string $email_domain;
+    public string $org;
+    public string $web_domain;
 }

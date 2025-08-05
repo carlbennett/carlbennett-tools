@@ -4,7 +4,7 @@ namespace CarlBennett\Tools\Libraries\Core;
 
 class Template
 {
-    private $context;
+    private mixed $context = null;
     private string $template_directory = 'Templates';
     private string $template_extension = '.phtml';
     private string $template_file = '';
@@ -15,27 +15,27 @@ class Template
         $this->setTemplateFile($template_file);
     }
 
-    public function getContext()
+    public function getContext(): mixed
     {
         return $this->context;
     }
 
-    public function getTemplateDirectory() : string
+    public function getTemplateDirectory(): string
     {
         return $this->template_directory;
     }
 
-    public function getTemplateExtension() : string
+    public function getTemplateExtension(): string
     {
         return $this->template_extension;
     }
 
-    public function getTemplateFile() : string
+    public function getTemplateFile(): string
     {
         return $this->template_file;
     }
 
-    public function render() : void
+    public function render(): void
     {
         try
         {
@@ -54,22 +54,22 @@ class Template
         }
     }
 
-    public function setContext(&$context) : void
+    public function setContext(&$context): void
     {
         $this->context = $context;
     }
 
-    public function setTemplateDirectory(string $template_directory) : void
+    public function setTemplateDirectory(string $template_directory): void
     {
         $this->template_directory = $template_directory;
     }
 
-    public function setTemplateExtension(string $template_extension) : void
+    public function setTemplateExtension(string $template_extension): void
     {
         $this->template_extension = $template_extension;
     }
 
-    public function setTemplateFile(string $template_file) : void
+    public function setTemplateFile(string $template_file): void
     {
         $this->template_file = \sprintf('.%s%s%s',
             \DIRECTORY_SEPARATOR,

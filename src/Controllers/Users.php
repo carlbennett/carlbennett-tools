@@ -2,6 +2,8 @@
 
 namespace CarlBennett\Tools\Controllers;
 
+use \CarlBennett\Tools\Libraries\Core\HttpCode;
+
 class Users extends Base
 {
     public function __construct()
@@ -13,8 +15,8 @@ class Users extends Base
     {
         if (!$this->model->active_user || !$this->model->active_user->getAclObject()->getAcl(\CarlBennett\Tools\Libraries\User\Acl::ACL_USERS_MANAGE))
         {
-          $this->model->_responseCode = 401;
-          return true;
+            $this->model->_responseCode = HttpCode::HTTP_UNAUTHORIZED;
+            return true;
         }
 
         $q = new \CarlBennett\Tools\Libraries\Utility\HTTPForm(\CarlBennett\Tools\Libraries\Core\Router::query());
@@ -24,7 +26,7 @@ class Users extends Base
         $this->model->show_hidden = (bool) $q->get('sh');
         $this->model->users = \CarlBennett\Tools\Libraries\User\User::getAll();
 
-        $this->model->_responseCode = 200;
+        $this->model->_responseCode = HttpCode::HTTP_OK;
         return true;
     }
 }

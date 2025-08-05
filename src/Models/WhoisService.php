@@ -4,7 +4,7 @@ namespace CarlBennett\Tools\Models;
 
 class WhoisService extends ActiveUser
 {
-    public bool $acl;
-    public ?string $query;
-    public ?array $result;
+    public bool $acl = false;
+    public ?string $query = null;
+    public ?array $result = null;
 }

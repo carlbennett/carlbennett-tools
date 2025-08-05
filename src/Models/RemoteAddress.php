@@ -4,7 +4,7 @@ namespace CarlBennett\Tools\Models;
 
 class RemoteAddress extends Base
 {
-  public $geoip_info;
-  public $ip_address;
-  public $user_agent;
+    public mixed $geoip_info = null;
+    public string $ip_address = '';
+    public string $user_agent = '';
 }

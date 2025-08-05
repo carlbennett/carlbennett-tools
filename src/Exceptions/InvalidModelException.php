@@ -15,13 +15,13 @@ class InvalidModelException extends \InvalidArgumentException
     {
         $this->model_name = \is_string($model) ? $model : \get_class($model);
         parent::__construct(
-            \sprintf('Invalid Model (%s)', $this->model_name),
+            \sprintf('Model not found: %s', $this->model_name),
             $errno,
             $previous
         );
     }
 
-    public function getModelName() : string
+    public function getModelName(): string
     {
         return $this->model_name;
     }

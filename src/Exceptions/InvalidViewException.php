@@ -15,7 +15,7 @@ class InvalidViewException extends \InvalidArgumentException
     {
         $this->view_name = \is_string($view) ? $view : \get_class($view);
         parent::__construct(
-            \sprintf('Invalid View (%s)', $this->view_name),
+            \sprintf('View not found: %s', $this->view_name),
             $errno,
             $previous
         );

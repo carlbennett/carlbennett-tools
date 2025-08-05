@@ -4,8 +4,8 @@ namespace CarlBennett\Tools\Models;
 
 class Paste extends ActiveUser
 {
-  public $id;
-  public $paste_object;
-  public $pastebin_admin;
-  public $recent_pastes;
+    public ?string $id = null;
+    public ?\CarlBennett\Tools\Libraries\PasteObject $paste_object = null;
+    public bool $pastebin_admin = false;
+    public ?array $recent_pastes = null;
 }

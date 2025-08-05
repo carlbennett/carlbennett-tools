@@ -4,5 +4,5 @@ namespace CarlBennett\Tools\Models;
 
 class Tools extends ActiveUser
 {
-  public $routes;
+    public array $routes = [];
 }

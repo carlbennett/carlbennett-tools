@@ -4,8 +4,8 @@ namespace CarlBennett\Tools\Models;
 
 class Task extends Base
 {
-  public $auth_token;
-  public $auth_token_valid;
-  public $task_name;
-  public $task_result;
+    public mixed $auth_token = null;
+    public bool $auth_token_valid = false;
+    public string $task_name = '';
+    public mixed $task_result = null;
 }
