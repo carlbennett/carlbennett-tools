@@ -2,7 +2,7 @@
 
 namespace CarlBennett\Tools\Models;
 
-class Errorable extends Base implements \JsonSerializable
+class Errorable extends \CarlBennett\Tools\Models\Base implements \JsonSerializable
 {
     /**
      * Stores error state information between Controller and downstream handlers, useful for Template rendering.

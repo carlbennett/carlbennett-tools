@@ -1,8 +1,8 @@
 <?php
 
-namespace CarlBennett\Tools\Models;
+namespace CarlBennett\Tools\Models\User;
 
-class ActiveUser extends Errorable implements \JsonSerializable
+class ActiveUser extends \CarlBennett\Tools\Models\Errorable implements \JsonSerializable
 {
     /**
      * The current user that is logged in to the site, or null if not logged in.

@@ -2,4 +2,4 @@
 
 namespace CarlBennett\Tools\Models;
 
-class Gandalf extends Base {}
+class Gandalf extends \CarlBennett\Tools\Models\Base {}

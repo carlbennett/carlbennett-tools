@@ -2,4 +2,4 @@
 
 namespace CarlBennett\Tools\Models;
 
-class PageNotFound extends Base {}
+class PageNotFound extends \CarlBennett\Tools\Models\Base {}

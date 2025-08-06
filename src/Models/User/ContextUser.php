@@ -1,8 +1,8 @@
 <?php /* vim: set colorcolumn=: */
 
-namespace CarlBennett\Tools\Models;
+namespace CarlBennett\Tools\Models\User;
 
-class ContextUser extends ActiveUser implements \JsonSerializable
+class ContextUser extends \CarlBennett\Tools\Models\User\ActiveUser implements \JsonSerializable
 {
     /**
      * The contextual user that is being operated upon by the upstream Controller.
