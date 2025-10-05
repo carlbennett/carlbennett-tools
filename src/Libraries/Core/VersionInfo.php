@@ -16,7 +16,10 @@ class VersionInfo
     /**
      * Block instantiation of this object. This class is completely static.
      */
-    private function __construct() {}
+    private function __construct()
+    {
+        throw new \LogicException('This static class cannot be constructed');
+    }
 
     /**
      * Gets the version information array for use externally outside this class.
