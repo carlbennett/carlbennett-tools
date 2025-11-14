@@ -1,10 +1,10 @@
 <?php namespace CarlBennett\Tools\Templates\User;
 $title = 'Log out';
 $return = $this->getContext()->return;
-$feedback = $this->getContext()->feedback;
+$error = $this->getContext()->error;
 require("./header.inc.phtml"); ?>
 <div class="container">
-  <p class="alert alert-success"><?=$feedback?></p>
+  <p class="alert alert-success"><?=$error?></p>
 <?php if (isset($return)) { ?>
   <p>Redirecting to <a href="<?=$return?>"><?=filter_var($return, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></a>...</p>
 <?php } ?>

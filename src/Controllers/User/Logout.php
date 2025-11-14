@@ -31,11 +31,11 @@ class Logout extends \CarlBennett\Tools\Controllers\Base
     {
         if (!\CarlBennett\Tools\Libraries\Core\Authentication::logout())
         {
-            $this->model->feedback = 'An error occurred while processing the logout.';
+            $this->model->error = 'An error occurred while processing the logout.';
             return;
         }
 
-        $this->model->feedback = 'Successfully logged out.';
+        $this->model->error = 'Successfully logged out.';
 
         if (!empty($this->model->return))
         {

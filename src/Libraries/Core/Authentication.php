@@ -28,17 +28,17 @@ class Authentication
   /**
    * @var string $key
    */
-  private static $key;
+  private static string $key = '';
 
   /**
-   * @var User $user
+   * @var User|null $user
    */
-  public static $user;
+  public static ?User $user = null;
 
   /**
-   * @var DateTimeZone $timezone
+   * @var DateTimeZone|null $timezone
    */
-  protected static $timezone;
+  protected static ?DateTimeZone $timezone = null;
 
   /**
    * __construct()
@@ -54,7 +54,7 @@ class Authentication
    *
    * @return bool Indicates if the operation succeeded.
    */
-  public static function discard()
+  public static function discard(): bool
   {
     $q = MariaDb::instance()->prepare('
       DELETE FROM `user_sessions` WHERE `expires_datetime` >= :now LIMIT 1;
@@ -158,7 +158,8 @@ class Authentication
    *
    * @return string The unique string.
    */
-  protected static function getUniqueKey(User &$user) {
+  protected static function getUniqueKey(User &$user): string
+  {
     if (!$user instanceof User) {
       throw new InvalidArgumentException('$user is not instance of User');
     }
@@ -178,7 +179,8 @@ class Authentication
    *
    * @return bool Indicates if the browser cookie was sent.
    */
-  public static function login(User &$user) {
+  public static function login(User &$user): bool
+  {
     if (!$user instanceof User) {
       throw new InvalidArgumentException('$user is not instance of User');
     }
@@ -210,7 +212,8 @@ class Authentication
    *
    * @return bool Indicates if the browser cookie was sent.
    */
-  public static function logout() {
+  public static function logout(): bool
+  {
     self::discardKey(self::$key);
 
     self::$key  = '';
@@ -237,9 +240,9 @@ class Authentication
    *
    * @param string $key The secret key, typically from the client.
    *
-   * @return array The fingerprint details, or false if not found.
+   * @return array|false The fingerprint details, or false if not found.
    */
-  protected static function lookup(string $key)
+  protected static function lookup(string $key): array|false
   {
     if (!self::$timezone) self::setTimezone();
     $now = (new DateTimeImmutable('now', self::$timezone))->format(self::DATE_SQL);
@@ -270,7 +273,8 @@ class Authentication
    * @throws UnexpectedValueException when value must be a valid timezone
    * @return bool Indicates if the operation succeeded. Always true.
    */
-  public static function setTimezone(string $value = self::TZ) {
+  public static function setTimezone(string $value = self::TZ): bool
+  {
     if (!is_string($value)) {
       throw new InvalidArgumentException('value must be a string');
     }
@@ -342,7 +346,8 @@ class Authentication
    *
    * @return bool Indicates if verification succeeded.
    */
-  public static function verify() {
+  public static function verify(): bool
+  {
     // get client's lookup key
     self::$key = (
       isset($_COOKIE[self::COOKIE_NAME]) ? $_COOKIE[self::COOKIE_NAME] : ''

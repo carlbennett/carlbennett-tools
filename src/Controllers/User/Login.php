@@ -39,12 +39,14 @@ class Login extends \CarlBennett\Tools\Controllers\Base
         if (empty($model->email))
         {
             $model->feedback['email'] = 'Email cannot be empty.';
+            $model->error = $model->feedback['email'];
             return;
         }
 
         if (!filter_var($model->email, FILTER_VALIDATE_EMAIL))
         {
             $model->feedback['email'] = 'Invalid email address.';
+            $model->error = $model->feedback['email'];
             return;
         }
 
@@ -53,6 +55,7 @@ class Login extends \CarlBennett\Tools\Controllers\Base
         if (!$user)
         {
             $model->feedback['email'] = 'User not found.';
+            $model->error = $model->feedback['email'];
             return;
         }
 
@@ -61,12 +64,14 @@ class Login extends \CarlBennett\Tools\Controllers\Base
         if (!($check & User::PASSWORD_CHECK_VERIFIED))
         {
             $model->feedback['password'] = 'Incorrect password.';
+            $model->error = $model->feedback['password'];
             return;
         }
 
         if ($user->isBanned())
         {
             $model->feedback['email'] = 'Account is banned.';
+            $model->error = $model->feedback['email'];
             return;
         }
 
@@ -77,7 +82,7 @@ class Login extends \CarlBennett\Tools\Controllers\Base
             $user->commit();
         }
 
-        \CarlBennett\Tools\Libraries\Core\Authentication::login($user);
+        $model->error = !\CarlBennett\Tools\Libraries\Core\Authentication::login($user);
 
         if (!empty($model->return))
         {
