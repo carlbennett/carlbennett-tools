@@ -3,6 +3,7 @@
 namespace CarlBennett\Tools\Libraries\Db;
 
 use \PDO;
+use \Pdo\Mysql;
 
 class MariaDb extends PDO
 {
@@ -27,7 +28,7 @@ class MariaDb extends PDO
 
         parent::__construct($dsn, $username, $password, [
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::MYSQL_ATTR_INIT_COMMAND => \sprintf('SET NAMES \'%s\'', $character_set),
+            Mysql::ATTR_INIT_COMMAND => \sprintf('SET NAMES \'%s\'', $character_set),
         ]);
     }
 
