@@ -104,9 +104,9 @@ require('./header.inc.phtml'); ?>
           $inv_date_invited = $inv->getDateInvited();
           $inv_date_revoked = $inv->getDateRevoked();
 
-          if ($inv_date_accepted) $inv_date_accepted->setTimezone($tz);
-          if ($inv_date_invited) $inv_date_invited->setTimezone($tz);
-          if ($inv_date_revoked) $inv_date_revoked->setTimezone($tz);
+          if ($inv_date_accepted) $inv_date_accepted = $inv_date_accepted->setTimezone($tz);
+          if ($inv_date_invited) $inv_date_invited = $inv_date_invited->setTimezone($tz);
+          if ($inv_date_revoked) $inv_date_revoked = $inv_date_revoked->setTimezone($tz);
 
           $inv_id_str = $inv->getId();
           $inv_date_accepted_str = (!is_null($inv_date_accepted) ? $inv_date_accepted->format($fmt) : '<em>(not accepted)</em>');
