@@ -188,7 +188,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
               `plex_id`, `plex_thumb`, `plex_title`, `plex_username`,
               `record_updated`, `risk`, UuidFromBin(`user_id`) AS `user_id`
         FROM `plex_users`
-        ORDER BY `date_added`, `plex_title`, `plex_username`, `plex_email`;
+        ORDER BY `date_added` DESC, `plex_title`, `plex_username`, `plex_email`;
       ');
       if (!$q || !$q->execute()) return null;
       $r = [];

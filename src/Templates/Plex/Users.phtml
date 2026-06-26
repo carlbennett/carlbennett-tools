@@ -25,102 +25,277 @@ if (!empty($highlight_id)) {
 }
 if ($highlight_act === null) $highlight_act = '';
 switch (\strtolower($highlight_act) ?? '') {
-  case 'add': $highlight_act = 'added'; break;
-  case 'edit': $highlight_act = 'edited'; break;
+  case 'add':    $highlight_act = 'added';   break;
+  case 'edit':   $highlight_act = 'edited';  break;
   case 'delete': $highlight_act = 'deleted'; break;
 }
 $title = 'Plex Users';
 require('./header.inc.phtml'); ?>
 <div class="container-fluid" style="max-width:1920px;">
 <?php if ($this->getContext()->users === false) { ?>
-  <h1><?=$title;?></h1>
   <?php require('./LoginRequired.inc.phtml'); ?>
 <?php } else { ?>
 <?php if (!empty($highlight_name) && !empty($highlight_act)) { ?>
-  <div class="alert alert-info">
+  <div class="alert alert-info alert-dismissible fade show" role="alert">
     The Plex user <strong><?=$highlight_name?></strong> was <?=$highlight_act?>.
+    <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
   </div>
 <?php } ?>
-  <div class="float-right">
-    <span class="mr-2" style="font-size:smaller;">Hidden Users:
-<?php if (!$show_hidden) { ?>
-      <a class="btn btn-sm btn-secondary" href="?sh=1">Show</a>
-<?php } else { ?>
-      <a class="btn btn-sm btn-secondary" href="?sh=0">Re-Hide</a>
-<?php } ?>
-    </span>
-    <a class="btn btn-lg btn-success" href="<?=UrlFormatter::format('/plex/users/add')?>">Add User</a>
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <div class="d-flex align-items-center">
+      <h1 class="mb-0 mr-2"><a class="text-reset text-decoration-none" href="<?=UrlFormatter::format('/plex/users')?>"><?=$title?></a></h1>
+      <a class="btn btn-sm btn-outline-secondary" href="#" onclick="location.reload();return false;" title="Refresh">&#x21BB;</a>
+    </div>
+    <a class="btn btn-success" href="<?=UrlFormatter::format('/plex/users/add')?>">Add User</a>
   </div>
-  <h1><a href="<?=UrlFormatter::format('/plex/users')?>"><?=$title;?></a></h1>
-  <p>The following is a list of the registered Plex users and associated data.</p>
-  <table id="plex_users" class="nowrap table table-hover table-striped w-100">
-    <thead class="thead-dark"><tr>
-      <th scope="col">Title, Username, &amp; Email</th>
-      <th scope="col">Added</th>
-      <th scope="col">Tags</th>
-      <th scope="col">Notes</th>
-      <th scope="col"></th>
-    </tr></thead>
-    <tbody>
+  <p>A local record of Plex users synced from the Plex API every 24 hours. Changes here do not affect Plex directly. Search by title, username, email, or notes. Filter by risk level or status tags.</p>
+  <div class="row">
+    <div class="col-lg-2 mb-3 mb-lg-0">
+      <button class="btn btn-sm btn-outline-secondary d-lg-none mb-2 w-100" id="plex-filter-toggle">Filters</button>
+      <div id="plex-filter-sidebar">
+        <div class="mb-3">
+          <h6 class="text-muted text-uppercase small font-weight-bold mb-2" style="letter-spacing:.05em;">Search</h6>
+          <input type="search" class="form-control form-control-sm bg-dark text-light" id="plex-search" placeholder="Title, username, email, notes&hellip;">
+          <div class="form-check mt-2">
+            <input class="form-check-input" type="checkbox" id="show-emails">
+            <label class="form-check-label" for="show-emails">Show Emails</label>
+          </div>
+        </div>
+        <div class="mb-3">
+          <h6 class="text-muted text-uppercase small font-weight-bold mb-2" style="letter-spacing:.05em;">Risk</h6>
+          <div class="form-check">
+            <input class="form-check-input plex-filter-risk" type="checkbox" value="0" id="risk-0" checked>
+            <label class="form-check-label" for="risk-0"><span class="badge badge-secondary">Unassessed</span></label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input plex-filter-risk" type="checkbox" value="1" id="risk-1" checked>
+            <label class="form-check-label" for="risk-1"><span class="badge badge-success">Low</span></label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input plex-filter-risk" type="checkbox" value="2" id="risk-2" checked>
+            <label class="form-check-label" for="risk-2"><span class="badge badge-warning">Medium</span></label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input plex-filter-risk" type="checkbox" value="3" id="risk-3" checked>
+            <label class="form-check-label" for="risk-3"><span class="badge badge-danger">High</span></label>
+          </div>
+        </div>
+        <div class="mb-3">
+          <h6 class="text-muted text-uppercase small font-weight-bold mb-2" style="letter-spacing:.05em;">Tags</h6>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="show-disabled" checked>
+            <label class="form-check-label" for="show-disabled">Show Disabled</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="show-expired" checked>
+            <label class="form-check-label" for="show-expired">Show Expired</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="show-hidden">
+            <label class="form-check-label" for="show-hidden">Show Hidden</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="only-homeuser">
+            <label class="form-check-label" for="only-homeuser">Only Home Users</label>
+          </div>
+        </div>
+        <div class="text-muted small" id="plex-count"></div>
+      </div>
+    </div>
+    <div class="col-lg-10">
+      <div class="table-responsive">
+        <table class="table table-hover table-sm" id="plex-users-table">
+          <thead class="thead-dark">
+            <tr>
+              <th style="width:40px;"></th>
+              <th style="width:40px;"></th>
+              <th class="plex-sortable" data-sort="title" style="cursor:pointer;">Title &amp; Username <span class="sort-icon" style="display:inline-block;"></span></th>
+              <th class="plex-sortable" data-sort="email" style="cursor:pointer;">Email <span class="sort-icon" style="display:inline-block;"></span></th>
+              <th class="plex-sortable" data-sort="added" style="cursor:pointer;">Added <span class="sort-icon" style="display:inline-block;"></span></th>
+              <th class="plex-sortable" data-sort="risk" style="cursor:pointer;">Tags <span class="sort-icon" style="display:inline-block;"></span></th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody id="plex-users-tbody">
 <?php foreach ($this->getContext()->users as $user) {
-        if ($user->isHidden() && !$show_hidden) continue;
-        $avatar = filter_var($user->getAvatar(40), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $date_added = array($user->getDateAdded()->format('D, M jS, Y'), $user->getDateAdded()->format('g:i A T'));
-        $id = filter_var($user->getId(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $notes = filter_var($user->getNotes(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $plex_email = filter_var($user->getPlexEmail(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $plex_title = filter_var($user->getPlexTitle(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $plex_username = filter_var($user->getPlexUsername(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $disabled = ($user->isDisabled() ? ' <span class="badge badge-danger">Disabled</span> ' : '');
-        $expired = ($user->isExpired() ? ' <span class="badge badge-warning">Expired</span> ' : '');
-        $homeuser = ($user->isHomeUser() ? ' <span class="badge badge-info">Home User</span> ' : '');
-        $risk = $user->getRisk();
-        $name = (!empty($plex_title) ? $plex_title : (!empty($plex_username) ? $plex_username : $plex_email));
-        if ($name != $plex_email && !empty($plex_email)) { $name .= sprintf('<br/><span class="text-secondary">%s</span>', $plex_email); }
-        if (empty($notes)) { $notes = '<em>&ndash;</em>'; }
-        switch ($risk) {
-          case PlexUser::RISK_UNASSESSED: $risk = array('secondary', 'Unassessed'); break;
-          case PlexUser::RISK_LOW: $risk = array('success', 'Low'); break;
-          case PlexUser::RISK_MEDIUM: $risk = array('warning', 'Medium'); break;
-          case PlexUser::RISK_HIGH: $risk = array('danger', 'High'); break;
-          default: $risk = array('info', sprintf('Unknown (%d)', $risk));
-        }
-        $risk = sprintf(' <span class="badge badge-%s">%s Risk</span> ', $risk[0], $risk[1]);
-        ?>
-      <tr>
-        <td class="align-middle">
-          <div class="d-table-cell align-middle"><img class="rounded mr-2" style="height:40px;width:40px;" src="<?=$avatar?>"/></div>
-          <div class="d-table-cell align-middle"><?=$name?></div>
-        </td>
-        <td class="align-middle"><time datetime="<?=$user->getDateAdded()->format(DATE_W3C)?>"><?=$date_added[0]?><br/><span class="text-secondary"><?=$date_added[1]?></span></time></td>
-        <td class="align-middle text-center"><?=$risk?><?=$disabled?><?=$expired?><?=$homeuser?></td>
-        <td class="align-middle"><?=$notes?></td>
-        <td class="align-middle text-right"><a class="btn btn-sm btn-primary" href="<?=UrlFormatter::format('/plex/users/edit?id=' . $id)?>">Edit</a></td>
-      </tr>
+  $avatar        = filter_var($user->getAvatar(40), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+  $date_added    = $user->getDateAdded()->format('D, M jS, Y');
+  $date_added_t  = $user->getDateAdded()->format('g:i A T');
+  $date_added_w  = $user->getDateAdded()->format(DATE_W3C);
+  $date_added_u  = $user->getDateAdded()->getTimestamp();
+  $id            = filter_var($user->getId(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+  $notes_raw     = $user->getNotes();
+  $notes         = filter_var($notes_raw, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+  $plex_email    = filter_var($user->getPlexEmail(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+  $plex_title    = filter_var($user->getPlexTitle(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+  $plex_username = filter_var($user->getPlexUsername(), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+  $search_str    = filter_var(strtolower(implode(' ', array_filter([$user->getPlexTitle(), $user->getPlexUsername(), $user->getPlexEmail(), $notes_raw]))), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+  $disabled_b    = ($user->isDisabled() ? ' <span class="badge badge-danger">Disabled</span>' : '');
+  $expired_b     = ($user->isExpired()  ? ' <span class="badge badge-warning">Expired</span>'  : '');
+  $homeuser_b    = ($user->isHomeUser() ? ' <span class="badge badge-info">Home User</span>'   : '');
+  switch ($user->getRisk()) {
+    case PlexUser::RISK_LOW:    $risk_b = '<span class="badge badge-success">Low Risk</span>';    break;
+    case PlexUser::RISK_MEDIUM: $risk_b = '<span class="badge badge-warning">Medium Risk</span>'; break;
+    case PlexUser::RISK_HIGH:   $risk_b = '<span class="badge badge-danger">High Risk</span>';    break;
+    default:                    $risk_b = '<span class="badge badge-secondary">Unassessed Risk</span>'; break;
+  }
+?>
+            <tr
+              data-name="<?=$search_str?>"
+              data-title="<?=$plex_title?>"
+              data-email="<?=$plex_email?>"
+              data-added="<?=$date_added_u?>"
+              data-risk="<?=$user->getRisk()?>"
+              data-disabled="<?=($user->isDisabled()  ? '1' : '0')?>"
+              data-expired="<?=($user->isExpired()   ? '1' : '0')?>"
+              data-hidden="<?=($user->isHidden()    ? '1' : '0')?>"
+              data-homeuser="<?=($user->isHomeUser() ? '1' : '0')?>">
+              <td class="align-middle"><a class="btn btn-sm btn-primary" href="<?=UrlFormatter::format('/plex/users/edit?id=' . $id)?>">&#x270F;&#xFE0F;</a></td>
+              <td class="align-middle p-1"><img class="rounded" style="height:40px;width:40px;display:block;" src="<?=$avatar?>"/></td>
+              <td class="align-middle"><?=(!empty($plex_title) ? $plex_title : (!empty($plex_username) ? $plex_username : '<em class="text-secondary">&ndash;</em>'))?><?=(!empty($plex_title) && !empty($plex_username) && $plex_username !== $plex_title ? '<br/><small class="text-muted">' . $plex_username . '</small>' : '')?></td>
+              <td class="align-middle"><span class="plex-email-mask text-muted"><?=(!empty($plex_email) ? str_repeat('&bull;', strlen($user->getPlexEmail())) : '&ndash;')?></span><span class="plex-email-text" style="display:none;"><?=(!empty($plex_email) ? $plex_email : '<em class="text-secondary">&ndash;</em>')?></span></td>
+              <td class="align-middle text-nowrap">
+                <time datetime="<?=$date_added_w?>"><?=$date_added?><br/><span class="text-secondary"><?=$date_added_t?></span></time>
+              </td>
+              <td class="align-middle text-nowrap"><?=$risk_b?><?=$disabled_b?><?=$expired_b?><?=$homeuser_b?></td>
+              <td class="align-middle" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"<?=(!empty($notes_raw) ? ' title="' . $notes . '"' : '')?>><?=(!empty($notes) ? $notes : '<em class="text-secondary">&ndash;</em>')?></td>
+            </tr>
 <?php } ?>
-    </tbody>
-  </table>
+          </tbody>
+        </table>
+        <p id="plex-no-results" class="text-muted text-center py-4" style="display:none;">No users match the current filters.</p>
+      </div>
+    </div>
+  </div>
 <?php ob_start(); ?>
   <script type="text/javascript">
-    $(document).ready(function(){
-      $('#plex_users').DataTable({
-        "columnDefs": [
-          { responsivePriority: 1, targets: 0 },
-          { responsivePriority: 3, targets: 1 },
-          { responsivePriority: 2, targets: 2 },
-          { responsivePriority: 4, targets: 3 },
-          { responsivePriority: 1, targets: 4 }
-        ],
-        "columns": [
-          null,
-          null,
-          null,
-          null,
-          { "orderable": false }
-        ],
-        "responsive": true
+    (function () {
+      var tbody = document.getElementById('plex-users-tbody');
+      var rows = Array.prototype.slice.call(tbody.querySelectorAll('tr'));
+      var searchEl = document.getElementById('plex-search');
+      var noResults = document.getElementById('plex-no-results');
+      var countEl = document.getElementById('plex-count');
+      var riskEls = Array.prototype.slice.call(document.querySelectorAll('.plex-filter-risk'));
+      var showEmails = document.getElementById('show-emails');
+      var showDisabled = document.getElementById('show-disabled');
+      var showExpired = document.getElementById('show-expired');
+      var showHidden = document.getElementById('show-hidden');
+      var onlyHomeuser = document.getElementById('only-homeuser');
+
+      function updateUrl() {
+        var params = new URLSearchParams();
+        var checkedRisks = riskEls.filter(function (el) { return el.checked; }).map(function (el) { return el.value; });
+        if (checkedRisks.length > 0 && checkedRisks.length < riskEls.length)
+          params.set('risk', checkedRisks.join(','));
+        var flags = [];
+        if (!showDisabled.checked) flags.push('nodisabled');
+        if (!showExpired.checked) flags.push('noexpired');
+        if (showHidden.checked) flags.push('hidden');
+        if (onlyHomeuser.checked) flags.push('homeuser');
+        if (flags.length) params.set('filter', flags.join(','));
+        var q = searchEl.value.trim();
+        if (q) params.set('q', q);
+        var qs = params.toString();
+        history.replaceState(null, '', qs ? '?' + qs : window.location.pathname);
+      }
+
+      function applyFilters() {
+        var searchVal = searchEl.value.toLowerCase().trim();
+        var checkedRisks = new Set(riskEls.filter(function (el) { return el.checked; }).map(function (el) { return parseInt(el.value, 10); }));
+        var doShowDisabled  = showDisabled.checked;
+        var doShowExpired   = showExpired.checked;
+        var doShowHidden    = showHidden.checked;
+        var doOnlyHomeuser  = onlyHomeuser.checked;
+        var visible = 0;
+        rows.forEach(function (tr) {
+          var risk = parseInt(tr.dataset.risk, 10);
+          var show = checkedRisks.has(risk)
+            && (tr.dataset.disabled !== '1' || doShowDisabled)
+            && (tr.dataset.expired  !== '1' || doShowExpired)
+            && (tr.dataset.hidden   !== '1' || doShowHidden)
+            && (!doOnlyHomeuser || tr.dataset.homeuser === '1')
+            && (!searchVal || tr.dataset.name.indexOf(searchVal) !== -1);
+          tr.style.display = show ? '' : 'none';
+          if (show) visible++;
+        });
+        noResults.style.display = visible === 0 ? '' : 'none';
+        countEl.textContent = visible + ' of ' + rows.length + ' user' + (rows.length !== 1 ? 's' : '');
+        updateUrl();
+      }
+
+      // Sortable columns
+      var sortCol = null, sortAsc = true;
+      document.querySelectorAll('.plex-sortable').forEach(function (th) {
+        th.addEventListener('click', function () {
+          var col = th.dataset.sort;
+          if (sortCol === col) { sortAsc = !sortAsc; } else { sortCol = col; sortAsc = true; }
+          document.querySelectorAll('.plex-sortable .sort-icon').forEach(function (el) { el.textContent = ''; el.style.transform = ''; });
+          var icon = th.querySelector('.sort-icon');
+          icon.textContent = ' ▲';
+          icon.style.transform = sortAsc ? '' : 'rotate(180deg)';
+          rows.sort(function (a, b) {
+            var va = a.dataset[col] || '', vb = b.dataset[col] || '';
+            var na = parseFloat(va), nb = parseFloat(vb);
+            if (!isNaN(na) && !isNaN(nb)) return sortAsc ? na - nb : nb - na;
+            return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+          });
+          rows.forEach(function (r) { tbody.appendChild(r); });
+          applyFilters();
+        });
       });
-    });
+
+      // Restore filter state from URL params
+      var urlParams = new URLSearchParams(window.location.search);
+      var riskParam = urlParams.get('risk');
+      if (riskParam) {
+        var ids = new Set(riskParam.split(',').map(function (s) { return s.trim(); }));
+        riskEls.forEach(function (el) { el.checked = ids.has(el.value); });
+      }
+      var filterParam = urlParams.get('filter');
+      if (filterParam) {
+        var flags = new Set(filterParam.split(',').map(function (s) { return s.trim(); }));
+        if (flags.has('nodisabled'))  showDisabled.checked  = false;
+        if (flags.has('noexpired'))   showExpired.checked   = false;
+        if (flags.has('hidden'))      showHidden.checked    = true;
+        if (flags.has('homeuser'))    onlyHomeuser.checked  = true;
+      }
+      var qParam = urlParams.get('q');
+      if (qParam) searchEl.value = qParam;
+
+      function applyEmailVisibility() {
+        var show = showEmails.checked;
+        document.querySelectorAll('.plex-email-mask').forEach(function (el) { el.style.display = show ? 'none' : ''; });
+        document.querySelectorAll('.plex-email-text').forEach(function (el) { el.style.display = show ? '' : 'none'; });
+      }
+
+      // Attach listeners
+      showEmails.addEventListener('change', applyEmailVisibility);
+      searchEl.addEventListener('input', applyFilters);
+      riskEls.forEach(function (el) { el.addEventListener('change', applyFilters); });
+      showDisabled.addEventListener('change', applyFilters);
+      showExpired.addEventListener('change', applyFilters);
+      showHidden.addEventListener('change', applyFilters);
+      onlyHomeuser.addEventListener('change', applyFilters);
+
+      applyFilters();
+
+      // Mobile sidebar toggle
+      var toggleBtn = document.getElementById('plex-filter-toggle');
+      var sidebar = document.getElementById('plex-filter-sidebar');
+      var sidebarOpen = false;
+      if (toggleBtn) {
+        sidebar.style.display = 'none';
+        toggleBtn.addEventListener('click', function () {
+          sidebarOpen = !sidebarOpen;
+          sidebar.style.display = sidebarOpen ? '' : 'none';
+          toggleBtn.textContent = sidebarOpen ? 'Hide Filters' : 'Filters';
+        });
+        var mq = window.matchMedia('(min-width: 992px)');
+        var onMq = function (e) { sidebar.style.display = e.matches ? '' : (sidebarOpen ? '' : 'none'); };
+        mq.addEventListener ? mq.addEventListener('change', onMq) : mq.addListener(onMq);
+        onMq(mq);
+      }
+    })();
   </script>
 <?php $_footer_script = ob_get_clean(); ?>
 <?php } ?>
