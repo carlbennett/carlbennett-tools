@@ -69,8 +69,8 @@ class SetblockMacro extends \CarlBennett\Tools\Controllers\Base
         for ($x = $x1; $x <= $x2; ++$x)
             for ($y = $y1; $y <= $y2; ++$y)
                 for ($z = $z1; $z <= $z2; ++$z)
-                    $lines .= \sprintf('%ssetblock %d %d %d %s' . "\n", $prefix, $x, $y, $z, $suffix);
+                    $lines .= \sprintf('%sminecraft:setblock %d %d %d %s' . "\n", $prefix, $x, $y, $z, $suffix);
 
-        return $lines . ($m->say_done ? $prefix . "say Done.\n" : '');
+        return $lines . ($m->say_done ? $prefix . "minecraft:say Done.\n" : '');
     }
 }
