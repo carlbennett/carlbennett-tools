@@ -36,7 +36,6 @@ $tzs = DateTimeZone::listIdentifiers();
 
 if ($date_added) $date_added = $date_added->setTimezone($tz);
 if ($date_disabled) $date_disabled = $date_disabled->setTimezone($tz);
-if ($date_expired) $date_expired = $date_expired->setTimezone($tz);
 if ($record_updated) $record_updated = $record_updated->setTimezone($tz);
 
 $id_str = (!is_null($id) ? $id : '<em>&ndash;</em>');
