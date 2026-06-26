@@ -1,0 +1,116 @@
+<?php
+namespace CarlBennett\Tools\Templates\Minecraft;
+$title = 'Minecraft /setblock Macro';
+$say_done = $this->getContext()->say_done;
+$slash = $this->getContext()->slash;
+$x1 = $this->getContext()->x1;
+$x2 = $this->getContext()->x2;
+$y1 = $this->getContext()->y1;
+$y2 = $this->getContext()->y2;
+$z1 = $this->getContext()->z1;
+$z2 = $this->getContext()->z2;
+$tile = $this->getContext()->tile;
+$extra = $this->getContext()->extra;
+$code = $this->getContext()->code;
+require('./header.inc.phtml'); ?>
+<div class="container">
+  <h1>Minecraft /setblock Macro</h1>
+  <p>Generates a sequence of <code>setblock</code> commands to fill a region block-by-block. Useful for command-block macros or server console scripts.</p>
+  <form method="POST">
+    <div class="row">
+      <div class="col-md-6">
+        <h2>Corner 1</h2>
+        <div class="m-3">
+          <div class="form-group row">
+            <label for="x1" class="col-sm-2 col-form-label">X1</label>
+            <div class="col-sm-10">
+              <input type="number" class="form-control bg-dark text-light" name="x1" id="x1" value="<?=\filter_var($x1, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>"/>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="y1" class="col-sm-2 col-form-label">Y1</label>
+            <div class="col-sm-10">
+              <input type="number" class="form-control bg-dark text-light" name="y1" id="y1" value="<?=\filter_var($y1, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>"/>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="z1" class="col-sm-2 col-form-label">Z1</label>
+            <div class="col-sm-10">
+              <input type="number" class="form-control bg-dark text-light" name="z1" id="z1" value="<?=\filter_var($z1, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <h2>Corner 2</h2>
+        <div class="m-3">
+          <div class="form-group row">
+            <label for="x2" class="col-sm-2 col-form-label">X2</label>
+            <div class="col-sm-10">
+              <input type="number" class="form-control bg-dark text-light" name="x2" id="x2" value="<?=\filter_var($x2, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>"/>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="y2" class="col-sm-2 col-form-label">Y2</label>
+            <div class="col-sm-10">
+              <input type="number" class="form-control bg-dark text-light" name="y2" id="y2" value="<?=\filter_var($y2, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>"/>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="z2" class="col-sm-2 col-form-label">Z2</label>
+            <div class="col-sm-10">
+              <input type="number" class="form-control bg-dark text-light" name="z2" id="z2" value="<?=\filter_var($z2, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="m-3">
+          <div class="form-group row">
+            <label for="tile" class="col-sm-3 col-form-label">Tile Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control bg-dark text-light" name="tile" id="tile" placeholder="e.g. minecraft:stone" value="<?=\filter_var($tile, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>"/>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="extra" class="col-sm-3 col-form-label">Extra Parameters</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control bg-dark text-light" name="extra" id="extra" placeholder="Optional (e.g. destroy)" value="<?=\filter_var($extra, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>"/>
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-9">
+              <div class="custom-control custom-switch">
+                <input class="custom-control-input" type="checkbox" name="say_done" id="say_done" value="1"<?=$say_done ? ' checked' : ''?>>
+                <label class="custom-control-label" for="say_done">Append <code>say Done.</code></label>
+              </div>
+              <div class="custom-control custom-switch">
+                <input class="custom-control-input" type="checkbox" name="slash" id="slash" value="1"<?=$slash ? ' checked' : ''?>>
+                <label class="custom-control-label" for="slash">Prefix commands with <code>/</code></label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col m-3">
+        <input type="submit" class="btn btn-success" value="Generate Code"/>
+      </div>
+    </div>
+  </form>
+<?php if (!empty($code)) { ?>
+  <div class="row">
+    <div class="col">
+      <h2>Output</h2>
+      <div class="m-3">
+        <textarea class="form-control bg-dark text-light" cols="80" rows="20"><?=\htmlspecialchars($code, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')?></textarea>
+      </div>
+    </div>
+  </div>
+<?php } ?>
+</div>
+<?php require('./footer.inc.phtml'); ?>

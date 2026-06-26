@@ -41,6 +41,7 @@ function main(int $argc, array $argv)
         Router::$routes = [
             ['#^/$#', 'RedirectSoft', ['RedirectSoftHtml'], '/tools'],
             ['#^/gandalf$#', 'Gandalf', ['GandalfHtml']],
+            ['#^/minecraft/setblock-macro$#', 'Minecraft\\SetblockMacro', ['Minecraft\\SetblockMacroHtml']],
             ['#^/paste$#', 'Paste', ['PasteHtml']],
             ['#^/paste/([A-Za-z0-9\-]+)$#', 'Paste\\View', ['Paste\\ViewHtml']],
             ['#^/phpinfo$#', 'PhpInfo', ['PhpInfoHtml']],
