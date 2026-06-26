@@ -26,5 +26,40 @@ require("./header.inc.phtml"); ?>
 <?php } ?>
     </tbody>
   </table>
+<?php if ($geoip) {
+  $lat = $geoip->location->latitude ?? null;
+  $lng = $geoip->location->longitude ?? null;
+  $maps_url = ($lat !== null && $lng !== null)
+    ? 'https://maps.google.com/?q=' . urlencode($lat) . ',' . urlencode($lng)
+    : null;
+?>
+  <h2>GeoIP</h2>
+  <table class="table table-bordered table-sm">
+    <thead></thead>
+    <tbody>
+<?php if (!empty($geoip->city->name)) { ?>
+      <tr><th scope="row" class="bg-primary border-dark text-right">City</th><td class="border-primary text-left"><?=filter_var($geoip->city->name, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></td></tr>
+<?php } ?>
+<?php if (!empty($geoip->subdivisions) && !empty($geoip->subdivisions[0]->name)) { ?>
+      <tr><th scope="row" class="bg-primary border-dark text-right">Region</th><td class="border-primary text-left"><?=filter_var($geoip->subdivisions[0]->name, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></td></tr>
+<?php } ?>
+<?php if (!empty($geoip->postal->code)) { ?>
+      <tr><th scope="row" class="bg-primary border-dark text-right">Postal Code</th><td class="border-primary text-left"><?=filter_var($geoip->postal->code, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></td></tr>
+<?php } ?>
+<?php if (!empty($geoip->country->name)) { ?>
+      <tr><th scope="row" class="bg-primary border-dark text-right">Country</th><td class="border-primary text-left"><?=filter_var($geoip->country->name, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?> (<?=filter_var($geoip->country->isoCode, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>)</td></tr>
+<?php } ?>
+<?php if (!empty($geoip->continent->name)) { ?>
+      <tr><th scope="row" class="bg-primary border-dark text-right">Continent</th><td class="border-primary text-left"><?=filter_var($geoip->continent->name, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></td></tr>
+<?php } ?>
+<?php if ($lat !== null && $lng !== null) { ?>
+      <tr><th scope="row" class="bg-primary border-dark text-right">Coordinates</th><td class="border-primary text-left"><?=filter_var($lat, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>, <?=filter_var($lng, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?> <a class="btn btn-sm btn-primary" href="<?=filter_var($maps_url, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?>" target="_blank" rel="noopener">🗺 Google Maps</a></td></tr>
+<?php } ?>
+<?php if (!empty($geoip->location->timeZone)) { ?>
+      <tr><th scope="row" class="bg-primary border-dark text-right">Time Zone</th><td class="border-primary text-left"><?=filter_var($geoip->location->timeZone, FILTER_SANITIZE_FULL_SPECIAL_CHARS)?></td></tr>
+<?php } ?>
+    </tbody>
+  </table>
+<?php } ?>
 </div>
 <?php require("./footer.inc.phtml"); ?>
