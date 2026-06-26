@@ -40,6 +40,7 @@ function main(int $argc, array $argv)
         $UUID_REGEX = \substr(\CarlBennett\Tools\Interfaces\DatabaseObject::UUID_REGEX, 1, -1); // trim first and last character from constant.
         Router::$routes = [
             ['#^/$#', 'RedirectSoft', ['RedirectSoftHtml'], '/tools'],
+            ['#^/factorio/blueprint-flipper$#', 'Factorio\\BlueprintFlipper', ['Factorio\\BlueprintFlipperHtml']],
             ['#^/gandalf$#', 'Gandalf', ['GandalfHtml']],
             ['#^/minecraft/setblock-macro$#', 'Minecraft\\SetblockMacro', ['Minecraft\\SetblockMacroHtml']],
             ['#^/paste$#', 'Paste', ['PasteHtml']],
