@@ -15,6 +15,7 @@ class Users extends Base
     {
         if (!$this->model->active_user || !$this->model->active_user->getAclObject()->getAcl(\CarlBennett\Tools\Libraries\User\Acl::ACL_USERS_MANAGE))
         {
+            $this->model->users = false;
             $this->model->_responseCode = HttpCode::HTTP_UNAUTHORIZED;
             return true;
         }

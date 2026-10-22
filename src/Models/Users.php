@@ -7,7 +7,7 @@ class Users extends \CarlBennett\Tools\Models\User\ActiveUser implements \JsonSe
     public ?string $hl = null; // highlight
     public ?string $id = null;
     public bool $show_hidden = false;
-    public ?array $users = null;
+    public array|false|null $users = null;
 
     /**
      * Implements the JSON serialization function from the JsonSerializable interface.
