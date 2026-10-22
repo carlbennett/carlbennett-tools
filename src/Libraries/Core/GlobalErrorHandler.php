@@ -27,9 +27,15 @@ class GlobalErrorHandler
 
     public static function errorHandler(int $errno, string $errstr, string $errfile, int $errline, array $errcontext = []): bool
     {
-        if (\error_reporting() & $errno !== $errno)
+        if ((\error_reporting() & $errno) !== $errno)
         {
             return false;
+        }
+
+        if ($errno === E_DEPRECATED || $errno === E_USER_DEPRECATED)
+        {
+            \error_log(\sprintf('PHP Deprecated: %s in %s on line %d', $errstr, $errfile, $errline));
+            return true;
         }
 
         return self::handleProblem([
