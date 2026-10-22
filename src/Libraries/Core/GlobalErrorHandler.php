@@ -50,7 +50,7 @@ class GlobalErrorHandler
         ]);
     }
 
-    private static function handleProblem(array $args): bool
+    private static function handleProblem(array $args): never
     {
         while (\ob_get_level()) \ob_end_clean();
 
@@ -60,12 +60,12 @@ class GlobalErrorHandler
         {
             \header('Content-Type: application/json;charset=utf-8');
             echo \json_encode($args, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR) . PHP_EOL;
-            return true;
+            exit(1);
         }
         else
         {
             echo 'Internal Server Error' . PHP_EOL;
-            return true;
+            exit(1);
         }
     }
 
