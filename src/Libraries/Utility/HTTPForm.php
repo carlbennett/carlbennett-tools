@@ -27,7 +27,7 @@ class HTTPForm
 
         if (\is_string($value) && \is_numeric($value))
         {
-            return \strpos($value, '.') !== false ? (double) $value : (int) $value;
+            return \strpos($value, '.') !== false ? (float) $value : (int) $value;
         }
         else
         {
