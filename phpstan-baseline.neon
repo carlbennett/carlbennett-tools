@@ -1,0 +1,1243 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseCode\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Factorio/BlueprintFlipper.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$action\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Factorio/BlueprintFlipper.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$blueprint_in\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Factorio/BlueprintFlipper.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$blueprint_json\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Factorio/BlueprintFlipper.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$blueprint_out\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Factorio/BlueprintFlipper.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$error\.$#'
+			identifier: property.notFound
+			count: 4
+			path: src/Controllers/Factorio/BlueprintFlipper.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseCode\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Gandalf.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseCode\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Maintenance.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$message\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Maintenance.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseCode\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Minecraft/SetblockMacro.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$code\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Minecraft/SetblockMacro.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$extra\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Minecraft/SetblockMacro.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$say_done\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Minecraft/SetblockMacro.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$slash\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Minecraft/SetblockMacro.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$tile\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Minecraft/SetblockMacro.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$x1\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Minecraft/SetblockMacro.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$x2\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Minecraft/SetblockMacro.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$y1\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Minecraft/SetblockMacro.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$y2\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Minecraft/SetblockMacro.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$z1\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Minecraft/SetblockMacro.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$z2\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Minecraft/SetblockMacro.php
+
+		-
+			message: '#^Call to an undefined method CarlBennett\\Tools\\Interfaces\\Model\:\:allFieldsSet\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Controllers/Minecraft/SetblockMacro.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseCode\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/PageNotFound.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseCode\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Controllers/Paste.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$active_user\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Paste.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$error\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Paste.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$pastebin_admin\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Paste.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$recent_pastes\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Paste.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseCode\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Paste/View.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseHeaders\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Paste/View.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Paste/View.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$paste_object\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Controllers/Paste/View.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseCode\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/PhpInfo.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$phpinfo\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/PhpInfo.php
+
+		-
+			message: '#^Ternary operator condition is always true\.$#'
+			identifier: ternary.alwaysTrue
+			count: 1
+			path: src/Controllers/PhpInfo.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseCode\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$active_user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$hl\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$show_hidden\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$users\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseCode\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Controllers/Plex/Users/Add.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseHeaders\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Add.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$active_user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Add.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$disabled\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Plex/Users/Add.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$error\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Add.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$expired\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Plex/Users/Add.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$hidden\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Plex/Users/Add.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$homeuser\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Plex/Users/Add.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Plex/Users/Add.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$notes\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Plex/Users/Add.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$plex_email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Add.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$plex_thumb\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Plex/Users/Add.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$plex_title\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Plex/Users/Add.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$plex_user\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Plex/Users/Add.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$plex_username\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Add.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$risk\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Plex/Users/Add.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$user_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Plex/Users/Add.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseCode\.$#'
+			identifier: property.notFound
+			count: 4
+			path: src/Controllers/Plex/Users/Delete.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseHeaders\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Delete.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$active_user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Delete.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$disabled\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Delete.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$error\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Delete.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$expired\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Delete.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$hidden\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Delete.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$homeuser\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Delete.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Delete.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$notes\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Delete.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$plex_email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Delete.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$plex_thumb\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Delete.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$plex_title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Delete.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$plex_user\.$#'
+			identifier: property.notFound
+			count: 4
+			path: src/Controllers/Plex/Users/Delete.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$plex_username\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Delete.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$risk\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Delete.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$user_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Plex/Users/Delete.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseCode\.$#'
+			identifier: property.notFound
+			count: 4
+			path: src/Controllers/Plex/Users/Edit.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseHeaders\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Edit.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$active_user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Edit.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$disabled\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Plex/Users/Edit.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$error\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Edit.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$expired\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Plex/Users/Edit.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$hidden\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Plex/Users/Edit.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$homeuser\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Plex/Users/Edit.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Edit.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$notes\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Plex/Users/Edit.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$plex_email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Edit.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$plex_thumb\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Plex/Users/Edit.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$plex_title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Edit.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$plex_user\.$#'
+			identifier: property.notFound
+			count: 4
+			path: src/Controllers/Plex/Users/Edit.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$plex_username\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Users/Edit.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$risk\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Plex/Users/Edit.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$user_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Plex/Users/Edit.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseCode\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Plex/Welcome.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseCode\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/PrivacyNotice.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$data_location\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/PrivacyNotice.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$email_domain\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/PrivacyNotice.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$org\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/PrivacyNotice.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$web_domain\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/PrivacyNotice.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseCode\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/RedirectSoft.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseHeaders\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/RedirectSoft.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$location\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/RedirectSoft.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseCode\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/RemoteAddress.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$geoip_info\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/RemoteAddress.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$ip_address\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/RemoteAddress.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$user_agent\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/RemoteAddress.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseCode\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Controllers/Task.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$auth_token_valid\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Task.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$task_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Task.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$task_result\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Task.php
+
+		-
+			message: '#^Parameter \#1 \$model of static method CarlBennett\\Tools\\Tasks\\Task\:\:create\(\) expects CarlBennett\\Tools\\Models\\Task, CarlBennett\\Tools\\Interfaces\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controllers/Task.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseCode\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Tools.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$routes\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Tools.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseCode\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/UrlEncodeDecode.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$decode\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/UrlEncodeDecode.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$input\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/UrlEncodeDecode.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$output\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/UrlEncodeDecode.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseCode\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/User/Invite.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseHeaders\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/User/Invite.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$active_user\.$#'
+			identifier: property.notFound
+			count: 6
+			path: src/Controllers/User/Invite.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$date_accepted\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/User/Invite.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$date_invited\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/User/Invite.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$date_revoked\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/User/Invite.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/User/Invite.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$error\.$#'
+			identifier: property.notFound
+			count: 10
+			path: src/Controllers/User/Invite.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$feedback\.$#'
+			identifier: property.notFound
+			count: 7
+			path: src/Controllers/User/Invite.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Controllers/User/Invite.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$invited_by\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/User/Invite.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$invited_user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/User/Invite.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$invites_available\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/User/Invite.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$invites_sent\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/User/Invite.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$invites_used\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/User/Invite.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$record_updated\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/User/Invite.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$return\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/User/Invite.php
+
+		-
+			message: '#^Call to function is_null\(\) with DateTimeInterface will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: src/Controllers/User/Invite.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseCode\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/User/Login.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseHeaders\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/User/Login.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/User/Login.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$error\.$#'
+			identifier: property.notFound
+			count: 6
+			path: src/Controllers/User/Login.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$feedback\.$#'
+			identifier: property.notFound
+			count: 6
+			path: src/Controllers/User/Login.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$password\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Controllers/User/Login.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$return\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/User/Login.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseCode\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/User/Logout.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseHeaders\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/User/Logout.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$error\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/User/Logout.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$feedback\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/User/Logout.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$return\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/User/Logout.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseCode\.$#'
+			identifier: property.notFound
+			count: 4
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseHeaders\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$acl_invite_users\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$acl_manage_users\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$acl_pastebin_admin\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$acl_phpinfo\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$acl_plex_users\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$acl_whois_service\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$active_user\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$avatar\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$biography\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$context_user\.$#'
+			identifier: property.notFound
+			count: 5
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$date_added\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$date_banned\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$date_disabled\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$display_name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$error\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$feedback\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$internal_notes\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$is_banned\.$#'
+			identifier: property.notFound
+			count: 5
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$is_disabled\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$manage\.$#'
+			identifier: property.notFound
+			count: 4
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$record_updated\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$return\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$self_manage\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$timezone\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/User/Profile.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseCode\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Users.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$active_user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Users.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$hl\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Users.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Users.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$show_hidden\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/Users.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$users\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/Users.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$_responseCode\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Controllers/WhoisService.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$acl\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/WhoisService.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$active_user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/WhoisService.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$query\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/WhoisService.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Model\:\:\$result\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/WhoisService.php
+
+		-
+			message: '#^Call to function is_null\(\) with CarlBennett\\Tools\\Libraries\\User\\User will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: src/Libraries/Core/Authentication.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Libraries/Core/Authentication.php
+
+		-
+			message: '#^Instanceof between CarlBennett\\Tools\\Libraries\\User\\User and CarlBennett\\Tools\\Libraries\\User\\User will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 2
+			path: src/Libraries/Core/Authentication.php
+
+		-
+			message: '#^Access to an undefined property CarlBennett\\Tools\\Interfaces\\Controller\:\:\$model\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Libraries/Core/Router.php
+
+		-
+			message: '#^Comparison operation "\>" between int\<1, max\> and 0 is always true\.$#'
+			identifier: greater.alwaysTrue
+			count: 1
+			path: src/Libraries/Core/StringProcessor.php
+
+		-
+			message: '#^Call to function is_null\(\) with non\-falsy\-string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: src/Libraries/Core/UrlFormatter.php
+
+		-
+			message: '#^Call to function is_null\(\) with DateTimeInterface\|string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: src/Libraries/PasteObject.php
+
+		-
+			message: '#^Call to function is_null\(\) with string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: src/Libraries/PasteObject.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 7
+			path: src/Libraries/PasteObject.php
+
+		-
+			message: '#^Instanceof between CarlBennett\\Tools\\Libraries\\User\\User and CarlBennett\\Tools\\Libraries\\User\\User will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Libraries/PasteObject.php
+
+		-
+			message: '#^Result of \|\| is always true\.$#'
+			identifier: booleanOr.alwaysTrue
+			count: 1
+			path: src/Libraries/PasteObject.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Libraries/Plex/User.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: src/Libraries/Plex/User.php
+
+		-
+			message: '#^Call to function is_null\(\) with string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: src/Libraries/User/Acl.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 2
+			path: src/Libraries/User/Acl.php
+
+		-
+			message: '#^PHPDoc tag @return with type string is incompatible with native type array\.$#'
+			identifier: return.phpDocType
+			count: 1
+			path: src/Libraries/User/Acl.php
+
+		-
+			message: '#^Call to function is_null\(\) with DateTimeInterface\|string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 2
+			path: src/Libraries/User/Invite.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Libraries/User/Invite.php
+
+		-
+			message: '#^Call to function is_null\(\) with DateTimeInterface\|string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 2
+			path: src/Libraries/User/User.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Libraries/User/User.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Tasks/SyncPlexUsersTask.php
+
+		-
+			message: '#^Negated boolean expression is always true\.$#'
+			identifier: booleanNot.alwaysTrue
+			count: 1
+			path: src/Tasks/SyncPlexUsersTask.php

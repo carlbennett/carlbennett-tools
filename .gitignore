@@ -25,6 +25,8 @@
 .Spotlight-V100
 .Trashes
 ._*
+/.phpunit.cache/
+/.phpunit.result.cache
 /composer.phar
 /etc/config.json
 /lib/
