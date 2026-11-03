@@ -11,7 +11,7 @@ class GeoIP
 
     private function __construct() {}
 
-    protected static function getReader(): Reader
+    protected static function getReader(): ?Reader
     {
         if (self::$reader) return self::$reader;
 
@@ -36,6 +36,7 @@ class GeoIP
         }
 
         $mmdb = self::getReader();
+        if (!$mmdb) return null; // database is unavailable
         $type = Config::instance()->root['geoip']['database_type'];
 
         try

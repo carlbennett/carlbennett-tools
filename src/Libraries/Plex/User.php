@@ -39,7 +39,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
   protected string $notes;
   protected int $options;
   protected ?string $plex_email;
-  protected ?string $plex_id;
+  protected ?int $plex_id;
   protected ?string $plex_thumb;
   protected ?string $plex_title;
   protected ?string $plex_username;
@@ -93,7 +93,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
       $this->allocateObject($q->fetchObject());
       return true;
     }
-    finally { if ($q) $q->closeCursor(); }
+    finally { if (isset($q) && $q instanceof \PDOStatement) $q->closeCursor(); }
   }
 
   private function allocateObject(StdClass $value): void
@@ -166,7 +166,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
       $this->setId($id);
       return true;
     }
-    finally { if ($q) $q->closeCursor(); }
+    finally { if (isset($q) && $q instanceof \PDOStatement) $q->closeCursor(); }
   }
 
   public function deallocate(): bool
@@ -195,7 +195,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
       while ($row = $q->fetchObject()) $r[] = new self($row);
       return $r;
     }
-    finally { if ($q) $q->closeCursor(); }
+    finally { if (isset($q) && $q instanceof \PDOStatement) $q->closeCursor(); }
   }
 
   /**

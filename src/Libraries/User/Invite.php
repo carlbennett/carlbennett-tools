@@ -94,17 +94,26 @@ class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeria
       ;'
     );
 
+    $id = $this->getId();
+    if (\is_null($id)) $id = \Ramsey\Uuid\Uuid::uuid4()->toString();
+
     $p = [
       ':accepted' => $this->getDateAccepted(),
       ':email' => $this->getEmail(),
-      ':id' => $this->getId(),
-      ':invited_by' => $this->getInvitedBy(),
-      ':invited_user' => $this->getInvitedUser(),
+      ':id' => $id,
+      ':invited_by' => $this->getInvitedById(),
+      ':invited_user' => $this->getInvitedUserId(),
       ':invited' => $this->getDateInvited(),
-      ':record_updated', $this->getRecordUpdated(),
+      ':record_updated' => $this->getRecordUpdated(),
       ':revoked' => $this->getDateRevoked(),
     ];
+
+    foreach ($p as $k => $v)
+      if ($v instanceof DateTimeInterface)
+        $p[$k] = $v->format(self::DATE_SQL);
+
     if (!$q || !$q->execute($p)) return false;
+    $this->setId($id);
     $q->closeCursor();
     return true;
   }
@@ -113,7 +122,7 @@ class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeria
   {
     $id = $this->getId();
     if (is_null($id)) return false;
-    $q = MariaDb::instance()->prepare('DELETE FROM `user_invites` WHERE `id` = ? LIMIT 1;');
+    $q = MariaDb::instance()->prepare('DELETE FROM `user_invites` WHERE `id` = UuidToBin(?) LIMIT 1;');
     try { return $q && $q->execute([$id]); }
     finally { if ($q) $q->closeCursor(); }
   }
@@ -171,10 +180,26 @@ class Invite implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeria
 
   public function getInvitedBy(): ?User
   {
+    return \is_null($this->invited_by) ? null : new User($this->invited_by);
+  }
+
+  /**
+   * @return string|null The UUID of the user who sent this invite.
+   */
+  public function getInvitedById(): ?string
+  {
     return $this->invited_by;
   }
 
   public function getInvitedUser(): ?User
+  {
+    return \is_null($this->invited_user) ? null : new User($this->invited_user);
+  }
+
+  /**
+   * @return string|null The UUID of the user who accepted this invite.
+   */
+  public function getInvitedUserId(): ?string
   {
     return $this->invited_user;
   }

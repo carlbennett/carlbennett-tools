@@ -44,7 +44,7 @@ class Config
 
     public function save(): void
     {
-        \file_put_contents($this->file_path, \json_encode($this->root, JSON_OBJECT_AS_ARRAY | JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
+        \file_put_contents($this->file_path, \json_encode($this->root, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
     }
 
     public function setFilePath(string $value = ''): void
