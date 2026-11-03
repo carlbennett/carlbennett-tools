@@ -95,7 +95,7 @@ class PasteObject implements \CarlBennett\Tools\Interfaces\DatabaseObject
   {
     $hash = $this->getPasswordHash();
     $rehash = password_needs_rehash($hash, PASSWORD_BCRYPT, array(
-      'cost' => Config::instance()->root['pastes']['bcrypt_cost'],
+      'cost' => Config::instance()->root['pastes']['crypt_cost'],
     ));
     $verified = password_verify($password, $hash);
 
@@ -171,7 +171,7 @@ class PasteObject implements \CarlBennett\Tools\Interfaces\DatabaseObject
     }
 
     return password_hash($password, PASSWORD_BCRYPT, array(
-      'cost' => Config::instance()->root['pastes']['bcrypt_cost'],
+      'cost' => Config::instance()->root['pastes']['crypt_cost'],
     ));
   }
 
