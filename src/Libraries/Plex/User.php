@@ -15,9 +15,9 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
 {
   # Maximum SQL field lengths, alter as appropriate.
   public const MAX_NOTES         = 0xFFFF;
-  public const MAX_OPTIONS       = 0xFFFFFFFFFFFFFFFF;
+  public const MAX_OPTIONS       = \PHP_INT_MAX; // BIGINT UNSIGNED exceeds PHP's integer range
   public const MAX_PLEX_EMAIL    = 0xFF;
-  public const MAX_PLEX_ID       = 0xFFFFFFFFFFFFFFFF;
+  public const MAX_PLEX_ID       = \PHP_INT_MAX; // BIGINT UNSIGNED exceeds PHP's integer range
   public const MAX_PLEX_THUMB    = 0xFF;
   public const MAX_PLEX_TITLE    = 0xFF;
   public const MAX_PLEX_USERNAME = 0xFF;

@@ -24,7 +24,7 @@ class User implements \CarlBennett\Tools\Interfaces\DatabaseObject, \JsonSeriali
   public const MAX_EMAIL             = 0xFF;
   public const MAX_INTERNAL_NOTES    = 0xFFFF;
   public const MAX_INVITES_AVAILABLE = 0xFFFF;
-  public const MAX_OPTIONS           = 0xFFFFFFFFFFFFFFFF;
+  public const MAX_OPTIONS           = \PHP_INT_MAX; // BIGINT UNSIGNED exceeds PHP's integer range
   public const MAX_PASSWORD_HASH     = 0xFF;
   public const MAX_TIMEZONE          = 0xFF;
 
