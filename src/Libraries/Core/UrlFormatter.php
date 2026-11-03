@@ -87,7 +87,9 @@ class UrlFormatter
         if (\substr($path, 0, 1) != '/')
         {
             $dir = \dirname($current_path);
-            $path = '/' . ($dir == '.' ? $path : $dir . '/' . $path);
+            if ($dir === '.') $dir = ''; // dirname() of a bare file name or empty string
+            $path = \rtrim($dir, '/') . '/' . $path;
+            if (\substr($path, 0, 1) != '/') $path = '/' . $path;
         }
     
         // Use current values if none provided
