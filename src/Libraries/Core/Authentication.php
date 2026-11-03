@@ -57,7 +57,7 @@ class Authentication
   public static function discard(): bool
   {
     $q = MariaDb::instance()->prepare('
-      DELETE FROM `user_sessions` WHERE `expires_datetime` >= :now LIMIT 1;
+      DELETE FROM `user_sessions` WHERE `expires_datetime` <= :now;
     ');
     if (!self::$timezone) self::setTimezone();
     $now = (new DateTimeImmutable('now', self::$timezone))->format(self::DATE_SQL);
@@ -251,7 +251,7 @@ class Authentication
       SELECT UuidFromBin(`user_id`) AS `user_id`, `ip_address`, `user_agent`
       FROM `user_sessions`
       WHERE `id` = UNHEX(:id) AND (
-        `expires_datetime` = NULL OR
+        `expires_datetime` IS NULL OR
         :dt < `expires_datetime`
       ) LIMIT 1;
     ');
@@ -280,12 +280,9 @@ class Authentication
     }
 
     try {
-      $tz = new DateTimeZone($value);
-      if (!$tz) throw new \RuntimeException();
+      self::$timezone = new DateTimeZone($value);
     } catch (Exception $e) {
       throw new UnexpectedValueException('value must be a valid timezone', 0, $e);
-    } finally {
-      self::$timezone = $tz;
     }
 
     return true;

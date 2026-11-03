@@ -51,9 +51,9 @@ class Task extends \CarlBennett\Tools\Controllers\Base
     protected static function auth($model): void
     {
         $q = new \CarlBennett\Tools\Libraries\Utility\HTTPForm(\CarlBennett\Tools\Libraries\Core\Router::query());
-        $h = \getenv('HTTP_X_AUTH_TOKEN') ?? null;
+        $h = \getenv('HTTP_X_AUTH_TOKEN') ?: null;
 
-        $model->auth_token = $q->get('auth_token') ?? $h ?? null;
+        $model->auth_token = $q->get('auth_token') ?? $h;
 
         $cnf_auth_token = \CarlBennett\Tools\Libraries\Core\Config::instance()->root['tasks']['auth_token'];
         $model->auth_token_valid = ($model->auth_token === $cnf_auth_token);

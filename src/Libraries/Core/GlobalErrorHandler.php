@@ -55,7 +55,7 @@ class GlobalErrorHandler
         while (\ob_get_level()) \ob_end_clean();
 
         \http_response_code(500);
-        $display_errors = self::ToBool(\ini_get('display_errors') ?? 'Off');
+        $display_errors = self::ToBool(\ini_get('display_errors') ?: 'Off');
         if ($display_errors)
         {
             \header('Content-Type: application/json;charset=utf-8');

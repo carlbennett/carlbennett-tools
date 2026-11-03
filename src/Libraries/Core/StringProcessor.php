@@ -13,8 +13,7 @@ class StringProcessor
      */
     public static function fuzzyMatch(string $pattern, string $subject): bool
     {
-        $pattern = \preg_replace_callback('/([^*])/', 'preg_quote', $pattern);
-        $pattern = \str_replace('*', '.*', $pattern);
+        $pattern = \implode('.*', \array_map(fn (string $part): string => \preg_quote($part, '/'), \explode('*', $pattern)));
         return (bool) \preg_match('/^' . $pattern . '$/i', $subject);
     }
 
@@ -28,23 +27,15 @@ class StringProcessor
     {
         return (1 === \preg_match(
             '#(?:AppleWebKit|Chrome|Edge|Firefox|Mozilla|MSIE|Opera|Safari|Trident|WebKit)#i',
-            $user_agent ?? \getenv('HTTP_USER_AGENT') ?? ''
+            $user_agent ?? \getenv('HTTP_USER_AGENT') ?: ''
         ));
     }
 
     public static function sanitizeForUrl(array|string $haystack, bool $lowercase = true): array|string
     {
         $result = \preg_replace('/[^\da-z]+/im', '-', $haystack);
-        if (\is_string($result))
-        {
-            $result = \trim($result, '-');
-        }
-        else
-        {
-            \array_walk($result, '\trim', '-');
-        }
-        if ($lowercase) $result = \strtolower($result);
-        return $result;
+        $clean = fn (string $value): string => $lowercase ? \strtolower(\trim($value, '-')) : \trim($value, '-');
+        return \is_string($result) ? $clean($result) : \array_map($clean, $result);
     }
 
     public static function stripExcessLines($buffer): string
