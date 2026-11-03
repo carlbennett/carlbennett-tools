@@ -18,14 +18,27 @@
             "CarlBennett\\Tools\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "CarlBennett\\Tools\\Tests\\": "tests/"
+        }
+    },
     "require": {
         "carlbennett/php-plextv-api": "dev-main",
         "erusev/parsedown": "^1.7",
         "ext-gmp": "*",
         "ext-json": "*",
+        "ext-mbstring": "*",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
         "geoip2/geoip2": "^3.0",
         "io-developer/php-whois": "^4.1",
-        "php-64bit": ">=5.5.0",
-        "phpmailer/phpmailer": "^6.6"
+        "php-64bit": "^8.4",
+        "phpmailer/phpmailer": "^6.6",
+        "ramsey/uuid": "^4.2"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^13.4"
     }
 }
